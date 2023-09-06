@@ -1,4 +1,4 @@
-from flask import Flask, request, url_for,session, redirect
+from flask import Flask, request, url_for,session, redirect, render_template
 import spotipy 
 from spotipy.oauth2 import SpotifyOAuth
 import os
@@ -18,6 +18,10 @@ app.config['SESSION_COOKIE_NAME'] = 'cookie dookie'
 
 
 @app.route('/')
+def landingPage():
+    return render_template("index.html")
+
+@app.route('/login')
 def login():
     sp_oauth = create_spotify_oauth()
     auth_url = sp_oauth.get_authorize_url()
