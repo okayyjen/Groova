@@ -40,29 +40,12 @@ def index():
         
 
     spotify = spotipy.Spotify(auth_manager=auth_manager)
-    return render_template("main.html")
-
-@app.route('/login')
-def login():
-    sp_oauth = create_spotify_oauth()
-    auth_url = sp_oauth.get_authorize_url()
-    return redirect(auth_url)
+    return redirectPage()
 
 @app.route('/redirect')
 def redirectPage():
-
     return render_template("main.html")
 
-@app.route('/getTracks')
-def getTracks():
-    return "Some aphex twins song"
-
-def create_spotify_oauth():
-    return SpotifyOAuth(
-            client_id=clientID,
-            client_secret=clientSecret,
-            redirect_uri=url_for('redirectPage', _external=True),
-            scope="user-library-read")
 
 @app.route('/logout')
 def logout():
