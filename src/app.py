@@ -34,7 +34,9 @@ def index():
     
     if not auth_manager.validate_token(cache_handler.get_cached_token()):
         auth_url = auth_manager.get_authorize_url()
-        return f'<h2><a href="{auth_url}">Sign in</a></h2>'
+
+        return render_template("index.html", auth_url=auth_url)
+
         
 
     spotify = spotipy.Spotify(auth_manager=auth_manager)
