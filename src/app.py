@@ -8,8 +8,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-clientID = os.getenv("CLIENT_ID")
-clientSecret = os.getenv("CLIENT_SECRET")
+clientID = os.getenv("SPOTIPY_CLIENT_ID")
+clientSecret = os.getenv("SPOTIPY_CLIENT_SECRET")
+redirectURI = os.getenv("SPOTIPY_REDIRECT_URI")
 
 
 app = Flask(__name__)
@@ -22,35 +23,44 @@ Session(app)
 
 @app.route('/')
 def index():
+    #add login button here
+    return render_template("index.html")
 
-    cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
-    auth_manager = spotipy.oauth2.SpotifyOAuth(scope='user-read-currently-playing playlist-modify-private',
-                                               cache_handler=cache_handler,
-                                               show_dialog=True)
-    
-    if request.args.get("code"):
-        auth_manager.get_access_token(request.args.get("code"))
-        return redirect('/')
-    
-    if not auth_manager.validate_token(cache_handler.get_cached_token()):
-        auth_url = auth_manager.get_authorize_url()
-
-        return render_template("index.html", auth_url=auth_url)
-
-        
-
-    spotify = spotipy.Spotify(auth_manager=auth_manager)
-    return redirectPage()
-
-@app.route('/redirect')
-def redirectPage():
+@app.route('/home')
+def home():
     return render_template("main.html")
 
-
+@app.route('/login')
+def login():
+    
+    spOauth = create_spotify_oauth()
+    authURL = spOauth.get_authorize_url()
+    
+    return redirect(authURL)
 @app.route('/logout')
 def logout():
+    #session.clear()
+    return "bye bye empire (unless)"
+
+@app.route('/redirect')
+def callback():
+
+    # if given access, continue to home page
+    if request.args.get('code'):
+        return home()
+
+    #if denied access, return to landing page ('/')
+    if request.args.get('error'):
+        return index()
+
+    #if neither, handle error in future. For now, return message
+    return "something went wrong"
     
-    for key in list(session.keys()):
-        session.pop(key)
-        
-    return redirect('/')
+
+#do not have this as global variable. create new oauth object for each use
+def create_spotify_oauth():
+    return spotipy.oauth2.SpotifyOAuth(
+            client_id=clientID,
+            client_secret=clientSecret,
+            redirect_uri=url_for('callback', _external=True),
+            scope="user-library-read")
