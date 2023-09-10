@@ -8,12 +8,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+app = Flask(__name__)
+
 clientID = os.getenv("SPOTIPY_CLIENT_ID")
 clientSecret = os.getenv("SPOTIPY_CLIENT_SECRET")
 redirectURI = os.getenv("SPOTIPY_REDIRECT_URI")
-
-
-app = Flask(__name__)
 
 app.sercret_key = "AKjhnd79Huha"
 app.config['SECRET_KEY'] = os.urandom(64)
@@ -23,7 +22,6 @@ Session(app)
 
 @app.route('/')
 def index():
-    #add login button here
     return render_template("index.html")
 
 @app.route('/home')
@@ -32,31 +30,32 @@ def home():
 
 @app.route('/login')
 def login():
-    
     spOauth = create_spotify_oauth()
     authURL = spOauth.get_authorize_url()
     
     return redirect(authURL)
-@app.route('/logout')
-def logout():
-    #session.clear()
-    return "bye bye empire (unless)"
 
 @app.route('/redirect')
 def callback():
-
+    #oAuth = create_spotify_oauth()
+    cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
+    auth_manager = spotipy.oauth2.SpotifyOAuth(scope='user-read-currently-playing playlist-modify-private',
+                                               cache_handler=cache_handler,
+                                               show_dialog=False)
+    
     # if given access, continue to home page
     if request.args.get('code'):
+       
         return home()
 
     #if denied access, return to landing page ('/')
     if request.args.get('error'):
+
         return index()
 
     #if neither, handle error in future. For now, return message
     return "something went wrong"
     
-
 #do not have this as global variable. create new oauth object for each use
 def create_spotify_oauth():
     return spotipy.oauth2.SpotifyOAuth(
@@ -64,3 +63,5 @@ def create_spotify_oauth():
             client_secret=clientSecret,
             redirect_uri=url_for('callback', _external=True),
             scope="user-library-read")
+
+
