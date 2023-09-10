@@ -3,7 +3,7 @@ from flask_session import Session
 import spotipy 
 from spotipy.oauth2 import SpotifyOAuth
 import os
-
+import AI
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -26,12 +26,14 @@ def index():
 
 @app.route('/home')
 def home():
+    
     return render_template("main.html")
 
 @app.route('/getinput', methods=['POST'])
 def getInput():
+    print("get input request")
     input = request.form['user_input']
-    print(input)
+    print(AI.response(input))
     return home()
 
 @app.route('/login')
