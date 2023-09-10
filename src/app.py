@@ -18,6 +18,8 @@ app.sercret_key = "AKjhnd79Huha"
 app.config['SECRET_KEY'] = os.urandom(64)
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = './.flask_session/'
+TOKEN_INFO = "token_info"
+USER_INFO = "user_info"
 Session(app)
 
 @app.route('/')
@@ -26,7 +28,8 @@ def index():
 
 @app.route('/home')
 def home():
-    return render_template("main.html")
+    displayname = get_display_name()
+    return render_template("main.html", displayname = displayname)
 
 @app.route('/login')
 def login():
@@ -37,10 +40,15 @@ def login():
 
 @app.route('/redirect')
 def callback():
-    
+    spOauth = create_spotify_oauth()
+    session.clear()
     # if given access, continue to home page
     if request.args.get('code'):
-       
+        tokenInfo = spOauth.get_access_token(request.args.get('code'))
+        session[TOKEN_INFO] = tokenInfo
+        sp = spotipy.Spotify(auth=tokenInfo['access_token'])
+        userInfo = sp.current_user()
+        session[USER_INFO] = userInfo
         return home()
 
     #if denied access, return to landing page ('/')
@@ -59,4 +67,5 @@ def create_spotify_oauth():
             redirect_uri=url_for('callback', _external=True),
             scope="user-library-read")
 
-
+def get_display_name():
+    return session[USER_INFO]['display_name']
