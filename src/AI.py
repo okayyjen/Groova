@@ -18,11 +18,7 @@ prompt = PromptTemplate(input_variables=['question'], template="""
 #llm chain
 chain = LLMChain(prompt=prompt, llm=llm)
 
-
-if prompt:
-
-    #passing prompt
+def response(prompt):
+    print("thinking...")
     response = chain.run(prompt)
-
-    #do this
-    st.write(response)
+    return response
