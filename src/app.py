@@ -37,11 +37,6 @@ def login():
 
 @app.route('/redirect')
 def callback():
-    #oAuth = create_spotify_oauth()
-    cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
-    auth_manager = spotipy.oauth2.SpotifyOAuth(scope='user-read-currently-playing playlist-modify-private',
-                                               cache_handler=cache_handler,
-                                               show_dialog=False)
     
     # if given access, continue to home page
     if request.args.get('code'):
