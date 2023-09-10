@@ -9,6 +9,10 @@
     <main>
         <h1>You have entered the Harb Kim Empire.</h1>
     </main>
-    <p align="center"><a href=logout ><button class=grey style="height:75px;width:150px">leave Empire</button></a></p>
+    <form method="POST" action="/getinput"">
+      <label for="user_input">Enter text:</label>
+      <input type="text" id="user_input" name="user_input">
+      <input type="submit" value="Submit">
+  </form>
   </body>
 </html>

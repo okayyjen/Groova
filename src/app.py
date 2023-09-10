@@ -28,6 +28,12 @@ def index():
 def home():
     return render_template("main.html")
 
+@app.route('/getinput', methods=['POST'])
+def getInput():
+    input = request.form['user_input']
+    print(input)
+    return home()
+
 @app.route('/login')
 def login():
     spOauth = create_spotify_oauth()
