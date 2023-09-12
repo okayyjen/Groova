@@ -1,18 +1,16 @@
+import time
 from flask import Flask, request, url_for,session, redirect, render_template
 from flask_session import Session
 import spotipy 
 from spotipy.oauth2 import SpotifyOAuth
 import os
+import SpotifyTools
 
 from dotenv import load_dotenv
 
 load_dotenv()
 
 app = Flask(__name__)
-
-clientID = os.getenv("SPOTIPY_CLIENT_ID")
-clientSecret = os.getenv("SPOTIPY_CLIENT_SECRET")
-redirectURI = os.getenv("SPOTIPY_REDIRECT_URI")
 
 app.sercret_key = "AKjhnd79Huha"
 app.config['SECRET_KEY'] = os.urandom(64)
@@ -28,23 +26,27 @@ def index():
 
 @app.route('/home')
 def home():
-    displayname = get_display_name()
+    displayname = SpotifyTools.get_display_name(session)
     return render_template("main.html", displayname = displayname)
+
+@app.route('/getTracks')
+def getTracks():
+    return SpotifyTools.get_top_tracks(get_token())
 
 @app.route('/login')
 def login():
-    spOauth = create_spotify_oauth()
-    authURL = spOauth.get_authorize_url()
+    sp_oauth = SpotifyTools.create_spotify_oauth()
+    authURL = sp_oauth.get_authorize_url()
     
     return redirect(authURL)
 
 @app.route('/redirect')
 def callback():
-    spOauth = create_spotify_oauth()
+    sp_oauth = SpotifyTools.create_spotify_oauth()
     session.clear()
     # if given access, continue to home page
     if request.args.get('code'):
-        tokenInfo = spOauth.get_access_token(request.args.get('code'))
+        tokenInfo = sp_oauth.get_access_token(request.args.get('code'))
         session[TOKEN_INFO] = tokenInfo
         sp = spotipy.Spotify(auth=tokenInfo['access_token'])
         userInfo = sp.current_user()
@@ -58,14 +60,16 @@ def callback():
 
     #if neither, handle error in future. For now, return message
     return "something went wrong"
-    
-#do not have this as global variable. create new oauth object for each use
-def create_spotify_oauth():
-    return spotipy.oauth2.SpotifyOAuth(
-            client_id=clientID,
-            client_secret=clientSecret,
-            redirect_uri=url_for('callback', _external=True),
-            scope="user-library-read")
 
-def get_display_name():
-    return session[USER_INFO]['display_name']
+def get_token():
+    token_info = session.get(TOKEN_INFO, None)
+    if not token_info:
+        print("YOOOOOOO")
+        raise "exception"
+    now = int(time.time())
+    is_expired = token_info['expires_at'] - now < 60
+    if(is_expired):
+        sp_oauth = SpotifyTools.create_spotify_oauth
+        token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
+
+    return token_info
