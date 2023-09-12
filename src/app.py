@@ -3,6 +3,7 @@ from flask_session import Session
 import spotipy 
 from spotipy.oauth2 import SpotifyOAuth
 import os
+import spotify_tools
 
 from dotenv import load_dotenv
 
@@ -28,19 +29,19 @@ def index():
 
 @app.route('/home')
 def home():
-    displayname = get_display_name()
+    displayname = spotify_tools.get_display_name(session)
     return render_template("main.html", displayname = displayname)
 
 @app.route('/login')
 def login():
-    spOauth = create_spotify_oauth()
+    spOauth = spotify_tools.create_spotify_oauth()
     authURL = spOauth.get_authorize_url()
     
     return redirect(authURL)
 
 @app.route('/redirect')
 def callback():
-    spOauth = create_spotify_oauth()
+    spOauth = spotify_tools.create_spotify_oauth()
     session.clear()
     # if given access, continue to home page
     if request.args.get('code'):
@@ -58,14 +59,3 @@ def callback():
 
     #if neither, handle error in future. For now, return message
     return "something went wrong"
-    
-#do not have this as global variable. create new oauth object for each use
-def create_spotify_oauth():
-    return spotipy.oauth2.SpotifyOAuth(
-            client_id=clientID,
-            client_secret=clientSecret,
-            redirect_uri=url_for('callback', _external=True),
-            scope="user-library-read")
-
-def get_display_name():
-    return session[USER_INFO]['display_name']
