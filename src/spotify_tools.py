@@ -18,7 +18,23 @@ def create_spotify_oauth():
             client_id=clientID,
             client_secret=clientSecret,
             redirect_uri=url_for('callback', _external=True),
-            scope="user-library-read")
+            scope="user-top-read")
 
+#getter for current user's display name
 def get_display_name(session):
     return session['user_info']['display_name']
+
+#getter for current user's top 20 artists
+def get_top_artists(token_info):
+    sp = spotipy.Spotify(auth=token_info['access_token'])
+    return sp.current_user_top_artists(limit=20, offset=0)
+
+#getter for current user's top 20 tracks
+def get_top_tracks(token_info):
+    sp = spotipy.Spotify(auth=token_info['access_token'])
+    return sp.current_user_top_tracks(limit=20, offset=0)['items'][2]
+
+
+    
+
+    

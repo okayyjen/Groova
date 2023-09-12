@@ -1,3 +1,4 @@
+import time
 from flask import Flask, request, url_for,session, redirect, render_template
 from flask_session import Session
 import spotipy 
@@ -28,20 +29,24 @@ def home():
     displayname = spotify_tools.get_display_name(session)
     return render_template("main.html", displayname = displayname)
 
+@app.route('/getTracks')
+def getTracks():
+    return spotify_tools.get_top_tracks(get_token())
+
 @app.route('/login')
 def login():
-    spOauth = spotify_tools.create_spotify_oauth()
-    authURL = spOauth.get_authorize_url()
+    sp_oauth = spotify_tools.create_spotify_oauth()
+    authURL = sp_oauth.get_authorize_url()
     
     return redirect(authURL)
 
 @app.route('/redirect')
 def callback():
-    spOauth = spotify_tools.create_spotify_oauth()
+    sp_oauth = spotify_tools.create_spotify_oauth()
     session.clear()
     # if given access, continue to home page
     if request.args.get('code'):
-        tokenInfo = spOauth.get_access_token(request.args.get('code'))
+        tokenInfo = sp_oauth.get_access_token(request.args.get('code'))
         session[TOKEN_INFO] = tokenInfo
         sp = spotipy.Spotify(auth=tokenInfo['access_token'])
         userInfo = sp.current_user()
@@ -55,3 +60,16 @@ def callback():
 
     #if neither, handle error in future. For now, return message
     return "something went wrong"
+
+def get_token():
+    token_info = session.get(TOKEN_INFO, None)
+    if not token_info:
+        print("YOOOOOOO")
+        raise "exception"
+    now = int(time.time())
+    is_expired = token_info['expires_at'] - now < 60
+    if(is_expired):
+        sp_oauth = spotify_tools.create_spotify_oauth
+        token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
+
+    return token_info
