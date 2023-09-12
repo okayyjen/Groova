@@ -4,7 +4,7 @@ from flask_session import Session
 import spotipy 
 from spotipy.oauth2 import SpotifyOAuth
 import os
-import spotify_tools
+import SpotifyTools
 
 from dotenv import load_dotenv
 
@@ -26,23 +26,23 @@ def index():
 
 @app.route('/home')
 def home():
-    displayname = spotify_tools.get_display_name(session)
+    displayname = SpotifyTools.get_display_name(session)
     return render_template("main.html", displayname = displayname)
 
 @app.route('/getTracks')
 def getTracks():
-    return spotify_tools.get_top_tracks(get_token())
+    return SpotifyTools.get_top_tracks(get_token())
 
 @app.route('/login')
 def login():
-    sp_oauth = spotify_tools.create_spotify_oauth()
+    sp_oauth = SpotifyTools.create_spotify_oauth()
     authURL = sp_oauth.get_authorize_url()
     
     return redirect(authURL)
 
 @app.route('/redirect')
 def callback():
-    sp_oauth = spotify_tools.create_spotify_oauth()
+    sp_oauth = SpotifyTools.create_spotify_oauth()
     session.clear()
     # if given access, continue to home page
     if request.args.get('code'):
@@ -69,7 +69,7 @@ def get_token():
     now = int(time.time())
     is_expired = token_info['expires_at'] - now < 60
     if(is_expired):
-        sp_oauth = spotify_tools.create_spotify_oauth
+        sp_oauth = SpotifyTools.create_spotify_oauth
         token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
 
     return token_info
