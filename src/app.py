@@ -11,10 +11,6 @@ load_dotenv()
 
 app = Flask(__name__)
 
-clientID = os.getenv("SPOTIPY_CLIENT_ID")
-clientSecret = os.getenv("SPOTIPY_CLIENT_SECRET")
-redirectURI = os.getenv("SPOTIPY_REDIRECT_URI")
-
 app.sercret_key = "AKjhnd79Huha"
 app.config['SECRET_KEY'] = os.urandom(64)
 app.config['SESSION_TYPE'] = 'filesystem'
