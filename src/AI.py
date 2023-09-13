@@ -1,70 +1,74 @@
 from langchain.llms import GPT4All
-from langchain import PromptTemplate, LLMChain, OpenAI, Cohere, HuggingFaceHub
+from langchain import PromptTemplate, LLMChain, OpenAI, Cohere, HuggingFaceHub, LLMMathChain
 from langchain.model_laboratory import ModelLaboratory
 
-#path
-#PATH = 'C:/Users/harba/AppData/Local/nomic.ai/GPT4All/ggml-model-gpt4all-falcon-q4_0.bin'
-#PATH = 'C:/Users/harba/AppData/Local/nomic.ai/GPT4All/llama-2-7b-chat.ggmlv3.q4_0.bin'
-#llm = GPT4All(model=PATH, verbose = True)
-#llm = HuggingFaceHub(repo_id="google/flan-t5-xl", model_kwargs={"temperature": 1})
 
-llm = OpenAI()
+from langchain.agents import initialize_agent, Tool, AgentType
+from langchain.tools import BaseTool, StructuredTool, Tool, tool
+from langchain.agents import AgentType, OpenAIFunctionsAgent
+from langchain.chat_models import ChatOpenAI
+from langchain.memory import ConversationBufferMemory
+from SpotifyAITool import DookTool
 
-#prompt template
-prompt = PromptTemplate(input_variables=['question'], template="""
-                        ### Instruction:
-                        About you:
-                        You are an AI Agent that will rate a the type of music a user should listen to based on the user's given situation / mood based on the things to rate provided to you below. 
-                        
-                        things to rate:
+from langchain.schema.messages import (
+    SystemMessage,
+)
 
-                        "acousticness":
-                            "description": "Confidence measure of whether the track is acoustic.",
-                            "example_value": 0.00242,
-                            "range": "0 - 1"
-                        ,
-                        "danceability": 
-                            "description": "How suitable a track is for dancing.",
-                            "example_value": 0.585
-                        
-                        "tempo": 
-                            "description": "Estimated tempo of a track in BPM.",
-                            "example_value": 118.211
-                        
-                        "valence": 
-                            "description": "Musical positiveness conveyed by a track.",
-                            "example_value": 0.428,
-                            "range": "0 - 1"
-                        
-                        "energy": 
-                            "description": "Perceptual measure of intensity and activity.",
-                            "example_value": 0.842
-                        
-                        --end of things to rate--
+sys_msg = """
+About you:
+You are an AI Agent that operates the Spotify API defined as a tool to respond to User's requests. Do not chat to the user, simply use the tools provided to you. If question is off topic, do not reply.
 
-                        The prompt you will be given is a human's described situation, or mood.
-                        
-                        RULES:
-                        
-                        DO NOT GIVE SONG SUGGESTIONS.
-                        SIMPLY GIVE THE RATINGS.
-                        DO NOT SAY ANYTHING ELSE BESIDES THE RATINGS.
+Execution:
+You should plan the execution using the Tool in response to the User's input
 
-                        example response:
+Output format (where each '?' is a name from the list returned from your SpotifyTool):
+1.'?'
+2.'?'
+3.'?'
+4.'?'
+5.'?'
 
-                        acousticness: 0.00134
-                        danceability: 0.378
-                        tempo: 100
-                        valence: 0.565
-                        energy: 0.235
-                
-                        ### Prompt:
-                        {question}
-                        ### Response:""")
+"""
+
+#llm = OpenAI()
+llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
+
+conversational_memory = ConversationBufferMemory(
+    memory_key='chat_history',
+    k=2,
+    return_messages=True
+)
+
+tools = [DookTool()]
+
+
+agent = initialize_agent(
+    agent='chat-conversational-react-description',
+    tools=tools,
+    llm=llm,
+    max_iterations=2,
+    early_stopping_method='generate',
+    memory=conversational_memory
+)
+
+new_prompt = agent.agent.create_prompt(
+    system_message=sys_msg,
+    tools=tools
+)
+
+agent.agent.llm_chain.prompt = new_prompt
+
+
+
 #llm chain
-chain = LLMChain(prompt=prompt, llm=llm)
+#chain = LLMChain(prompt=prompt, llm=llm)
 
 def response(prompt):
-    print("thinking...")
-    response = chain.run(prompt)
+    print('thinking...')
+    response = agent(prompt)
     return response
+
+#def response(prompt):
+#    print("thinking...")
+#    response = chain.run(prompt)
+#    return response
