@@ -27,14 +27,23 @@ def index():
 
 @app.route('/home')
 def home():
+    write_token_to_dotenv(get_token())
     displayname = SpotifyTools.get_display_name(session)
+    #SpotifyTools.get_top_artists(get_token())
+
+    SpotifyTools.create_playlist(session, get_token())
+
     return render_template("main.html", displayname = displayname)
 
 @app.route('/getinput', methods=['POST'])
 def getInput():
     print("get input request")
     input = request.form['user_input']
-    print(AI.response(input))
+
+    #if u wanna try AI, uncomment this
+    #print(AI.response(input))
+
+
     return home()
 
 @app.route('/getTracks')
@@ -60,7 +69,6 @@ def callback():
         userInfo = sp.current_user()
         session[USER_INFO] = userInfo
 
-        write_token_to_dotenv(tokenInfo['access_token'])
         return home()
 
     #if denied access, return to landing page ('/')
@@ -83,7 +91,9 @@ def get_token():
 
     return token_info
 
-def write_token_to_dotenv(token):
+#use this function with get_token() to ensure it gets refreshed before expiration
+def write_token_to_dotenv(token_info):
+    token = token_info['access_token']
     dotenv_file = dotenv.find_dotenv()
     dotenv.load_dotenv(dotenv_file)
     os.environ["SPOTIFY_ACCESS_TOKEN"] = token
