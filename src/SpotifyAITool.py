@@ -22,7 +22,7 @@ class DookTool(BaseTool):
         top_artists = sp.current_user_top_artists(time_range='medium_term', limit=5)
         # Extract artist names from the response
         artist_names = [artist['name'] for artist in top_artists['items']]
-        artist_names_json = json.dumps(top_artists)
+        artist_names_json = json.dumps(artist_names)
 
 
         return artist_names_json
