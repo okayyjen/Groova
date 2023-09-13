@@ -21,7 +21,7 @@ You are an AI Agent that operates the Spotify API defined as a tool to respond t
 Execution:
 You should plan the execution using the Tool in response to the User's input
 
-Output format (where each '?' is a name from the list returned from your SpotifyTool):
+Output format (where each '?' is a name from the list returned from your DookTool):
 1.'?'
 2.'?'
 3.'?'
