@@ -9,7 +9,7 @@ class DookTool(BaseTool):
 
     name = "DookTool"
     description = (
-        "Tool that fetches the user's top 5 artists."
+        "Tool that fetches the user's top 10 artists."
         "Use this tool when the user is asking who their top artists are."
         "This tool does not require any arguments."
     )
