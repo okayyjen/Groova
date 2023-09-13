@@ -14,11 +14,14 @@ redirectURI = os.getenv("SPOTIPY_REDIRECT_URI")
 
 #do not have this as global variable. create new oauth object for each use
 def create_spotify_oauth():
+
+    scopes = ["user-top-read", "playlist-modify-private","playlist-modify-public"]
+
     return spotipy.oauth2.SpotifyOAuth(
             client_id=clientID,
             client_secret=clientSecret,
             redirect_uri=url_for('callback', _external=True),
-            scope="user-top-read")
+            scope=' '.join(scopes))
 
 #getter for current user's display name
 def get_display_name(session):
@@ -37,9 +40,15 @@ def get_top_artists(token_info):
 
     return top_artists
 
+#creates empty playlist
+def create_playlist(session, token_info):
 
-    #sp = spotipy.Spotify(auth=token_info['access_token'])
-    #return sp.current_user_top_artists(limit=20, offset=0)
+    sp = spotipy.Spotify(auth=token_info['access_token'])
+    user_id = session['user_info']['id']
+    sp.user_playlist_create(user_id, "New Playlist", public=True,collaborative=False, description="")
+
+#TODO figure out this function VVV, then create one to be passed to AI
+#def add_track_to_playlist(playlist, track):
 
 #getter for current user's top 20 tracks
 def get_top_tracks(token_info):
