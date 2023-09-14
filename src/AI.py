@@ -8,20 +8,23 @@ from langchain.tools import BaseTool, StructuredTool, Tool, tool
 from langchain.agents import AgentType, OpenAIFunctionsAgent
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
-from SpotifyAITool import DookTool
-
+from AITopTracksTool import TopTracksTool
+from AITopArtistsTool import TopArtistsTool
+from AIPlaylistTool import PlaylistTool
 from langchain.schema.messages import (
     SystemMessage,
 )
-
-sys_msg = """
+from langchain.prompts import MessagesPlaceholder
+#Each input given from a user will be a users given situation or mood. Based on the situation or mood that is provided to you, you will rate it based on these features:
+content = """
 About you:
 You are an AI Agent that operates the Spotify API defined as a tool to respond to User's requests. Do not chat to the user, simply use the tools provided to you. If question is off topic, do not reply.
 
-Execution:
-You should plan the execution using the Tool in response to the User's input
 
-Output format (where each '?' is a name from the list returned from your DookTool):
+Execution:
+You should plan the execution using the Tools provided to you in response to the User's input
+
+Output format (where each '?' is an artist name or track name from your DookTool):
 1.'?'
 2.'?'
 3.'?'
@@ -32,31 +35,15 @@ Output format (where each '?' is a name from the list returned from your DookToo
 
 #llm = OpenAI()
 llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
-
-conversational_memory = ConversationBufferMemory(
-    memory_key='chat_history',
-    k=2,
-    return_messages=True
-)
-
-tools = [DookTool()]
-
-
-agent = initialize_agent(
-    agent='chat-conversational-react-description',
-    tools=tools,
-    llm=llm,
-    max_iterations=2,
-    early_stopping_method='generate',
-    memory=conversational_memory
-)
-
-new_prompt = agent.agent.create_prompt(
-    system_message=sys_msg,
-    tools=tools
-)
-
-agent.agent.llm_chain.prompt = new_prompt
+tools = [TopArtistsTool(), TopTracksTool(), PlaylistTool()]
+agent_kwargs = {
+    "extra_prompt_messages": [MessagesPlaceholder(variable_name="memory")],
+    "system_message": SystemMessage(
+            content= content
+        ),
+}
+memory = ConversationBufferMemory(memory_key="memory", return_messages=True)
+mrkl = initialize_agent(tools, llm, agent=AgentType.OPENAI_FUNCTIONS, agent_kwargs=agent_kwargs, memory=memory, verbose=True)
 
 
 
@@ -65,7 +52,8 @@ agent.agent.llm_chain.prompt = new_prompt
 
 def response(prompt):
     print('thinking...')
-    response = agent(prompt)
+    response = mrkl.run(prompt)
+    print('here: ')
     return response
 
 #def response(prompt):
