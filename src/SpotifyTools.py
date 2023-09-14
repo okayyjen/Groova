@@ -45,7 +45,10 @@ def create_playlist(session, token_info):
 
     sp = spotipy.Spotify(auth=token_info['access_token'])
     user_id = session['user_info']['id']
-    sp.user_playlist_create(user_id, "New Playlist", public=True,collaborative=False, description="")
+    playlist = sp.user_playlist_create(user_id, "New Playlist", public=True,collaborative=False, description="")
+    playlist_url = playlist['external_urls']['spotify']
+
+    print(playlist_url)
 
 #TODO figure out this function VVV, then create one to be passed to AI
 #def add_track_to_playlist(playlist, track):
@@ -53,7 +56,13 @@ def create_playlist(session, token_info):
 #getter for current user's top 20 tracks
 def get_top_tracks(token_info):
     sp = spotipy.Spotify(auth=token_info['access_token'])
-    return sp.current_user_top_tracks(limit=20, offset=0)['items'][2]
+    top_tracks = sp.current_user_top_tracks(limit=20, offset=0)
+    top_tracks_names = [track['name'] for track in top_tracks['items']]
+
+    for i, track in enumerate(top_tracks_names, start=1):
+        print(f"{i}. {track}")
+
+    return top_tracks_names
 
 
     
