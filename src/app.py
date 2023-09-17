@@ -27,11 +27,15 @@ def index():
 
 @app.route('/home')
 def home():
-    write_token_to_dotenv(get_token())
+    write_to_dotenv("SPOTIFY_ACCESS_TOKEN")
+    write_to_dotenv("SPOTIFY_USER_ID")
+
     displayname = SpotifyTools.get_display_name(session)
     #SpotifyTools.get_top_artists(get_token())
+    #SpotifyTools.get_top_tracks(get_token())
+    SpotifyTools.get_song_features(get_token())
 
-    SpotifyTools.create_playlist(session, get_token())
+    #SpotifyTools.create_playlist(session, get_token())
 
     return render_template("main.html", displayname = displayname)
 
@@ -91,10 +95,20 @@ def get_token():
 
     return token_info
 
-#use this function with get_token() to ensure it gets refreshed before expiration
-def write_token_to_dotenv(token_info):
-    token = token_info['access_token']
+def write_to_dotenv(name):
+    if name == "SPOTIFY_ACCESS_TOKEN":
+        token_info = get_token()
+        string = token_info['access_token']
+        
+    if name == "SPOTIFY_USER_ID":
+        string = session['user_info']['id']
+
     dotenv_file = dotenv.find_dotenv()
     dotenv.load_dotenv(dotenv_file)
-    os.environ["SPOTIFY_ACCESS_TOKEN"] = token
-    dotenv.set_key(dotenv_file, "SPOTIFY_ACCESS_TOKEN", os.environ["SPOTIFY_ACCESS_TOKEN"])
+    os.environ[name] = string
+    dotenv.set_key(dotenv_file, name, os.environ[name])
+
+    # Add tracks to the playlist
+        #sp.playlist_add_items(user_playlist['id'], items=track_ids, position=None)
+
+        #return f"Playlist '{playlist_name}' created with {len(track_ids)} tracks."

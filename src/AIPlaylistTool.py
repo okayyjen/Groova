@@ -9,7 +9,6 @@ class PlaylistTool(BaseTool):
     description = (
         "Use this tool when the user asks you to make a playlist"
         "A tool that creates a new playlist and adds tracks to it on Spotify."
-        "This tool requires a playlist name (string), and a playlist description (string) as keyword arguments."
         "The playlist name is the name of the new playlist to be created."
         "The playlist description is a description for the new playlist, just put the word empty"
         "The arguments should be passed as keyword arguments like so: tool._run(playlist_name='the dance music', playlist_description='danceable music')"
@@ -34,8 +33,7 @@ class PlaylistTool(BaseTool):
         return playlist_url
 
     async def _arun(self, *args, **kwargs) -> str:
-        """Use the SpotifyPlaylistTool asynchronously."""
-        return self._run()
+        raise NotImplementedError("This tool does not support async")
     
 
 
