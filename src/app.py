@@ -31,12 +31,8 @@ def home():
     write_to_dotenv("SPOTIFY_USER_ID")
 
     displayname = SpotifyTools.get_display_name(session)
-    #SpotifyTools.get_top_artists(get_token())
-    #SpotifyTools.get_top_tracks(get_token())
-    SpotifyTools.get_song_features(get_token())
-
-    #SpotifyTools.create_playlist(session, get_token())
-
+    #features = SpotifyTools.get_song_features(SpotifyTools.get_top_tracks(get_token()), get_token())
+    #print(features)
     return render_template("main.html", displayname = displayname)
 
 @app.route('/getinput', methods=['POST'])
@@ -45,7 +41,7 @@ def getInput():
     input = request.form['user_input']
 
     #if u wanna try AI, uncomment this
-    #print(AI.response(input))
+    print(AI.response(input))
 
 
     return home()
@@ -112,3 +108,4 @@ def write_to_dotenv(name):
         #sp.playlist_add_items(user_playlist['id'], items=track_ids, position=None)
 
         #return f"Playlist '{playlist_name}' created with {len(track_ids)} tracks."
+

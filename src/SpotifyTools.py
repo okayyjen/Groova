@@ -56,13 +56,24 @@ def create_playlist(session, token_info):
 #getter for current user's top 20 tracks
 def get_top_tracks(token_info):
     sp = spotipy.Spotify(auth=token_info['access_token'])
-    top_tracks = sp.current_user_top_tracks(limit=20, offset=0)
+    top_tracks = sp.current_user_top_tracks(limit=1, offset=0)
     top_tracks_names = [track['name'] for track in top_tracks['items']]
 
     for i, track in enumerate(top_tracks_names, start=1):
         print(f"{i}. {track}")
 
-    return top_tracks_names
+    return top_tracks
+
+def get_song_features(tracks, token_info):
+    sp = spotipy.Spotify(auth=token_info['access_token'])
+    tracks_id_list = []
+    for track in tracks['items']:
+        track_id = track['id']
+        tracks_id_list.append(track_id)
+
+    features = sp.audio_features(tracks_id_list)
+    return features
+
 
 
     
