@@ -1,6 +1,7 @@
 from langchain.tools.base import BaseTool, StructuredTool
 import spotipy
 import os
+import json
 
 class PlaylistTool(BaseTool):
     """Tool that creates a new playlist and adds tracks to it on Spotify."""
@@ -9,12 +10,11 @@ class PlaylistTool(BaseTool):
     description = (
         "Use this tool when the user asks you to make a playlist"
         "A tool that creates a new playlist and adds tracks to it on Spotify."
-        "The playlist name is the name of the new playlist to be created."
-        "The playlist description is a description for the new playlist, just put the word empty"
-        "The arguments should be passed as keyword arguments like so: tool._run(playlist_name='the dance music', playlist_description='danceable music')"
+        "The argument tracks is a dictionary list of the user's top tracks, obtained from TopTracksTool"
+        "This tool requires a dictionary of tracks as a keyword argument. You will get this from your TopTracksTool. The argument is NOT A STRING"
     )
 
-    def _run(self, *args, **kwargs) -> str:
+    def _run(self, tracks, *args, **kwargs) -> str:
         user = os.getenv('SPOTIFY_USER_ID')
         if not user:
             raise ValueError("SPOTIFY_USER_ID environment variable is not set.")
@@ -27,8 +27,17 @@ class PlaylistTool(BaseTool):
 
         # Create a new playlist
         user_playlist = sp.user_playlist_create(user, "New Playlist", public=False, collaborative=False, description="desc")
-        playlist_url = user_playlist['external_urls']['spotify']
+        #coverting string dictionary into dictionary.
+        tracks_dict = json.loads(tracks)
         
+        #getting urls from track list
+        track_URLs = []
+        for track in tracks_dict['items']:
+            track_url = track['external_urls']['spotify']
+            track_URLs.append(track_url)
+        playlist_id = user_playlist['id']
+        sp.playlist_add_items(playlist_id, track_URLs, position=None)
+        playlist_url = user_playlist['external_urls']['spotify']
 
         return playlist_url
 

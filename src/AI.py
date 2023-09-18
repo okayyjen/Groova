@@ -24,18 +24,14 @@ You are an AI Agent that operates the Spotify API defined as a tool to respond t
 Execution:
 You should plan the execution using the Tools provided to you in response to the User's input
 
-Output format (where each '?' is an artist name or track name from your DookTool):
-1.'?'
-2.'?'
-3.'?'
-4.'?'
-5.'?'
+Output format:
+a link to the playlist created with your PlaylistTool
 
 """
 
 #llm = OpenAI()
-llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
-tools = [TopArtistsTool(), TopTracksTool(), PlaylistTool()]
+llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-16k")
+tools = [TopTracksTool(), PlaylistTool()]
 agent_kwargs = {
     "extra_prompt_messages": [MessagesPlaceholder(variable_name="memory")],
     "system_message": SystemMessage(
