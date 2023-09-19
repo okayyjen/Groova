@@ -3,6 +3,7 @@ from flask_session import Session
 import spotipy 
 from spotipy.oauth2 import SpotifyOAuth
 import os
+import json
 
 from dotenv import load_dotenv
 
@@ -48,7 +49,7 @@ def create_playlist(session, token_info):
     playlist = sp.user_playlist_create(user_id, "New Playlist", public=True,collaborative=False, description="")
     playlist_url = playlist['external_urls']['spotify']
 
-    print(playlist_url)
+    return playlist
 
 #TODO figure out this function VVV, then create one to be passed to AI
 #def add_track_to_playlist(playlist, track):
@@ -56,7 +57,7 @@ def create_playlist(session, token_info):
 #getter for current user's top 20 tracks
 def get_top_tracks(token_info):
     sp = spotipy.Spotify(auth=token_info['access_token'])
-    top_tracks = sp.current_user_top_tracks(limit=1, offset=0)
+    top_tracks = sp.current_user_top_tracks(limit=3, offset=0)
     top_tracks_names = [track['name'] for track in top_tracks['items']]
 
     for i, track in enumerate(top_tracks_names, start=1):
@@ -73,6 +74,46 @@ def get_song_features(tracks, token_info):
 
     features = sp.audio_features(tracks_id_list)
     return features
+
+
+def get_recommendations(token_info, top_artists, target_features) -> dict:
+    sp = spotipy.Spotify(auth=token_info['access_token'])
+
+    artist_URLs = []
+    for artist in top_artists['items']:
+
+        artist_url = artist['external_urls']['spotify']
+        artist_URLs.append(artist_url)
+
+    recommended_tracks = sp.recommendations(seed_artists=artist_URLs, limit=20, target_features=target_features)
+    return recommended_tracks
+
+
+
+def add_tracks(token_info,session,tracks):
+
+    sp = spotipy.Spotify(auth=token_info['access_token'])
+
+
+
+    track_uris = [track['uri'] for track in tracks['tracks']]
+
+    #creating playlist and getting playlist_id
+    playlist = create_playlist(session, token_info)
+    playlist_id = playlist['id']
+    sp.playlist_add_items(playlist_id, track_uris, position=None)
+
+    return playlist['external_urls']['spotify']
+
+
+
+
+
+
+
+
+
+
 
 
 
