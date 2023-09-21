@@ -38,6 +38,9 @@ def home():
 
     #ecommends = SpotifyTools.get_recommendations(get_token(), top_artists,target_features)
     #SpotifyTools.add_tracks(get_token(), session, recommends)
+    #features = "heres your answer acousticness: 0.123 danceability: 0.123 tempo: 0.123 valence: 0.123 energy: 100"
+    #print("urmom")
+    #print(SpotifyTools.extract_and_format(features))
 
     return render_template("main.html", displayname = displayname)
 

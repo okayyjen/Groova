@@ -82,7 +82,7 @@ llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-16k")
 feature_rating_chain = LLMChain(prompt=content_chain_1, llm=llm)
 
 #initializing tool agent chain (aka second chain/ tool chain)
-tools = [TopTracksTool(), PlaylistTool()]
+tools = [PlaylistTool()]
 agent_kwargs = {
     "extra_prompt_messages": [MessagesPlaceholder(variable_name="memory")],
     "system_message": SystemMessage(

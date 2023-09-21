@@ -4,6 +4,7 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import os
 import json
+import re
 
 from dotenv import load_dotenv
 
@@ -104,6 +105,17 @@ def add_tracks(token_info,session,tracks):
     sp.playlist_add_items(playlist_id, track_uris, position=None)
 
     return playlist['external_urls']['spotify']
+
+def extract_and_format(response):
+    pattern = r'(acousticness|danceability|tempo|valence|energy):?\s*(\d+(\.\d+)?)'
+    matches = re.findall(pattern, response)
+        
+    formatted_dict = {}
+        
+    for keyword, value, _ in matches:
+        formatted_dict[keyword] = {'target': float(value)}
+        
+    return formatted_dict
 
 
 
