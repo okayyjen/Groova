@@ -31,7 +31,7 @@ def get_display_name(session):
 #getter for current user's top 20 artists
 def get_top_artists(token_info):
     sp = spotipy.Spotify(auth=token_info['access_token'])
-    top_artists = sp.current_user_top_artists(time_range='medium_term', limit=10)
+    top_artists = sp.current_user_top_artists(time_range='medium_term', limit=5)
 
     # Extract artist names from the response
     artist_names = [artist['name'] for artist in top_artists['items']]
