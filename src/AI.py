@@ -15,27 +15,79 @@ from langchain.schema.messages import (
     SystemMessage,
 )
 from langchain.prompts import MessagesPlaceholder
-#Each input given from a user will be a users given situation or mood. Based on the situation or mood that is provided to you, you will rate it based on these features:
-content = """
-About you:
-You are an AI Agent that operates the Spotify API defined as a tool to respond to User's requests. Do not chat to the user, simply use the tools provided to you. If question is off topic, do not reply.
 
+content_chain_1 = PromptTemplate(input_variables=['user_mood'], template="""
+                        ### Instruction:
+                        About you:
+                        You are an AI Agent tasked with rating the type of music a user should listen to based on the user's given situation or mood, using the music attributes provided below.Please provide ratings based on your assessment, and do not rely on the example values I have given you.
+                        
+                        Music attributes:
+
+                        "acousticness":
+                            "description": "Confidence measure of whether the track is acoustic.",
+                            "example_value": 0.242,
+                            "range": "0 - 1"
+                        ,
+                        "danceability": 
+                            "description": "How suitable a track is for dancing.",
+                            "example_value": 0.585
+                        
+                        "tempo": 
+                            "description": "Estimated tempo of a track in BPM.",
+                            "example_value": 118.211
+                        
+                        "valence": 
+                            "description": "Musical positiveness conveyed by a track.",
+                            "example_value": 0.428,
+                            "range": "0 - 1"
+                        
+                        "energy": 
+                            "description": "Perceptual measure of intensity and activity.",
+                            "example_value": 0.842
+                        
+                        --end of things to rate--
+
+                        The prompt you will be given is a human's described situation, or mood.
+                        
+                        RULES:
+                        follow the response template below
+
+                        response template:
+
+                        acousticness: 0.134
+                        danceability: 0.378
+                        tempo: 100
+                        valence: 0.565
+                        energy: 0.235
+                
+                        ### Prompt:
+                        {user_mood}
+                        ### Response:""")
+
+content_chain_2 = """
+About you:
+You are an AI Agent that operates the Spotify API defined as a tool to respond to User's requests. Do not chat to the user, simply use the PlaylistTool provided to you. 
 
 Execution:
-You should plan the execution using the Tools provided to you in response to the User's input
+You should plan the execution using the PlaylistTool provided to you using the user's input
 
 Output format:
-a link to the playlist created with your PlaylistTool
+print the return statement from your PlaylistTool
 
 """
 
-#llm = OpenAI()
+#language model that BOTH chains will be using
 llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-16k")
+
+#initializing feature rating agent --> aka first chain 
+feature_rating_chain = LLMChain(prompt=content_chain_1, llm=llm)
+
+#initializing tool agent chain (aka second chain/ tool chain)
 tools = [TopTracksTool(), PlaylistTool()]
 agent_kwargs = {
     "extra_prompt_messages": [MessagesPlaceholder(variable_name="memory")],
     "system_message": SystemMessage(
-            content= content
+            content= content_chain_2
         ),
 }
 memory = ConversationBufferMemory(memory_key="memory", return_messages=True)
@@ -43,16 +95,42 @@ mrkl = initialize_agent(tools, llm, agent=AgentType.OPENAI_FUNCTIONS, agent_kwar
 
 
 
-#llm chain
-#chain = LLMChain(prompt=prompt, llm=llm)
+#functions to run chains and pass chain 1 response to chain 2
 
-def response(prompt):
-    print('thinking...')
-    response = mrkl.run(prompt)
+def get_feature_rating(user_prompt):
+    print("thinking...")
+    feature_rating = feature_rating_chain.run(user_prompt)
+    print('your rating is: ')
+    return feature_rating
+
+def playlist_generate(rating):
+    print('thinking bout dooks...')
+    response = mrkl.run(rating)
     print('here: ')
     return response
 
-#def response(prompt):
-#    print("thinking...")
-#    response = chain.run(prompt)
-#    return response
+
+
+
+#// going to return feature ratings
+#chain1(user_input)
+#    return feature_rating
+
+#//going to create playlist based on feature ratings
+#chain2(feature_rating)
+#    return playlist 
+
+
+#get_rating --rating-->playlist_agent == outputs playlist
+
+
+
+
+
+
+
+
+
+
+
+

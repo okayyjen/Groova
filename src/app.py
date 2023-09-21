@@ -33,11 +33,11 @@ def home():
     displayname = SpotifyTools.get_display_name(session)
     #features = SpotifyTools.get_song_features(SpotifyTools.get_top_tracks(get_token()), get_token())
     #print(features)
-    top_artists = SpotifyTools.get_top_artists(get_token())
-    target_features = {'danceability': {'min': 0.8},'tempo': {'min': 100} ,'valence': {'min': 0.6},'energy': {'max': 0.5}}
+    #top_artists = SpotifyTools.get_top_artists(get_token())
+    #target_features = {'danceability': {'min': 0.8},'tempo': {'min': 100} ,'valence': {'min': 0.6},'energy': {'max': 0.5}}
 
-    recommends = SpotifyTools.get_recommendations(get_token(), top_artists,target_features)
-    SpotifyTools.add_tracks(get_token(), session, recommends)
+    #ecommends = SpotifyTools.get_recommendations(get_token(), top_artists,target_features)
+    #SpotifyTools.add_tracks(get_token(), session, recommends)
 
     return render_template("main.html", displayname = displayname)
 
@@ -47,7 +47,8 @@ def getInput():
     input = request.form['user_input']
 
     #if u wanna try AI, uncomment this
-    print(AI.response(input))
+    rating = AI.get_feature_rating(input)#returns ratings
+    AI.playlist_generate(rating)
 
 
     return home()

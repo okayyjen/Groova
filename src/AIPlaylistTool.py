@@ -8,13 +8,12 @@ class PlaylistTool(BaseTool):
 
     name = "PlaylistTool"
     description = (
-        "Use this tool when the user asks you to make a playlist"
-        "A tool that creates a new playlist and adds tracks to it on Spotify."
-        "The argument tracks is a dictionary list of the user's top tracks, obtained from TopTracksTool"
-        "This tool requires a dictionary of tracks as a keyword argument. You will get this from your TopTracksTool. The argument is NOT A STRING"
+        "Always use this tool when given input"
+        "This tool requires a string representation of musical features as a keyword argument. You will get this from the input given to you. The argument is A STRING"
+        "Features is the input you received from the user"
     )
 
-    def _run(self, tracks, *args, **kwargs) -> str:
+    def _run(self, features,*args, **kwargs) -> str:
         user = os.getenv('SPOTIFY_USER_ID')
         if not user:
             raise ValueError("SPOTIFY_USER_ID environment variable is not set.")
@@ -23,25 +22,10 @@ class PlaylistTool(BaseTool):
         if not token:
             raise ValueError("SPOTIFY_ACCESS_TOKEN environment variable is not set.")
         
-        sp = spotipy.Spotify(auth=token)
 
-        # Create a new playlist
-        user_playlist = sp.user_playlist_create(user, "New Playlist", public=False, collaborative=False, description="desc")
-        #coverting string dictionary into dictionary.
-        tracks_dict = json.loads(tracks)
-        
-        #getting urls from track list
-        track_URLs = []
-        for track in tracks_dict['items']:
-            track_url = track['external_urls']['spotify']
-            track_URLs.append(track_url)
-        playlist_id = user_playlist['id']
-        sp.playlist_add_items(playlist_id, track_URLs, position=None)
-        playlist_url = user_playlist['external_urls']['spotify']
+        return features
 
-        return playlist_url
-
-    async def _arun(self, *args, **kwargs) -> str:
+    async def _arun(self, features,*args, **kwargs) -> str:
         raise NotImplementedError("This tool does not support async")
     
 
