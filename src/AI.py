@@ -2,7 +2,6 @@ from langchain.llms import GPT4All
 from langchain import PromptTemplate, LLMChain, OpenAI, Cohere, HuggingFaceHub, LLMMathChain
 from langchain.model_laboratory import ModelLaboratory
 
-
 from langchain.agents import initialize_agent, Tool, AgentType
 from langchain.tools import BaseTool, StructuredTool, Tool, tool
 from langchain.agents import AgentType, OpenAIFunctionsAgent
@@ -19,7 +18,7 @@ from langchain.prompts import MessagesPlaceholder
 content_chain_1 = PromptTemplate(input_variables=['user_mood'], template="""
                         ### Instruction:
                         About you:
-                        You are an AI Agent tasked with rating the type of music a user should listen to based on the user's given situation or mood, using the music attributes provided below.Please provide ratings based on your assessment, and do not rely on the example values I have given you.
+                        You are an AI Agent tasked with rating the type of music a user should listen to based on the user's given situation or mood, using the music attributes provided below.Please provide ratings based on your assessment, and do not rely on the example values I have given you. Do not reply on your past answers.
                         
                         Music attributes:
 
@@ -52,13 +51,13 @@ content_chain_1 = PromptTemplate(input_variables=['user_mood'], template="""
                         RULES:
                         follow the response template below
 
-                        response template:
+                        response template (where each "x" should be replaced with your number rating for each corresponding music attribute):
 
-                        acousticness: 0.134
-                        danceability: 0.378
-                        tempo: 100
-                        valence: 0.565
-                        energy: 0.235
+                        acousticness: x
+                        danceability: x
+                        tempo: x
+                        valence: x
+                        energy: x
                 
                         ### Prompt:
                         {user_mood}
