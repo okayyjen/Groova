@@ -102,33 +102,16 @@ def add_tracks(token_info,session,tracks):
 
 def extract_and_format(response):
     features_pattern = r'(acousticness|danceability|tempo|valence|energy):?\s*(\d+(\.\d+)?)'
-    genres_pattern = r"'genres':\s*'([^']+)'"
+    genres_pattern = r'genres:\s*([^,]+(,\s*[^,]+)*)'
+
     features_match = re.findall(features_pattern, response)
     genres_match = re.search(genres_pattern, response)
-        
-    features_dict = {}
-        
-    for keyword, value, _ in features_match:
-        features_dict[keyword] = {'target': float(value)}
 
+    features_dict = {key: float(value) for key, value, _ in features_match}
+
+    genres_list = []
     if genres_match:
-        genres_data = genres_match.group(1).split(', ')
-        genres_dict = {'genres': genres_data}
-        
-    return features_dict, genres_dict
+        genres_data = genres_match.group(1).strip().split(', ')
+        genres_list = genres_data
 
-def extract_genres_from_input(response):
-    try:
-        # Parse the input string as a JSON object
-        input_dict = json.loads(response)
-
-        # Extract the 'genres' field from the dictionary
-        genres_str = input_dict.get('genres', '')
-
-        # Split the 'genres' field by commas and strip whitespace to create a list of genres
-        genres_list = [genre.strip() for genre in genres_str.split(',')]
-
-        return genres_list
-    except json.JSONDecodeError:
-        # Handle parsing errors by returning an empty list
-        return []
+    return features_dict, genres_list
