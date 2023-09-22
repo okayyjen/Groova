@@ -32,7 +32,7 @@ class PlaylistTool(BaseTool):
         user_playlist = sp.user_playlist_create(user, "New Playlist", public=False, collaborative=False, description="desc")
 
         #getting user's top artists
-        top_artists = sp.current_user_top_artists(time_range='medium_term', limit=3)
+        top_artists = sp.current_user_top_artists(time_range='medium_term', limit=1)
 
         #extracting user's top artists urls
         artist_URLs = []
