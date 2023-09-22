@@ -1,6 +1,5 @@
 from langchain import PromptTemplate, LLMChain
 from langchain.agents import initialize_agent, AgentType
-from langchain.agents import AgentType
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 from AIPlaylistTool import PlaylistTool
