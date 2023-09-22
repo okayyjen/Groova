@@ -2,6 +2,7 @@ from flask import url_for
 import spotipy
 import os
 import re
+import json
 
 from dotenv import load_dotenv
 
@@ -87,7 +88,6 @@ def get_recommendations(token_info, top_artists, target_features) -> dict:
     return recommended_tracks
 
 
-
 def add_tracks(token_info,session,tracks):
 
     sp = spotipy.Spotify(auth=token_info['access_token'])
@@ -101,28 +101,34 @@ def add_tracks(token_info,session,tracks):
     return playlist['external_urls']['spotify']
 
 def extract_and_format(response):
-    pattern = r'(acousticness|danceability|tempo|valence|energy):?\s*(\d+(\.\d+)?)'
-    matches = re.findall(pattern, response)
+    features_pattern = r'(acousticness|danceability|tempo|valence|energy):?\s*(\d+(\.\d+)?)'
+    genres_pattern = r"'genres':\s*'([^']+)'"
+    features_match = re.findall(features_pattern, response)
+    genres_match = re.search(genres_pattern, response)
         
-    formatted_dict = {}
+    features_dict = {}
         
-    for keyword, value, _ in matches:
-        formatted_dict[keyword] = {'target': float(value)}
+    for keyword, value, _ in features_match:
+        features_dict[keyword] = {'target': float(value)}
+
+    if genres_match:
+        genres_data = genres_match.group(1).split(', ')
+        genres_dict = {'genres': genres_data}
         
-    return formatted_dict
+    return features_dict, genres_dict
 
+def extract_genres_from_input(response):
+    try:
+        # Parse the input string as a JSON object
+        input_dict = json.loads(response)
 
+        # Extract the 'genres' field from the dictionary
+        genres_str = input_dict.get('genres', '')
 
+        # Split the 'genres' field by commas and strip whitespace to create a list of genres
+        genres_list = [genre.strip() for genre in genres_str.split(',')]
 
-
-
-
-
-
-
-
-
-
-    
-
-    
+        return genres_list
+    except json.JSONDecodeError:
+        # Handle parsing errors by returning an empty list
+        return []
