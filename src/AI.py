@@ -98,29 +98,3 @@ def playlist_generate(rating):
     response = mrkl.run(rating)
     print('here: ')
     return response
-
-
-
-
-#// going to return feature ratings
-#chain1(user_input)
-#    return feature_rating
-
-#//going to create playlist based on feature ratings
-#chain2(feature_rating)
-#    return playlist 
-
-
-#get_rating --rating-->playlist_agent == outputs playlist
-
-
-
-
-
-
-
-
-
-
-
-
