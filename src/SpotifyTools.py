@@ -50,8 +50,6 @@ def create_playlist(session, token_info):
 
     return playlist
 
-#TODO figure out this function VVV, then create one to be passed to AI
-#def add_track_to_playlist(playlist, track):
 
 #getter for current user's top 20 tracks
 def get_top_tracks(token_info):
@@ -107,7 +105,19 @@ def extract_and_format(response):
     features_match = re.findall(features_pattern, response)
     genres_match = re.search(genres_pattern, response)
 
-    features_dict = {key: float(value) for key, value, _ in features_match}
+    for key, value, _ in features_match:
+        if key == "valence":
+            if float(value) <= 0.5:
+                min_or_max = 'max'
+                break
+            else:
+                min_or_max = 'min'
+                break
+
+    features_dict = {}
+    
+    for key, value, _ in features_match:
+        features_dict[key] = {min_or_max: float(value)}
 
     genres_list = []
     if genres_match:
@@ -115,3 +125,8 @@ def extract_and_format(response):
         genres_list = genres_data
 
     return features_dict, genres_list
+
+def recommendations_genres(token_info):
+    sp = spotipy.Spotify(auth=token_info['access_token'])
+    print(sp.recommendation_genre_seeds())
+
