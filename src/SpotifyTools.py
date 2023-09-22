@@ -1,8 +1,10 @@
+
 from flask import url_for
 import spotipy
 import os
 import re
 import json
+
 
 from dotenv import load_dotenv
 
@@ -15,6 +17,7 @@ redirectURI = os.getenv("SPOTIPY_REDIRECT_URI")
 #do not have this as global variable. create new oauth object for each use
 def create_spotify_oauth():
 
+
     scopes = ["user-top-read", "playlist-modify-private","playlist-modify-public"]
 
     return spotipy.oauth2.SpotifyOAuth(
@@ -23,6 +26,7 @@ def create_spotify_oauth():
             redirect_uri=url_for('callback', _external=True),
             scope=' '.join(scopes))
 
+
 #getter for current user's display name
 def get_display_name(session):
     return session['user_info']['display_name']
@@ -30,6 +34,7 @@ def get_display_name(session):
 #getter for current user's top 20 artists
 def get_top_artists(token_info):
     sp = spotipy.Spotify(auth=token_info['access_token'])
+
     top_artists = sp.current_user_top_artists(time_range='medium_term', limit=5)
 
     # Extract artist names from the response
@@ -49,6 +54,7 @@ def create_playlist(session, token_info):
     playlist_url = playlist['external_urls']['spotify']
 
     return playlist
+
 
 
 #getter for current user's top 20 tracks
@@ -129,4 +135,5 @@ def extract_and_format(response):
 def recommendations_genres(token_info):
     sp = spotipy.Spotify(auth=token_info['access_token'])
     print(sp.recommendation_genre_seeds())
+
 
