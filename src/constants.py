@@ -29,6 +29,21 @@ CONTENT_CHAIN_1 = """
                         "energy": 
                             "description": "Perceptual measure of intensity and activity.",
                             "example_value": 0.842
+
+                        "instrumentalness": 
+                            "description": "Predicts if a track contains no vocals. Rap or spoken word tracks are clearly "vocal". The closer the instrumentalness value is to 1.0, the greater likelihood the track contains no vocal content. Values above 0.5 are intended to represent instrumental tracks, but confidence is higher as the value approaches 1.0.",
+                            "range": 0 - 1.0
+                            "example_value": 0.00686
+
+                        "liveness": 
+                            "description": "Presence of an audience in the recording.A value above 0.8 provides strong likelihood that the track is live.",
+                            "range": 0 - 1
+                            "example_value": 0.0866
+
+                        "loudness": 
+                            "description": "Overall loudness of a track in decibels (dB).",
+                            "range": -60 - 0 decibles
+                            "example_value": -5.883
                         
                         --end of things to rate--
 
@@ -152,6 +167,9 @@ CONTENT_CHAIN_1 = """
                         tempo: x
                         valence: x
                         energy: x
+                        instrumentalness: x
+                        liveness: x
+                        loudness: x
                         genres: y, y
                 
                         ### Prompt:

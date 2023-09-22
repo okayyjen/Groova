@@ -99,7 +99,7 @@ def add_tracks(token_info,session,tracks):
     return playlist['external_urls']['spotify']
 
 def extract_and_format(response):
-    features_pattern = r'(acousticness|danceability|tempo|valence|energy):?\s*(\d+(\.\d+)?)'
+    features_pattern = r'(acousticness|danceability|tempo|valence|energy|loudness|liveness|instrumentalness):?\s*(\d+(\.\d+)?)'
     genres_pattern = r'genres:\s*([^,]+(,\s*[^,]+)*)'
 
     features_match = re.findall(features_pattern, response)
@@ -117,7 +117,7 @@ def extract_and_format(response):
     features_dict = {}
     
     for key, value, _ in features_match:
-        features_dict[key] = {min_or_max: float(value)}
+        features_dict[key] = {'target': float(value)}
 
     genres_list = []
     if genres_match:
