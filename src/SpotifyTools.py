@@ -68,6 +68,7 @@ def get_top_tracks(token_info):
 
 def get_song_features(tracks, token_info):
     sp = spotipy.Spotify(auth=token_info['access_token'])
+    
     tracks_id_list = []
     for track in tracks['items']:
         track_id = track['id']
@@ -82,7 +83,6 @@ def get_recommendations(token_info, top_artists, target_features) -> dict:
 
     artist_URLs = []
     for artist in top_artists['items']:
-
         artist_url = artist['external_urls']['spotify']
         artist_URLs.append(artist_url)
 
@@ -94,9 +94,6 @@ def get_recommendations(token_info, top_artists, target_features) -> dict:
 def add_tracks(token_info,session,tracks):
 
     sp = spotipy.Spotify(auth=token_info['access_token'])
-
-
-
     track_uris = [track['uri'] for track in tracks['tracks']]
 
     #creating playlist and getting playlist_id

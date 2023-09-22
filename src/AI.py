@@ -7,8 +7,6 @@ from langchain.tools import BaseTool, StructuredTool, Tool, tool
 from langchain.agents import AgentType, OpenAIFunctionsAgent
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
-from AITopTracksTool import TopTracksTool
-from AITopArtistsTool import TopArtistsTool
 from AIPlaylistTool import PlaylistTool
 from langchain.schema.messages import (
     SystemMessage,

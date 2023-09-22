@@ -31,16 +31,6 @@ def home():
     write_to_dotenv("SPOTIFY_USER_ID")
 
     displayname = SpotifyTools.get_display_name(session)
-    #features = SpotifyTools.get_song_features(SpotifyTools.get_top_tracks(get_token()), get_token())
-    #print(features)
-    #top_artists = SpotifyTools.get_top_artists(get_token())
-    #target_features = {'danceability': {'min': 0.8},'tempo': {'min': 100} ,'valence': {'min': 0.6},'energy': {'max': 0.5}}
-
-    #ecommends = SpotifyTools.get_recommendations(get_token(), top_artists,target_features)
-    #SpotifyTools.add_tracks(get_token(), session, recommends)
-    #features = "heres your answer acousticness: 0.123 danceability: 0.123 tempo: 0.123 valence: 0.123 energy: 100"
-    #print("urmom")
-    #print(SpotifyTools.extract_and_format(features))
 
     return render_template("main.html", displayname = displayname)
 
@@ -113,9 +103,3 @@ def write_to_dotenv(name):
     dotenv.load_dotenv(dotenv_file)
     os.environ[name] = string
     dotenv.set_key(dotenv_file, name, os.environ[name])
-
-    # Add tracks to the playlist
-        #sp.playlist_add_items(user_playlist['id'], items=track_ids, position=None)
-
-        #return f"Playlist '{playlist_name}' created with {len(track_ids)} tracks."
-
