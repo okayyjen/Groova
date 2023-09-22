@@ -1,9 +1,6 @@
-from flask import Flask, request, url_for,session, redirect, render_template
-from flask_session import Session
-import spotipy 
-from spotipy.oauth2 import SpotifyOAuth
+from flask import url_for
+import spotipy
 import os
-import json
 import re
 
 from dotenv import load_dotenv
@@ -68,7 +65,7 @@ def get_top_tracks(token_info):
 
 def get_song_features(tracks, token_info):
     sp = spotipy.Spotify(auth=token_info['access_token'])
-    
+
     tracks_id_list = []
     for track in tracks['items']:
         track_id = track['id']

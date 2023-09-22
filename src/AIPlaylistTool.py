@@ -1,4 +1,4 @@
-from langchain.tools.base import BaseTool, StructuredTool
+from langchain.tools.base import BaseTool
 import spotipy
 import os
 import SpotifyTools
@@ -45,7 +45,7 @@ class PlaylistTool(BaseTool):
         recommended_tracks = sp.recommendations(seed_artists=artist_URLs, limit=20, target_features=features_dict)
         recommended_track_uris = [track['uri'] for track in recommended_tracks['tracks']]
         playlist_id = user_playlist['id']
-        
+
         #add tracks to playlist
         sp.playlist_add_items(playlist_id, recommended_track_uris, position=None)
         playlist_url = user_playlist['external_urls']['spotify']

@@ -1,8 +1,7 @@
 import time
-from flask import Flask, request, url_for,session, redirect, render_template
+from flask import Flask, request, session, redirect, render_template
 from flask_session import Session
-import spotipy 
-from spotipy.oauth2 import SpotifyOAuth
+import spotipy
 import os
 import SpotifyTools
 import AI
