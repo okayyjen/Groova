@@ -58,7 +58,7 @@ def login():
     sp_oauth = SpotifyTools.create_spotify_oauth()
     authURL = sp_oauth.get_authorize_url()
     
-    return redirect(authURL)
+    return authURL
 
 @app.route('/redirect')
 def callback():
@@ -72,12 +72,15 @@ def callback():
         userInfo = sp.current_user()
         session[USER_INFO] = userInfo
 
-        return home()
+        return "woohoo"
+        #return redirect('http://localhost:3000')
+        #return home()
 
     #if denied access, return to landing page ('/')
     if request.args.get('error'):
 
-        return index()
+        return "erra erra"
+        #return index()
 
     #if neither, handle error in future. For now, return message
     return "something went wrong"
