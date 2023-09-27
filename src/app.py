@@ -24,6 +24,10 @@ Session(app)
 def index():
     return render_template("index.html")
 
+@app.route('/time')
+def get_current_time():
+    return {'time': time.time()}
+
 @app.route('/home')
 def home():
     write_to_dotenv("SPOTIFY_ACCESS_TOKEN")
