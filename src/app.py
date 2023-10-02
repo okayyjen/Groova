@@ -6,6 +6,7 @@ import os
 import SpotifyTools
 import AI
 import dotenv
+from AIPlaylistDetails import PlaylistDetails, run_it_betch, ask_question, ask_for_list, playlist_details_initial
 
 from dotenv import load_dotenv
 
@@ -18,6 +19,10 @@ app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = './.flask_session/'
 TOKEN_INFO = "token_info"
 USER_INFO = "user_info"
+ASK_FOR = "ask_for"
+PLAYLIST_DETAILS = "playlist_details"
+
+
 Session(app)
 
 @app.route('/')
@@ -28,10 +33,11 @@ def index():
 def home():
     write_to_dotenv("SPOTIFY_ACCESS_TOKEN")
     write_to_dotenv("SPOTIFY_USER_ID")
-
+    
     displayname = SpotifyTools.get_display_name(session)
 
     return render_template("main.html", displayname = displayname)
+
 
 @app.route('/getinput', methods=['POST'])
 def getInput():
@@ -39,8 +45,10 @@ def getInput():
     input = request.form['user_input']
 
     #if u wanna try AI, uncomment this
-    rating = AI.get_feature_rating(input)#returns ratings
-    AI.playlist_generate(rating)
+    #rating = AI.get_feature_rating(input)#returns ratings
+    #AI.playlist_generate(rating)
+    #print(AI.get_playlist_details())
+
 
 
     return home()
@@ -67,6 +75,8 @@ def callback():
         sp = spotipy.Spotify(auth=tokenInfo['access_token'])
         userInfo = sp.current_user()
         session[USER_INFO] = userInfo
+        session[ASK_FOR] = ask_for_list
+        session[PLAYLIST_DETAILS] = playlist_details_initial
 
         return home()
 
