@@ -24,14 +24,10 @@ Session(app)
 def index():
     return render_template("index.html")
 
+@app.route('/get_display_name')
+def get_display_name():
 
-@app.route('/getDisplayName')
-def getDisplayName():
-
-    display_name = SpotifyTools.get_display_name(session)
-
-    return jsonify(display_name)
-
+    return SpotifyTools.display_name()
 
 @app.route('/home')
 def home():

@@ -26,13 +26,14 @@ def create_spotify_oauth():
 
 
 #getter for current user's display name
-def get_display_name(session):
+#error handling if token is missing from env file needed
+def display_name():
     
-    if 'user_info' in session:
-        display_name = session['user_info']['display_name']
-        return display_name
-    else:
-        return "wowowowowwoEERRRAAA"
+    token = os.getenv('SPOTIFY_ACCESS_TOKEN')
+    sp = spotipy.Spotify(auth=token)
+    user_info = sp.current_user()
+    
+    return user_info['display_name']
 
 
 #getter for current user's top 20 artists
