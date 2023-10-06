@@ -6,7 +6,7 @@ import os
 import SpotifyTools
 import AI
 import dotenv
-from AIPlaylistDetails import PlaylistDetails, run_it_betch, ask_question, ask_for_list, playlist_details_initial
+from AIPlaylistDetails import PlaylistDetails, generate_question, filter_response, update_details
 
 from dotenv import load_dotenv
 
@@ -22,6 +22,10 @@ USER_INFO = "user_info"
 ASK_FOR = "ask_for"
 PLAYLIST_DETAILS = "playlist_details"
 
+playlist_details_initial = PlaylistDetails(playlist_name="",
+                                artist_name="",
+                                user_mood_occasion="")
+ask_for_initial = ['playlist_name', 'artist_name', 'user_mood_occasion']
 
 Session(app)
 
@@ -35,19 +39,29 @@ def home():
     write_to_dotenv("SPOTIFY_USER_ID")
     
     displayname = SpotifyTools.get_display_name(session)
-
+    
     return render_template("main.html", displayname = displayname)
-
 
 @app.route('/getinput', methods=['POST'])
 def getInput():
-    print("get input request")
-    input = request.form['user_input']
-
+    
+    user_input = request.form['user_input']
+    print("me: ", user_input)
+    time.sleep(25)
+    session[ASK_FOR], new_details = filter_response(user_input, session[PLAYLIST_DETAILS] )
+    session[PLAYLIST_DETAILS] = update_details(session[PLAYLIST_DETAILS], new_details)
     #if u wanna try AI, uncomment this
     #rating = AI.get_feature_rating(input)#returns ratings
     #AI.playlist_generate(rating)
     #print(AI.get_playlist_details())
+    list = session[ASK_FOR]
+    if list:
+
+        print(generate_question(session[ASK_FOR]))
+        
+    else:
+        print("thats everything, thank you!:) i'll get to creating your playlist now")
+        print(session[ASK_FOR],  ", ", session[PLAYLIST_DETAILS])
 
 
 
@@ -75,9 +89,10 @@ def callback():
         sp = spotipy.Spotify(auth=tokenInfo['access_token'])
         userInfo = sp.current_user()
         session[USER_INFO] = userInfo
-        session[ASK_FOR] = ask_for_list
+        session[ASK_FOR] = ask_for_initial
         session[PLAYLIST_DETAILS] = playlist_details_initial
-
+        #initial question from gathering agent
+        print(generate_question(session[ASK_FOR]))
         return home()
 
     #if denied access, return to landing page ('/')
