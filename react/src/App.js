@@ -1,11 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
-import { BrowserRouter as Router, Route, Routes,Switch } from 'react-router-dom';
+import { BrowserRouter as Route, Routes } from 'react-router-dom';
 
 import Home from './components/Home';
 import Login from './components/Login';
+import WebFont from 'webfontloader';
 
 export function App() {
+  useEffect(() => {
+    WebFont.load({
+      google: {
+        families: ['Chango', 'Chilanka']
+      }
+    });
+   }, []);
     return (
       <Routes>
         <Route path="/" element={<Login />} />

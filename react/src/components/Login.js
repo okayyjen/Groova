@@ -19,7 +19,7 @@ function Login() {
     <div className="App">
     <div className="center-content">
       <header>
-        <h1>Groova</h1>
+        <h1 className="font-loader">Groova</h1>
       </header>
       <p>Connect your Spotify account to get started</p>
       <button onClick={() => window.location.href = url}>Login with Spotify</button>
