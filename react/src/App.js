@@ -4,6 +4,7 @@ import { Route, Routes} from 'react-router-dom';
 
 import Home from './components/Home';
 import Login from './components/Login';
+import Prac from './components/Prac';
 import WebFont from 'webfontloader';
 
 export function App() {
@@ -18,6 +19,7 @@ export function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/prac" element={<Prac />} />
       </Routes>
     )
   }
