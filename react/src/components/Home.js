@@ -23,7 +23,7 @@ function Home() {
           <h1>Welcome to the Harb Kim Empire {displayName}</h1>
         </header>
         <main>
-          <form method="POST" action="/getinput">
+          <form className="center-content" method="POST" action="/getinput">
             <label htmlFor="user_input">Enter text:</label>
             <input
               type="text"
