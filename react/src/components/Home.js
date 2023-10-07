@@ -34,6 +34,14 @@ function Home() {
           </form>
         </main>
       </div>
+      <div>
+      <body>
+        <section id="up"></section>
+        <section id="down"></section>
+        <section id="left"></section>
+        <section id="right"></section>
+      </body>
+    </div>
     </div>
   );
 }
