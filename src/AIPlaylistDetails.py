@@ -67,6 +67,7 @@ def generate_question(ask_for):
     # a chain used for gathering a users playlist details
     detail_gathering_chain = LLMChain(llm=llm, prompt=first_prompt)
     print("RUNNING QUESTION CHAIN WITH THIS LIST: ", ask_for)
+    time.sleep(30)
     question = detail_gathering_chain.run(ask_for)
     
     return question

@@ -1,4 +1,3 @@
-
 from flask import url_for
 import spotipy
 import os
@@ -27,9 +26,13 @@ def create_spotify_oauth():
             scope=' '.join(scopes))
 
 
-#getter for current user's display name
-def get_display_name(session):
-    return session['user_info']['display_name']
+def display_name():
+    
+    token = os.getenv('SPOTIFY_ACCESS_TOKEN')
+    sp = spotipy.Spotify(auth=token)
+    user_info = sp.current_user()
+    
+    return user_info['display_name']
 
 #getter for current user's top 20 artists
 def get_top_artists(token_info):

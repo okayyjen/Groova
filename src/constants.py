@@ -200,3 +200,5 @@ it should all come from user input. the user input should not be modified. \n\n 
 
 """
 
+ASK_FOR_INITIAL = ['playlist_name', 'artist_name', 'user_mood_occasion']
+

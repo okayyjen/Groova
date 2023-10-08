@@ -1,5 +1,6 @@
 import time
 from flask import Flask, request, session, redirect, render_template
+from flask_cors import CORS
 from flask_session import Session
 import spotipy
 import os
@@ -7,6 +8,7 @@ import SpotifyTools
 import AI
 import dotenv
 from AIPlaylistDetails import PlaylistDetails, generate_question, filter_response, update_details
+import constants
 
 from dotenv import load_dotenv
 
@@ -22,10 +24,7 @@ USER_INFO = "user_info"
 ASK_FOR = "ask_for"
 PLAYLIST_DETAILS = "playlist_details"
 
-playlist_details_initial = PlaylistDetails(playlist_name="",
-                                artist_name="",
-                                user_mood_occasion="")
-ask_for_initial = ['playlist_name', 'artist_name', 'user_mood_occasion']
+CORS(app)
 
 Session(app)
 
@@ -38,34 +37,51 @@ def home():
     write_to_dotenv("SPOTIFY_ACCESS_TOKEN")
     write_to_dotenv("SPOTIFY_USER_ID")
     
-    displayname = SpotifyTools.get_display_name(session)
+    print("AI: ", generate_question(constants.ASK_FOR_INITIAL))
     
-    return render_template("main.html", displayname = displayname)
+    return redirect('http://localhost:3000/home')
 
-@app.route('/getinput', methods=['POST'])
-def getInput():
+@app.route('/get_display_name')
+def get_display_name():
+
+    return SpotifyTools.display_name()
+
+@app.route('/get_user_input', methods=["POST"])
+def get_user_input():
+    react_input = request.get_json()
+
+    print("Input from react: ", react_input)
+
+    user_input = react_input["user_input"]
+    playlist_details = set_p_details(react_input["p_details"])
+    ask_for = react_input["ask_for"]
+
     
-    user_input = request.form['user_input']
-    print("me: ", user_input)
-    time.sleep(25)
-    session[ASK_FOR], new_details = filter_response(user_input, session[PLAYLIST_DETAILS] )
-    session[PLAYLIST_DETAILS] = update_details(session[PLAYLIST_DETAILS], new_details)
-    #if u wanna try AI, uncomment this
-    #rating = AI.get_feature_rating(input)#returns ratings
-    #AI.playlist_generate(rating)
-    #print(AI.get_playlist_details())
-    list = session[ASK_FOR]
-    if list:
-
-        print(generate_question(session[ASK_FOR]))
-        
+    ask_for, new_details = filter_response(user_input, playlist_details )
+    playlist_details = update_details(playlist_details, new_details)
+    
+    
+    if ask_for:
+        print()
+        print("AI: ", generate_question(ask_for))     
     else:
         print("thats everything, thank you!:) i'll get to creating your playlist now")
-        print(session[ASK_FOR],  ", ", session[PLAYLIST_DETAILS])
+        print(ask_for,  ", ", playlist_details)
 
+    time.sleep(60)
 
+    return{'updatedAskList':ask_for, 
+           'updatedPlaylistDetails':{'playlistName':playlist_details.playlist_name,
+                                     'artistName':playlist_details.artist_name,
+                                     'userMoodOccasion':playlist_details.user_mood_occasion}}
 
-    return home()
+def set_p_details(p_details_dict):
+    p_details = PlaylistDetails(playlist_name=p_details_dict["playlistName"],
+                                artist_name=p_details_dict["artistName"],
+                                user_mood_occasion=p_details_dict["userMoodOccasion"])
+    
+    return p_details
+    
 
 @app.route('/getTracks')
 def getTracks():
@@ -76,7 +92,7 @@ def login():
     sp_oauth = SpotifyTools.create_spotify_oauth()
     authURL = sp_oauth.get_authorize_url()
     
-    return redirect(authURL)
+    return authURL
 
 @app.route('/redirect')
 def callback():
@@ -89,16 +105,15 @@ def callback():
         sp = spotipy.Spotify(auth=tokenInfo['access_token'])
         userInfo = sp.current_user()
         session[USER_INFO] = userInfo
-        session[ASK_FOR] = ask_for_initial
-        session[PLAYLIST_DETAILS] = playlist_details_initial
+        
         #initial question from gathering agent
-        print(generate_question(session[ASK_FOR]))
+        #print(generate_question(session[ASK_FOR]))
         return home()
 
     #if denied access, return to landing page ('/')
     if request.args.get('error'):
 
-        return index()
+        return redirect('http://localhost:3000')
 
     #if neither, handle error in future. For now, return message
     return "something went wrong"
