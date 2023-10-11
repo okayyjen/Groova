@@ -3,37 +3,90 @@ import axios from 'axios';
 
 
 function Login() {
+  const [curX, setCurX] = useState(0);
+  const [curY, setCurY] = useState(0);
   const [url, setUrl] = useState('ERRA');
-  //get authURL from /login
+
   useEffect(() => {
-      axios.get('/login')
-          .then(response => {
-              setUrl(response.data);
-          })
-          .catch(error => {
-              console.error(error);
-          });
+    
+    // Center the interactive element initially
+    const initialX = window.innerWidth / 2;
+    const initialY = window.innerHeight / 2;
+    setCurX(initialX);
+    setCurY(initialY);
+
+    const handleMouseMove = (event) => {
+      setCurX(event.clientX);
+      setCurY(event.clientY);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
   }, []);
 
+  useEffect(() => {
+    axios.get('/login')
+        .then(response => {
+            setUrl(response.data);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}, []);
+
   return (
-  <div className="App">
-    <div className="center-content">
-      <header>
-        <h1 className="font-loader">Groova</h1>
-      </header>
-      <p>Connect your Spotify account to get started</p>
-      <button onClick={() => window.location.href = url}>Login with Spotify</button>
+    <div className="App">
+      <div>
+        
+        <div className="gradient-bg">
+          <svg xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="goo">
+                <feGaussianBlur
+                  in="SourceGraphic"
+                  stdDeviation="10"
+                  result="blur"
+                />
+                <feColorMatrix
+                  in="blur"
+                  mode="matrix"
+                  values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8"
+                  result="goo"
+                />
+                <feBlend in="SourceGraphic" in2="goo" />
+              </filter>
+            </defs>
+          </svg>
+          <div className = "text-container">
+            <header>
+                <h1>Groova</h1>
+            </header>
+            <p>Connect your Spotify account to get started</p>
+            <button onClick={() => window.location.href = url}>Login with Spotify</button>
+          </div>
+          
+          
+          <div className="gradients-container">
+            <div className="g1"></div>
+            <div className="g2"></div>
+            <div className="g3"></div>
+            <div className="g4"></div>
+            <div className="g5"></div>
+            <div
+              className="interactive"
+              style={{
+                transform: `translate(${curX}px, ${curY}px)`,
+              }}
+            ></div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div>
-      <body>
-        <section id="up"></section>
-        <section id="down"></section>
-        <section id="left"></section>
-        <section id="right"></section>
-      </body>
-    </div>
-  </div>
   );
+  
 }
 
 export default Login;
