@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../App.scss';
+import '../Home.scss';
 
 function Home() {
   const [curX, setCurX] = useState(0);
@@ -72,7 +73,6 @@ function Home() {
   return (
     <div className="App">
       <div>
-
         <div className="gradient-bg">
           <svg xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -96,15 +96,16 @@ function Home() {
             <header>
               <h1>Welcome to the Harb Kim Empire {displayName}</h1>
             </header>
-            <form onSubmit={handleSubmit}>
-            <label>Enter text:
-            <input 
-              type="text" 
-              value={userInput} 
-              onChange={(e) => setUserInput(e.target.value)}/>
-            </label>
-            <input type="submit"/>
-          </form>
+            <form onSubmit={handleSubmit} className='form-container'>
+              <input 
+                placeholder='Aa'
+                type="text" 
+                value={userInput} 
+                onChange={(e) => setUserInput(e.target.value)}
+                className="input-bar"
+                />
+              <button type="submit" className="submit-button"/>
+            </form>
           </div>
           <div className="gradients-container">
             <div className="g1"></div>

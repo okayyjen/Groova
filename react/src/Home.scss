@@ -1,0 +1,24 @@
+
+//message bar styling
+.form-container {
+    display: flex;
+    align-items: center;
+}
+  
+.input-bar {
+    opacity: 50%;
+    border: 1px solid #ccc;
+    border-radius: 50px;
+    padding: 10px;
+    outline: none;
+    margin-right: 10px;
+}
+
+.submit-button{
+    opacity: 50%;
+    border-radius: 50%;
+    padding:18px;
+    outline: none;
+    border: none;
+}
+  
