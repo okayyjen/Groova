@@ -40,7 +40,6 @@ function Login() {
   return (
     <div className="App">
       <div>
-        
         <div className="gradient-bg">
           <svg xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -67,8 +66,6 @@ function Login() {
             <p>Connect your Spotify account to get started</p>
             <button onClick={() => window.location.href = url}>Login with Spotify</button>
           </div>
-          
-          
           <div className="gradients-container">
             <div className="g1"></div>
             <div className="g2"></div>

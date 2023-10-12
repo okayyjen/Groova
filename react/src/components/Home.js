@@ -94,18 +94,20 @@ function Home() {
           </svg>
           <div className = "text-container">
             <header>
-              <h1>Welcome to the Harb Kim Empire {displayName}</h1>
+              <h1 className = "home-greeting">Welcome to the Harb Kim Empire {displayName}</h1>
             </header>
-            <form onSubmit={handleSubmit} className='form-container'>
-              <input 
-                placeholder='Aa'
-                type="text" 
-                value={userInput} 
-                onChange={(e) => setUserInput(e.target.value)}
-                className="input-bar"
-                />
-              <button type="submit" className="submit-button"/>
-            </form>
+            <div className = "chat-box">
+              <form onSubmit={handleSubmit} className='form-container'>
+                <input 
+                  placeholder='Aa'
+                  type="text" 
+                  value={userInput} 
+                  onChange={(e) => setUserInput(e.target.value)}
+                  className="input-bar"
+                  />
+                <button type="submit" className="submit-button"/>
+              </form>
+            </div>
           </div>
           <div className="gradients-container">
             <div className="g1"></div>
