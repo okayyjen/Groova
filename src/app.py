@@ -1,5 +1,5 @@
 import time
-from flask import Flask, request, session, redirect, render_template
+from flask import Flask, jsonify, request, session, redirect, render_template
 from flask_session import Session
 import spotipy
 import os
@@ -24,14 +24,20 @@ Session(app)
 def index():
     return render_template("index.html")
 
+@app.route('/get_display_name')
+def get_display_name():
+
+    return SpotifyTools.display_name()
+
 @app.route('/home')
 def home():
+    
     write_to_dotenv("SPOTIFY_ACCESS_TOKEN")
     write_to_dotenv("SPOTIFY_USER_ID")
 
-    displayname = SpotifyTools.get_display_name(session)
+    return redirect('http://localhost:3000/home')
 
-    return render_template("main.html", displayname = displayname)
+    
 
 @app.route('/getinput', methods=['POST'])
 def getInput():
@@ -40,10 +46,10 @@ def getInput():
 
     #if u wanna try AI, uncomment this
     rating = AI.get_feature_rating(input)#returns ratings
-    AI.playlist_generate(rating)
+    #AI.playlist_generate(rating)
 
 
-    return home()
+    return AI.playlist_generate(rating)
 
 @app.route('/getTracks')
 def getTracks():
@@ -54,29 +60,32 @@ def login():
     sp_oauth = SpotifyTools.create_spotify_oauth()
     authURL = sp_oauth.get_authorize_url()
     
-    return redirect(authURL)
+    return authURL
 
 @app.route('/redirect')
 def callback():
     sp_oauth = SpotifyTools.create_spotify_oauth()
     session.clear()
     # if given access, continue to home page
+    
     if request.args.get('code'):
         tokenInfo = sp_oauth.get_access_token(request.args.get('code'))
         session[TOKEN_INFO] = tokenInfo
         sp = spotipy.Spotify(auth=tokenInfo['access_token'])
         userInfo = sp.current_user()
         session[USER_INFO] = userInfo
+        session.modified = True
 
         return home()
 
-    #if denied access, return to landing page ('/')
+
+    #if denied access, return to landing page ('/') 
     if request.args.get('error'):
 
-        return index()
+        return redirect('http://localhost:3000')
 
     #if neither, handle error in future. For now, return message
-    return "something went wrong"
+    return "something went wrong ERRA ERRA"
 
 def get_token():
     token_info = session.get(TOKEN_INFO, None)

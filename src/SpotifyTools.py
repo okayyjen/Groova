@@ -1,5 +1,4 @@
-
-from flask import url_for
+from flask import jsonify, url_for
 import spotipy
 import os
 import re
@@ -17,7 +16,6 @@ redirectURI = os.getenv("SPOTIPY_REDIRECT_URI")
 #do not have this as global variable. create new oauth object for each use
 def create_spotify_oauth():
 
-
     scopes = ["user-top-read", "playlist-modify-private","playlist-modify-public"]
 
     return spotipy.oauth2.SpotifyOAuth(
@@ -28,8 +26,15 @@ def create_spotify_oauth():
 
 
 #getter for current user's display name
-def get_display_name(session):
-    return session['user_info']['display_name']
+#error handling if token is missing from env file needed
+def display_name():
+    
+    token = os.getenv('SPOTIFY_ACCESS_TOKEN')
+    sp = spotipy.Spotify(auth=token)
+    user_info = sp.current_user()
+    
+    return user_info['display_name']
+
 
 #getter for current user's top 20 artists
 def get_top_artists(token_info):
