@@ -1,5 +1,6 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Dongle:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dongle:wght@300;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dongle:wght@300&family=Lato:ital,wght@0,100;1,100&family=Roboto&family=Sora&display=swap');
 
 body {
     font-family: 'Dongle', sans-serif;
@@ -8,7 +9,13 @@ body {
     min-height: 100vh;
     overflow: hidden;
   }
-  
+#logo_text{
+  margin:0;
+  height: 240px;
+  font-family: 'Dongle', sans-serif;
+  font-weight: 700;
+  font-size: 230px;
+}
 .text-container {
     z-index: 100;
     width: 100%;
@@ -26,13 +33,11 @@ body {
     text-shadow: 1px 1px rgba(0,0,0,0.1);
     flex-direction: column;
 }
-.text-container p{
+
+#subtext{
   margin:0;
   font-size: 50px;
-}
-
-.text-container h1{
-  margin:0;
+  font-weight: 300;
 }
   
 :root {
@@ -197,3 +202,46 @@ body {
     }
   }
   
+  .Btn {
+    position: relative;
+    margin:60px;
+    width: 260px;
+    height: 60px;
+    border: none;
+    background-color: #c14be26b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 10px 10px 0px rgb(90, 4, 107);
+    transition-duration: .3s;
+  }
+  
+  .Btn:hover {
+    transform: translateY(5px);
+    box-shadow: 3px 3px 0px rgb(90, 4, 107);
+    transition-duration: .3s;
+  }
+  
+  .text {
+    color: white;
+    font-weight: 600;
+    font-size: 20px;
+    position: absolute;
+    z-index: 2;
+    transition-duration: .1s;
+    font-family: 'Sora', sans-serif;
+    font-weight: 300;
+    margin-right: 45%;
+  }
+
+  #spotify_logo{
+    position: absolute;
+    margin-left: 45%;
+    margin-top: 2%;
+    margin-bottom: 3%;
+    width: 45%;
+    height: 50%;
+  }

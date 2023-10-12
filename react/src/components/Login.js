@@ -62,10 +62,13 @@ function Login() {
           </svg>
           <div className = "text-container">
             <header>
-                <h1>Groova</h1>
+                <h1 id= "logo_text">Groova</h1>
             </header>
-            <p>Connect your Spotify account to get started</p>
-            <button onClick={() => window.location.href = url}>Login with Spotify</button>
+            <p id = "subtext">Connect your Spotify account to get started</p>
+            <button className="Btn" onClick={() => window.location.href = url}>
+                <p className="text">Login With </p>
+                <img id = "spotify_logo" src={require('../spotify_logo.png')} alt = "spotify logo"/>
+            </button>
           </div>
           
           
