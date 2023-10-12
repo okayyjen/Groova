@@ -13,6 +13,7 @@ function Home() {
     playlistName:"",
     artistName:"",
     userMoodOccasion:""})
+  const [AIResponse, setAIResponse] = useState('error while retrieving AI response')
 
   useEffect(() => {
     
@@ -61,6 +62,7 @@ function Home() {
       
       setAskFor(response.data['updatedAskList']);
       setPlaylistDetails(response.data['updatedPlaylistDetails']);
+      setAIResponse(response.data['AIResponse']);
       
       //resetting user input in prep for next submit 
       setUserInput('');
