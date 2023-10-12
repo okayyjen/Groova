@@ -37,7 +37,7 @@ def home():
     write_to_dotenv("SPOTIFY_ACCESS_TOKEN")
     write_to_dotenv("SPOTIFY_USER_ID")
     
-    print("AI: ", generate_question(constants.ASK_FOR_INITIAL))
+    #print("AI: ", generate_question(constants.ASK_FOR_INITIAL))
     
     return redirect('http://localhost:3000/home')
 
@@ -57,13 +57,13 @@ def get_user_input():
     ask_for = react_input["ask_for"]
 
     
-    ask_for, new_details = filter_response(user_input, playlist_details )
-    playlist_details = update_details(playlist_details, new_details)
+    #ask_for, new_details = filter_response(user_input, playlist_details )
+    #playlist_details = update_details(playlist_details, new_details)
     
     
     if ask_for:
-        print()
-        print("AI: ", generate_question(ask_for))     
+        print("AI")
+        #print("AI: ", generate_question(ask_for))     
     else:
         print("thats everything, thank you!:) i'll get to creating your playlist now")
         print(ask_for,  ", ", playlist_details)
