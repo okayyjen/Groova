@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import '../App.scss';
 import '../Home.scss';
+import {createMessageElement, createWhiteSpaceElement} from './messageCreator';
 
 function Home() {
+  const messageContainerRef = useRef(null);
   const [curX, setCurX] = useState(0);
   const [curY, setCurY] = useState(0);
   const [displayName, setDisplayName] = useState('');
@@ -13,8 +15,8 @@ function Home() {
     playlistName:"",
     artistName:"",
     userMoodOccasion:""})
-  const [AIResponse, setAIResponse] = useState('error while retrieving AI response')
-
+  const [AIResponse, setAIResponse] = useState(null)
+  
   useEffect(() => {
     
     // Center the interactive element initially
@@ -46,6 +48,7 @@ function Home() {
       });
   }, []);
 
+  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -58,11 +61,16 @@ function Home() {
         p_details: playlistDetails
       });
 
-      console.log('Handling server response:', response.data);
-      
       setAskFor(response.data['updatedAskList']);
       setPlaylistDetails(response.data['updatedPlaylistDetails']);
       setAIResponse(response.data['AIResponse']);
+
+      const messageElementUser = createMessageElement(userInput, "message-user");
+      messageContainerRef.current.appendChild(messageElementUser);
+
+      //const messageElementAI= createMessageElement(AIResponse, "message-AI");
+      //messageContainerRef.current.appendChild(messageElementAI);
+      
       
       //resetting user input in prep for next submit 
       setUserInput('');
@@ -96,10 +104,12 @@ function Home() {
           </svg>
           <div className = "text-container">
             <header>
-              <h1 className = "home-greeting">Welcome to the Harb Kim Empire {displayName}</h1>
+              <h1 className = "home-greeting">Welcome {displayName}</h1>
             </header>
             <div className = "chat-box">
-              <form onSubmit={handleSubmit} className='form-container'>
+              <div className = "message-cont" ref={messageContainerRef}></div>
+            </div>
+            <form onSubmit={handleSubmit} className='form-container'>
                 <input 
                   placeholder='Aa'
                   type="text" 
@@ -109,7 +119,6 @@ function Home() {
                   />
                 <button type="submit" className="submit-button"/>
               </form>
-            </div>
           </div>
           <div className="gradients-container">
             <div className="g1"></div>

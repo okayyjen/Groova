@@ -5,9 +5,9 @@
     align-items: center;
     margin: 30px;
     padding: 30px;
-    width: 100%;
+    width: 45%;
 }
-  
+
 .input-bar {
     width:100%;
     opacity: 50%;
@@ -33,11 +33,34 @@
 //chat box styling
 .chat-box{
     display: flex;
-    align-items: flex-end;
-    justify-content: center;
     border-radius: 50px;
     height:80%;
     width: 50%;
+    align-items: flex-end;
     background-color:rgba(65, 37, 82, 0.667);
+    overflow-y: hidden;
+    
+}
+
+.message-cont{
+    max-width: 50%;
+    word-wrap: break-word;
+}
+
+.message-cont #message-user{
+    display:flex;
+    font-size: 30%;
+    background-color: #ccc;
+    border-radius: 40px 40px 40px 10px;
+    max-width: 100%;
+    margin: 20px 20px 20px 20px;
+    padding: 30px 30px 30px 30px;
+    justify-self: right;
+    
+}
+
+#message-text{
+    
+    max-width: 100%;
 }
   
