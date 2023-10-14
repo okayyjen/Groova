@@ -48,6 +48,7 @@ def get_display_name():
 
 @app.route('/get_user_input', methods=["POST"])
 def get_user_input():
+    ai_response = 'YUH!'
     react_input = request.get_json()
 
     print("Input from react: ", react_input)
@@ -62,18 +63,19 @@ def get_user_input():
     
     
     if ask_for:
-        print("AI")
-        #print("AI: ", generate_question(ask_for))     
+        #ai_response = generate_question(ask_for)
+        print("AI: ", ai_response)     
     else:
         print("thats everything, thank you!:) i'll get to creating your playlist now")
         print(ask_for,  ", ", playlist_details)
 
-    time.sleep(60)
+    #time.sleep(60)
 
     return{'updatedAskList':ask_for, 
            'updatedPlaylistDetails':{'playlistName':playlist_details.playlist_name,
                                      'artistName':playlist_details.artist_name,
-                                     'userMoodOccasion':playlist_details.user_mood_occasion}}
+                                     'userMoodOccasion':playlist_details.user_mood_occasion},
+            'AIResponse': ai_response}
 
 def set_p_details(p_details_dict):
     p_details = PlaylistDetails(playlist_name=p_details_dict["playlistName"],
