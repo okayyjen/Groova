@@ -3,6 +3,7 @@ import axios from 'axios';
 import '../App.scss';
 import '../Home.scss';
 import {createMessageElement} from './messageCreator';
+import Shared from './Shared';
 
 function Home() {
   const messageContainerRef = useRef(null);
@@ -12,9 +13,9 @@ function Home() {
   const [userInput, setUserInput] = useState('')
   const [askFor, setAskFor] = useState(['playlist_name', 'artist_name', 'user_mood_occasion'])
   const [playlistDetails, setPlaylistDetails] = useState({
-    playlistName:"",
-    artistName:"",
-    userMoodOccasion:""})
+        playlistName:"",
+        artistName:"",
+        userMoodOccasion:""})
   const [AIResponse, setAIResponse] = useState(null)
   
   useEffect(() => {
@@ -81,57 +82,25 @@ function Home() {
   return (
     <div className="App">
       <div>
-        <div className="gradient-bg">
-          <svg xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <filter id="goo">
-                <feGaussianBlur
-                  in="SourceGraphic"
-                  stdDeviation="10"
-                  result="blur"
-                />
-                <feColorMatrix
-                  in="blur"
-                  mode="matrix"
-                  values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8"
-                  result="goo"
-                />
-                <feBlend in="SourceGraphic" in2="goo" />
-              </filter>
-            </defs>
-          </svg>
-          <div className = "text-container">
-            <header>
-              <h1 className = "home-greeting">Welcome {displayName}</h1>
-            </header>
-            <div className = "chat-top-bar"><div id = "text">Groova</div></div>
-            <div className = "chat-box">
-              <div className = "message-cont" ref={messageContainerRef}></div>
-            </div>
-            <form onSubmit={handleSubmit} className='form-container'>
-                <input 
-                  placeholder='Aa'
-                  type="text" 
-                  value={userInput} 
-                  onChange={(e) => setUserInput(e.target.value)}
-                  className="input-bar"
-                  />
-                <button type="submit" className="submit-button"/>
-              </form>
+        <Shared  curX={curX} curY={curY}></Shared>
+        <div className = "text-container">
+          <header>
+            <h1 className = "home-greeting">Welcome {displayName}</h1>
+          </header>
+          <div className = "chat-top-bar"><div id = "text">Groova</div></div>
+          <div className = "chat-box">
+            <div className = "message-cont" ref={messageContainerRef}></div>
           </div>
-          <div className="gradients-container">
-            <div className="g1"></div>
-            <div className="g2"></div>
-            <div className="g3"></div>
-            <div className="g4"></div>
-            <div className="g5"></div>
-            <div
-              className="interactive"
-              style={{
-                transform: `translate(${curX}px, ${curY}px)`,
-              }}
-            ></div>
-          </div>
+          <form onSubmit={handleSubmit} className='form-container'>
+              <input 
+                placeholder='Aa'
+                type="text" 
+                value={userInput} 
+                onChange={(e) => setUserInput(e.target.value)}
+                className="input-bar"
+                />
+              <button type="submit" className="submit-button"/>
+            </form>
         </div>
       </div>
     </div>
