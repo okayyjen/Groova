@@ -4,29 +4,7 @@ import Shared from './Shared';
 
 
 function Login() {
-  const [curX, setCurX] = useState(0);
-  const [curY, setCurY] = useState(0);
   const [url, setUrl] = useState('ERRA');
-
-  useEffect(() => {
-    
-    // Center the interactive element initially
-    const initialX = window.innerWidth / 2;
-    const initialY = window.innerHeight / 2;
-    setCurX(initialX);
-    setCurY(initialY);
-
-    const handleMouseMove = (event) => {
-      setCurX(event.clientX);
-      setCurY(event.clientY);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, []);
 
   useEffect(() => {
     axios.get('/login')
@@ -41,7 +19,7 @@ function Login() {
   return (
     <div className="App">
       <div>
-      <Shared  curX={curX} curY={curY}></Shared>
+      <Shared></Shared>
         <div className = "text-container">
           <header>
               <h1 id= "logo_text">Groova</h1>
@@ -55,7 +33,6 @@ function Login() {
       </div>
     </div>
   );
-  
 }
 
 export default Login;

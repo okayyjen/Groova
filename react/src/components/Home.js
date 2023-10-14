@@ -7,8 +7,6 @@ import Shared from './Shared';
 
 function Home() {
   const messageContainerRef = useRef(null);
-  const [curX, setCurX] = useState(0);
-  const [curY, setCurY] = useState(0);
   const [displayName, setDisplayName] = useState('');
   const [userInput, setUserInput] = useState('')
   const [askFor, setAskFor] = useState(['playlist_name', 'artist_name', 'user_mood_occasion'])
@@ -18,26 +16,6 @@ function Home() {
         userMoodOccasion:""})
   const [AIResponse, setAIResponse] = useState(null)
   
-  useEffect(() => {
-    
-    // Center the interactive element initially
-    const initialX = window.innerWidth / 2;
-    const initialY = window.innerHeight / 2;
-    setCurX(initialX);
-    setCurY(initialY);
-
-    const handleMouseMove = (event) => {
-      setCurX(event.clientX);
-      setCurY(event.clientY);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, []);
-
   useEffect(() => {
     axios
       .get('/get_display_name')
@@ -65,7 +43,6 @@ function Home() {
       setPlaylistDetails(response.data['updatedPlaylistDetails']);
       setAIResponse(response.data['AIResponse']);
 
-
       const messageElementUser = createMessageElement(userInput, "message-user");
       messageContainerRef.current.appendChild(messageElementUser);
 
@@ -82,7 +59,7 @@ function Home() {
   return (
     <div className="App">
       <div>
-        <Shared  curX={curX} curY={curY}></Shared>
+        <Shared></Shared>
         <div className = "text-container">
           <header>
             <h1 className = "home-greeting">Welcome {displayName}</h1>

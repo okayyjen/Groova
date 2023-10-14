@@ -1,6 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
-function Shared({ children, curX, curY }) {
+//shared html for dynamic background
+function Shared({ children }) {
+
+const [curX, setCurX] = useState(0);
+  const [curY, setCurY] = useState(0);
+
+  useEffect(() => {
+    const handleMouseMove = (event) => {
+      setCurX(event.clientX);
+      setCurY(event.clientY);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
     return (
         <div className="gradient-bg">
           <svg xmlns="http://www.w3.org/2000/svg">
