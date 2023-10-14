@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import '../App.scss';
 import '../Home.scss';
-import {createMessageElement, createWhiteSpaceElement} from './messageCreator';
+import {createMessageElement} from './messageCreator';
 
 function Home() {
   const messageContainerRef = useRef(null);
@@ -48,12 +48,11 @@ function Home() {
       });
   }, []);
 
-  
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     
     try {
+
       //sending the user input, ask list, and playlist details to backend
       const response = await axios.post('/get_user_input', {
         user_input: userInput,
@@ -65,19 +64,18 @@ function Home() {
       setPlaylistDetails(response.data['updatedPlaylistDetails']);
       setAIResponse(response.data['AIResponse']);
 
+
       const messageElementUser = createMessageElement(userInput, "message-user");
       messageContainerRef.current.appendChild(messageElementUser);
 
-      //const messageElementAI= createMessageElement(AIResponse, "message-AI");
-      //messageContainerRef.current.appendChild(messageElementAI);
-      
+      const messageElementAI= createMessageElement(AIResponse, "message-AI");
+      messageContainerRef.current.appendChild(messageElementAI);
       
       //resetting user input in prep for next submit 
       setUserInput('');
     } catch (error) {
       console.error('Error sending data:', error);
     }
-
   }
 
   return (
@@ -106,6 +104,7 @@ function Home() {
             <header>
               <h1 className = "home-greeting">Welcome {displayName}</h1>
             </header>
+            <div className = "chat-top-bar"><div id = "text">Groova</div></div>
             <div className = "chat-box">
               <div className = "message-cont" ref={messageContainerRef}></div>
             </div>

@@ -10,11 +10,3 @@ export function createMessageElement(input, divName) {
     messageElement.id = divName
     return messageElement
 }
-
-export function createWhiteSpaceElement() {
-  
-  const whiteSpace = document.createElement('div')
-
-  whiteSpace.id = "white-space"
-  return whiteSpace
-}
