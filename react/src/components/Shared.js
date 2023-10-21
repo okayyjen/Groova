@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 //shared html for dynamic background
 function Shared({ children }) {
 
-const [curX, setCurX] = useState(0);
+  const [curX, setCurX] = useState(0);
   const [curY, setCurY] = useState(0);
 
   useEffect(() => {

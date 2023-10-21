@@ -1,20 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import '../App.scss';
-import '../Home.scss';
+import '../static/Home.scss';
 import {createMessageElement} from './messageCreator';
 import Shared from './Shared';
 
 function Home() {
   const messageContainerRef = useRef(null);
   const [displayName, setDisplayName] = useState('');
-  const [userInput, setUserInput] = useState('')
-  const [askFor, setAskFor] = useState(['playlist_name', 'artist_name', 'user_mood_occasion'])
+  const [userInput, setUserInput] = useState('');
+  const [askFor, setAskFor] = useState(['playlist_name', 'artist_name', 'user_mood_occasion']);
   const [playlistDetails, setPlaylistDetails] = useState({
         playlistName:"",
         artistName:"",
-        userMoodOccasion:""})
-  const [AIResponse, setAIResponse] = useState(null)
+        userMoodOccasion:""});
+  const [AIResponse, setAIResponse] = useState(null);
   
   useEffect(() => {
     axios
@@ -33,24 +32,33 @@ function Home() {
     try {
 
       //sending the user input, ask list, and playlist details to backend
-      const response = await axios.post('/get_user_input', {
-        user_input: userInput,
-        ask_for: askFor,
-        p_details: playlistDetails
-      });
+      if(userInput){
+        const response = await axios.post('/get_user_input', {
+          user_input: userInput,
+          ask_for: askFor,
+          p_details: playlistDetails
+        });
+  
+        setAskFor(response.data['updatedAskList']);
+        setPlaylistDetails(response.data['updatedPlaylistDetails']);
+        setAIResponse(response.data['AIResponse']);
 
-      setAskFor(response.data['updatedAskList']);
-      setPlaylistDetails(response.data['updatedPlaylistDetails']);
-      setAIResponse(response.data['AIResponse']);
-
-      const messageElementUser = createMessageElement(userInput, "message-user");
-      messageContainerRef.current.appendChild(messageElementUser);
-
-      const messageElementAI= createMessageElement(AIResponse, "message-AI");
-      messageContainerRef.current.appendChild(messageElementAI);
+        console.log(AIResponse)
+  
+        
+        const messageElementUser = createMessageElement(userInput, "message-user");
+        messageContainerRef.current.appendChild(messageElementUser);
+        
+        if(AIResponse){
+          const messageElementAI= createMessageElement(AIResponse, "message-AI");
+          messageContainerRef.current.appendChild(messageElementAI);
+        }
+        
+        
+        //resetting user input in prep for next submit 
+        setUserInput('');
+      }
       
-      //resetting user input in prep for next submit 
-      setUserInput('');
     } catch (error) {
       console.error('Error sending data:', error);
     }
@@ -76,7 +84,9 @@ function Home() {
                 onChange={(e) => setUserInput(e.target.value)}
                 className="input-bar"
                 />
-              <button type="submit" className="submit-button"/>
+              <button type="submit" className="submit-button">
+                <img id = "send-icon" src={require('../images/send_icon_groova.png')} alt = "spotify logo"/>
+              </button>
             </form>
         </div>
       </div>
