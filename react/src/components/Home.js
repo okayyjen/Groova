@@ -5,7 +5,6 @@ import {createMessageElement} from './messageCreator';
 import Shared from './Shared';
 
 function Home() {
-  const messageContainerRef = useRef(null);
   const [displayName, setDisplayName] = useState('');
   const [userInput, setUserInput] = useState('');
   const [askFor, setAskFor] = useState(['playlist_name', 'artist_name', 'user_mood_occasion']);
@@ -14,6 +13,8 @@ function Home() {
         artistName:"",
         userMoodOccasion:""});
   const [AIResponse, setAIResponse] = useState(null);
+  const messageContainerRef = useRef(null);
+  const lastMessageRef = useRef(null);
   
   useEffect(() => {
     axios
@@ -26,9 +27,12 @@ function Home() {
       });
   }, []);
 
+  useEffect(() => {
+    lastMessageRef.current?.scrollIntoView();
+  }, [userInput]);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
     try {
 
       //sending the user input, ask list, and playlist details to backend
@@ -75,6 +79,7 @@ function Home() {
           <div className = "chat-top-bar"><div id = "text">Groova</div></div>
           <div className = "chat-box">
             <div className = "message-cont" ref={messageContainerRef}></div>
+            <div ref={lastMessageRef}></div>
           </div>
           <form onSubmit={handleSubmit} className='form-container'>
               <input 
