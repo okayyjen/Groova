@@ -3,6 +3,7 @@ import axios from 'axios';
 import '../static/Home.scss';
 import {createMessageElement} from './messageCreator';
 import Shared from './Shared';
+import Loading from './Loading';
 
 function Home() {
   const [displayName, setDisplayName] = useState('');
@@ -15,15 +16,20 @@ function Home() {
   const [AIResponse, setAIResponse] = useState(null);
   const messageContainerRef = useRef(null);
   const lastMessageRef = useRef(null);
+  const [loading, setLoading] = useState(true);
+  
   
   useEffect(() => {
     axios
       .get('/get_display_name')
       .then((response) => {
         setDisplayName(response.data);
+        
+        setLoading(false);
       })
       .catch((error) => {
         console.error('Error: ', error);
+        setLoading(false);
       });
   }, []);
 
@@ -70,31 +76,37 @@ function Home() {
 
   return (
     <div className="App">
-      <div>
-        <Shared></Shared>
-        <div className = "text-container">
-          <header>
-            <h1 className = "home-greeting">Welcome {displayName}</h1>
-          </header>
-          <div className = "chat-top-bar"><div id = "text">Groova</div></div>
-          <div className = "chat-box">
-            <div className = "message-cont" ref={messageContainerRef}></div>
-            <div ref={lastMessageRef}></div>
-          </div>
-          <form onSubmit={handleSubmit} className='form-container'>
-              <input 
-                placeholder='Aa'
-                type="text" 
-                value={userInput} 
+      <Shared></Shared>
+      {loading ? (
+        <Loading />
+      ) : (
+        <div>
+          <div className="text-container">
+            <header>
+              <h1 className="home-greeting">Welcome {displayName}</h1>
+            </header>
+            <div className="chat-top-bar">
+              <div id="text">Groova</div>
+            </div>
+            <div className="chat-box">
+              <div className="message-cont" ref={messageContainerRef}></div>
+              <div ref={lastMessageRef}></div>
+            </div>
+            <form onSubmit={handleSubmit} className="form-container">
+              <input
+                placeholder="Aa"
+                type="text"
+                value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
                 className="input-bar"
-                />
+              />
               <button type="submit" className="submit-button">
-                <img id = "send-icon" src={require('../images/send_icon_groova.png')} alt = "spotify logo"/>
+                <img id="send-icon" src={require('../images/send_icon_groova.png')} alt="spotify logo" />
               </button>
             </form>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
   
