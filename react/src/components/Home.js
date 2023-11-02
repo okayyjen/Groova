@@ -34,6 +34,22 @@ function Home() {
   }, []);
 
   useEffect(() => {
+    axios
+      .get('/get_initial_interaction')
+      .then((response) => {
+        
+        const messageElementAI= createMessageElement(response.data['greetingMessage'], "message-AI");
+        messageContainerRef.current.appendChild(messageElementAI);
+
+        const questionAI= createMessageElement(response.data['initialQuestion'], "message-AI");
+        messageContainerRef.current.appendChild(questionAI);
+      })
+      .catch((error) => {
+        console.error('Error: ', error);
+      });
+  }, []);
+
+  useEffect(() => {
     lastMessageRef.current?.scrollIntoView();
   }, [userInput]);
 
@@ -43,26 +59,28 @@ function Home() {
 
       //sending the user input, ask list, and playlist details to backend
       if(userInput){
-        const response = await axios.post('/get_user_input', {
+        await axios.post('/get_user_input', {
           user_input: userInput,
           ask_for: askFor,
           p_details: playlistDetails
+        }).then((response) => {
+
+          setAskFor(response.data['updatedAskList']);
+          setPlaylistDetails(response.data['updatedPlaylistDetails']);
+          setAIResponse(response.data['AIResponse']);
+
+          console.log(AIResponse)
+  
+          const messageElementUser = createMessageElement(userInput, "message-user");
+          messageContainerRef.current.appendChild(messageElementUser);
+        
+         if(AIResponse){
+            const messageElementAI= createMessageElement(AIResponse, "message-AI");
+            messageContainerRef.current.appendChild(messageElementAI);
+         }
         });
   
-        setAskFor(response.data['updatedAskList']);
-        setPlaylistDetails(response.data['updatedPlaylistDetails']);
-        setAIResponse(response.data['AIResponse']);
-
-        console.log(AIResponse)
-  
         
-        const messageElementUser = createMessageElement(userInput, "message-user");
-        messageContainerRef.current.appendChild(messageElementUser);
-        
-        if(AIResponse){
-          const messageElementAI= createMessageElement(AIResponse, "message-AI");
-          messageContainerRef.current.appendChild(messageElementAI);
-        }
         
         
         //resetting user input in prep for next submit 
