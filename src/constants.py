@@ -202,3 +202,4 @@ it should all come from user input. the user input should not be modified. \n\n 
 
 ASK_FOR_INITIAL = ['playlist_name', 'artist_name', 'user_mood_occasion']
 
+GREETING_MESSAGE = "Hello, {display_name}! My name is Groova, and I'll be your assistant today. Before I put together your playlist, I have a few questions for you."

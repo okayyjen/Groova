@@ -37,7 +37,7 @@ def home():
     write_to_dotenv("SPOTIFY_ACCESS_TOKEN")
     write_to_dotenv("SPOTIFY_USER_ID")
     
-    #print("AI: ", generate_question(constants.ASK_FOR_INITIAL))
+    #print("AI: ", generate_question(constants.ASK_FOR_INITIAL))    
     
     return redirect('http://localhost:3000/home')
 
@@ -45,6 +45,18 @@ def home():
 def get_display_name():
 
     return SpotifyTools.display_name()
+
+@app.route('/get_initial_interaction')
+def get_initial_AI_response():
+    
+
+    display_name = get_display_name()
+
+    greeting_message = constants.GREETING_MESSAGE.format(display_name=display_name)
+    #getting AI question will go here
+    initial_question = "dookie doo, dookie doo doo?"
+
+    return {'greetingMessage': greeting_message, 'initialQuestion': initial_question}
 
 @app.route('/get_user_input', methods=["POST"])
 def get_user_input():
@@ -57,7 +69,6 @@ def get_user_input():
     playlist_details = set_p_details(react_input["p_details"])
     ask_for = react_input["ask_for"]
 
-    
     #ask_for, new_details = filter_response(user_input, playlist_details )
     #playlist_details = update_details(playlist_details, new_details)
     
