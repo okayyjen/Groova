@@ -91,7 +91,6 @@
     max-width: 70%; /* Adjust the maximum width of the bubble */
     padding: 10px 15px;
     margin:10px;
-    border-radius: 20px;
     word-wrap: break-word;
     border-radius: 40px 40px 40px 10px;
     background-color: #837191;
@@ -113,4 +112,51 @@
 #send-icon{
     padding-top: 1px;
     padding-right: 1px;
+}
+.dots {
+  width: 50px;
+  height: 20px;
+  border-radius: 40px 40px 40px 10px;
+  background-color: #837191;
+  margin: 10px;
+  transform: scale(0);
+  animation: overall-scale 8s infinite;
+  display: flex;
+  padding: 10px 15px;
+  margin:10px;
+}
+  
+.dot {
+  animation-timing-function: ease-in;
+  animation-iteration-count: infinite;
+  animation-name: dot-scale;
+  animation-duration: 1s;
+    
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin: 5px 0px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  transform: scale(0.65);
+    
+  &:first-of-type {
+    margin-left: 6px
+  }
+  &:nth-of-type(2) {
+    animation-delay: 0.15s;
+  }
+  &:nth-of-type(3) {
+    animation-delay: 0.3s;
+  }
+}
+  
+@keyframes dot-scale {
+  0%, 70% { transform: scale(0.65); }
+  35% { transform: scale(1); }
+}
+  
+@keyframes overall-scale {
+  0%, 95% { transform: scale(0); }
+  5%, 90% { transform: scale(1); }
 }

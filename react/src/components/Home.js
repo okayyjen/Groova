@@ -4,6 +4,7 @@ import '../static/Home.scss';
 import {createMessageElement} from './messageCreator';
 import Shared from './Shared';
 import Loading from './Loading';
+import Elipses from './Elipses';
 
 function Home() {
   const [displayName, setDisplayName] = useState('');
@@ -17,7 +18,7 @@ function Home() {
   const messageContainerRef = useRef(null);
   const lastMessageRef = useRef(null);
   const [loading, setLoading] = useState(true);
-  
+  const [typing, setTyping] = useState(true);
   
   useEffect(() => {
     axios
@@ -37,15 +38,17 @@ function Home() {
     axios
       .get('/get_initial_interaction')
       .then((response) => {
-        
         const messageElementAI= createMessageElement(response.data['greetingMessage'], "message-AI");
         messageContainerRef.current.appendChild(messageElementAI);
 
         const questionAI= createMessageElement(response.data['initialQuestion'], "message-AI");
         messageContainerRef.current.appendChild(questionAI);
+
+        setTyping(false);
       })
       .catch((error) => {
         console.error('Error: ', error);
+        setTyping(false);
       });
   }, []);
 
@@ -80,9 +83,6 @@ function Home() {
          }
         });
   
-        
-        
-        
         //resetting user input in prep for next submit 
         setUserInput('');
       }
@@ -108,6 +108,7 @@ function Home() {
             </div>
             <div className="chat-box">
               <div className="message-cont" ref={messageContainerRef}></div>
+              {typing && <Elipses/>}
               <div ref={lastMessageRef}></div>
             </div>
             <form onSubmit={handleSubmit} className="form-container">
