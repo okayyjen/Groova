@@ -77,10 +77,9 @@ function Home() {
           const messageElementUser = createMessageElement(userInput, "message-user");
           messageContainerRef.current.appendChild(messageElementUser);
         
-         if(AIResponse){
-            const messageElementAI= createMessageElement(AIResponse, "message-AI");
-            messageContainerRef.current.appendChild(messageElementAI);
-         }
+          const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI");
+          messageContainerRef.current.appendChild(messageElementAI);
+
         });
   
         //resetting user input in prep for next submit 
