@@ -23,6 +23,7 @@ TOKEN_INFO = "token_info"
 USER_INFO = "user_info"
 ASK_FOR = "ask_for"
 PLAYLIST_DETAILS = "playlist_details"
+initial_ask_for = ['playlist_name', 'artist_name', 'user_mood_occasion']
 
 CORS(app)
 
@@ -48,28 +49,29 @@ def get_display_name():
 
 @app.route('/get_initial_interaction')
 def get_initial_AI_response():
-    
 
     display_name = get_display_name()
 
     greeting_message = constants.GREETING_MESSAGE.format(display_name=display_name)
     #getting AI question will go here
     initial_question = "dookie doo, dookie doo doo?"
-
+    #question = generate_question(initial_ask_for)
+    #print("DONE ", question)
     return {'greetingMessage': greeting_message, 'initialQuestion': initial_question}
 
 @app.route('/get_user_input', methods=["POST"])
 def get_user_input():
-    ai_response = 'YUH!'
+
     react_input = request.get_json()
 
     print("Input from react: ", react_input)
 
     user_input = react_input["user_input"]
+    ai_response = user_input
     playlist_details = set_p_details(react_input["p_details"])
     ask_for = react_input["ask_for"]
 
-    #ask_for, new_details = filter_response(user_input, playlist_details )
+    #ask_for, new_details = filter_response(user_input, playlist_details)
     #playlist_details = update_details(playlist_details, new_details)
     
     
