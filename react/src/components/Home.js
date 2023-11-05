@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import '../static/Home.scss';
 import {createMessageElement} from './messageCreator';
@@ -19,7 +19,7 @@ function Home() {
   const lastMessageRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [typing, setTyping] = useState(true);
-  
+
   useEffect(() => {
     axios
       .get('/get_display_name')
@@ -34,10 +34,15 @@ function Home() {
       });
   }, []);
 
-  useEffect(() => {
-    axios
+  useLayoutEffect(() => {
+    if (!loading && messageContainerRef.current) {
+      console.log("element exists in the DOM, focusing...");
+      console.log(messageContainerRef)
+
+      axios
       .get('/get_initial_interaction')
       .then((response) => {
+
         const messageElementAI= createMessageElement(response.data['greetingMessage'], "message-AI");
         messageContainerRef.current.appendChild(messageElementAI);
 
@@ -45,12 +50,15 @@ function Home() {
         messageContainerRef.current.appendChild(questionAI);
 
         setTyping(false);
+
       })
       .catch((error) => {
         console.error('Error: ', error);
         setTyping(false);
       });
-  }, []);
+
+    }
+  }, [loading]);
 
   useEffect(() => {
     lastMessageRef.current?.scrollIntoView();
