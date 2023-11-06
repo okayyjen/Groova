@@ -59,6 +59,11 @@ def get_initial_AI_response():
     #print("DONE ", question)
     return {'greetingMessage': greeting_message, 'initialQuestion': initial_question}
 
+@app.route('/get_user_pic')
+def get_user_pic():
+
+    return SpotifyTools.user_pic()
+
 @app.route('/get_user_input', methods=["POST"])
 def get_user_input():
 

@@ -34,6 +34,13 @@ def display_name():
     
     return user_info['display_name']
 
+def user_pic():
+    token = os.getenv('SPOTIFY_ACCESS_TOKEN')
+    sp = spotipy.Spotify(auth=token)
+    user_info = sp.current_user()
+    url = user_info['images'][0]['url'] if user_info['images'] else None
+    return url
+
 #getter for current user's top 20 artists
 def get_top_artists(token_info):
     sp = spotipy.Spotify(auth=token_info['access_token'])
