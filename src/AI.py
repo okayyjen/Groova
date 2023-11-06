@@ -48,12 +48,12 @@ def gather_playlist_details(user_input, ask_for, playlist_details):
 
 def get_feature_rating(user_prompt):
     print("thinking...")
-    feature_rating = feature_rating_chain.run(user_prompt)
+    features_and_genres = feature_rating_chain.run(user_prompt)
     print('your rating is: ')
-    return feature_rating
+    return features_and_genres
 
-def playlist_generate(rating):
+def playlist_generate(features_and_genres, playlistName, artistName):
     print('thinking bout dooks...')
-    response = mrkl.run(rating)
+    response = mrkl.run(features_and_genres)
     print('here: ')
     return response
