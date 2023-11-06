@@ -19,6 +19,7 @@ function Home() {
   const lastMessageRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [typing, setTyping] = useState(true);
+  const regex = /.*[a-zA-Z]+.*/;
 
   useEffect(() => {
     axios
@@ -67,9 +68,8 @@ function Home() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-
       //sending the user input, ask list, and playlist details to backend
-      if(userInput){
+      if(userInput && regex.test(userInput)){
         await axios.post('/get_user_input', {
           user_input: userInput,
           ask_for: askFor,
@@ -115,7 +115,7 @@ function Home() {
             </div>
             <div className="chat-box">
               <div className="message-cont" ref={messageContainerRef}></div>
-              {typing && <Elipses/>}
+              <div className = "elipses">{typing && <Elipses/>} </div>
               <div ref={lastMessageRef}></div>
             </div>
             <form onSubmit={handleSubmit} className="form-container">
