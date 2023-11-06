@@ -19,6 +19,7 @@ function Home() {
   const lastMessageRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [typing, setTyping] = useState(true);
+  const [playlistUrl, setPlaylistUrl] = useState('');
 
   useEffect(() => {
     axios
@@ -64,10 +65,20 @@ function Home() {
     lastMessageRef.current?.scrollIntoView();
   }, [userInput]);
 
+  function generatePlaylist(){
+    axios.post('/generate_playlist', {
+      playlist_details: playlistDetails
+    }).then((response) => {
+      setPlaylistUrl(response.data['playlistUrl'])
+      const messageElementAI= createMessageElement(playlistUrl, "message-AI");
+      messageContainerRef.current.appendChild(messageElementAI);
+    })
+  }
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
 
+      
       //sending the user input, ask list, and playlist details to backend
       if(userInput){
         await axios.post('/get_user_input', {
@@ -76,6 +87,7 @@ function Home() {
           p_details: playlistDetails
         }).then((response) => {
 
+          
           setAskFor(response.data['updatedAskList']);
           setPlaylistDetails(response.data['updatedPlaylistDetails']);
           setAIResponse(response.data['AIResponse']);
@@ -87,7 +99,9 @@ function Home() {
         
           const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI");
           messageContainerRef.current.appendChild(messageElementAI);
-
+          if(askFor.length == 0 && userMood != null){
+            generatePlaylist(userMood)
+          }
         });
   
         //resetting user input in prep for next submit 
