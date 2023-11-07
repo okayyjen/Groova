@@ -52,8 +52,8 @@ def get_feature_rating(user_prompt):
     print('your rating is: ')
     return features_and_genres
 
-def playlist_generate(features_and_genres, playlistName, artistName):
+def playlist_generate(features_genres_pdetails):
     print('thinking bout dooks...')
-    response = mrkl.run(features_and_genres)
+    response = mrkl.run(features_genres_pdetails)
     print('here: ')
     return response

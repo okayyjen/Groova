@@ -103,12 +103,23 @@ def set_p_details(p_details_dict):
     return p_details
 
 @app.route('/generate_playlist', methods=["POST"])
-def generate_playlist():    
+def generate_playlist():
     react_input = request.get_json()
+
     playlist_details = react_input['playlist_details']
     user_mood = playlist_details['userMoodOccasion']
+
     features_and_genres = AI.get_feature_rating(user_mood)
-    playlist_url = AI.playlist_generate(features_and_genres)
+
+    playlist_details_str = str(playlist_details)
+    playlist_details_str = playlist_details_str.strip('{}')
+    playlist_details_str = playlist_details_str + " "
+
+    features_genres_pdetails = "".join([playlist_details_str, features_and_genres])
+
+    playlist_url = AI.playlist_generate(features_genres_pdetails)
+
+
     return {
         'playlistUrl': playlist_url
     }
