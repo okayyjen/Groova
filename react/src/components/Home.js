@@ -38,7 +38,7 @@ function Home() {
 
   useLayoutEffect(() => {
     if (!loading && messageContainerRef.current) {
-      console.log("element exists in the DOM, focusing...");
+
       console.log(messageContainerRef)
 
       axios
@@ -67,18 +67,23 @@ function Home() {
   }, [userInput]);
 
   function generatePlaylist(){
+    console.log("call for generate")
+
     axios.post('/generate_playlist', {
       playlist_details: playlistDetails
     }).then((response) => {
-      setPlaylistUrl(response.data['playlistUrl'])
+      
+      setPlaylistUrl(response.data['playlistUrl']);
+      console.log("playlistUrl: ", playlistUrl)
       const messageElementAI= createMessageElement(playlistUrl, "message-AI");
       messageContainerRef.current.appendChild(messageElementAI);
+
     })
+  
   }
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-
       //sending the user input, ask list, and playlist details to backend
       if(userInput && regex.test(userInput)){
         await axios.post('/get_user_input', {
@@ -86,22 +91,29 @@ function Home() {
           ask_for: askFor,
           p_details: playlistDetails
         }).then((response) => {
+          console.log(response);
 
           
           setAskFor(response.data['updatedAskList']);
           setPlaylistDetails(response.data['updatedPlaylistDetails']);
           setAIResponse(response.data['AIResponse']);
 
-          console.log(AIResponse)
-  
+          console.log("playlist deets: ", playlistDetails);
+          console.log("ask list: ", askFor);
+        
+          /*
           const messageElementUser = createMessageElement(userInput, "message-user");
           messageContainerRef.current.appendChild(messageElementUser);
-        
+
           const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI");
           messageContainerRef.current.appendChild(messageElementAI);
-          if(askFor.length == 0 && userMood != null){
-            generatePlaylist(userMood)
+          */
+
+          if(askFor.length == 0 && playlistDetails["userMoodOccasion"] != null){
+            console.log("IN GENERATE IF STMNT: ", playlistDetails)
+            generatePlaylist();
           }
+          
         });
   
         //resetting user input in prep for next submit 
@@ -129,7 +141,7 @@ function Home() {
             </div>
             <div className="chat-box">
               <div className="message-cont" ref={messageContainerRef}></div>
-              <div className = "elipses">{typing && <Elipses/>} </div>
+              <div className = "elipses">{<Elipses typing={typing}/>} </div>
               <div ref={lastMessageRef}></div>
             </div>
             <form onSubmit={handleSubmit} className="form-container">
