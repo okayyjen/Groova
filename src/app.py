@@ -37,9 +37,7 @@ def index():
 def home():
     write_to_dotenv("SPOTIFY_ACCESS_TOKEN")
     write_to_dotenv("SPOTIFY_USER_ID")
-    
-    #print("AI: ", generate_question(constants.ASK_FOR_INITIAL))    
-    
+       
     return redirect('http://localhost:3000/home')
 
 @app.route('/get_display_name')
@@ -55,8 +53,8 @@ def get_initial_AI_response():
     greeting_message = constants.GREETING_MESSAGE.format(display_name=display_name)
     #getting AI question will go here
     initial_question = "dookie doo, dookie doo doo?"
-    #question = generate_question(initial_ask_for)
-    #print("DONE ", question)
+    #initial_question = generate_question(initial_ask_for)
+    print("DONE ", initial_question)
     return {'greetingMessage': greeting_message, 'initialQuestion': initial_question}
 
 @app.route('/get_user_pic')
@@ -72,29 +70,33 @@ def get_user_input():
     print("Input from react: ", react_input)
 
     user_input = react_input["user_input"]
-    ai_response = user_input
-    playlist_details = set_p_details(react_input["p_details"])
+    
+    #playlist_details = set_p_details(react_input["p_details"])
     ask_for = react_input["ask_for"]
 
     #ask_for, new_details = filter_response(user_input, playlist_details)
     #playlist_details = update_details(playlist_details, new_details)
     
-    
     if ask_for:
         #ai_response = generate_question(ask_for)
-        print("AI: ", ai_response)     
+        ai_response = "STOP"
+        print("AI: ", ai_response)
     else:
-        print("thats everything, thank you!:) i'll get to creating your playlist now")
-        print(ask_for,  ", ", playlist_details)
+        ai_response = constants.WOKRING_MESSAGE 
+    #time.sleep(45)
 
-    #time.sleep(60)
+    return{'updatedAskList':[], 
+           'updatedPlaylistDetails':{'playlistName':"Dookie doo",
+                                     'artistName':"Spongebob Squarepants",
+                                     'userMoodOccasion':"sexy"},
+            'AIResponse': "YUH!!!"}
 
-    return{'updatedAskList':ask_for, 
-           'updatedPlaylistDetails':{'playlistName':playlist_details.playlist_name,
-                                     'artistName':playlist_details.artist_name,
-                                     'userMoodOccasion':playlist_details.user_mood_occasion},
-            'AIResponse': ai_response}
-
+    #return{'updatedAskList':ask_for, 
+    #       'updatedPlaylistDetails':{'playlistName':playlist_details.playlist_name,
+    #                                 'artistName':playlist_details.artist_name,
+    #                                 'userMoodOccasion':playlist_details.user_mood_occasion},
+    #        'AIResponse': ai_response}
+     
 def set_p_details(p_details_dict):
     p_details = PlaylistDetails(playlist_name=p_details_dict["playlistName"],
                                 artist_name=p_details_dict["artistName"],
