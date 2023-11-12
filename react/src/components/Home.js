@@ -37,6 +37,20 @@ function Home() {
       });
   }, []);
 
+  useEffect(() => {
+    axios
+      .get('/get_user_pic')
+      .then((response) => {
+        setUserPic(response.data)
+        //if(userPic === "no pfp"){
+        //  setUserPic(require('../images/d.png'))
+        //}
+      })
+      .catch((error) => {
+        console.error('Error: ', error);
+      });
+  }, []);
+
   useLayoutEffect(() => {
     if (!loading && messageContainerRef.current) {
       console.log("element exists in the DOM, focusing...");
@@ -46,10 +60,10 @@ function Home() {
       .get('/get_initial_interaction')
       .then((response) => {
 
-        const messageElementAI= createMessageElement(response.data['greetingMessage'], "message-AI");
+        const messageElementAI= createMessageElement(response.data['greetingMessage'], "message-AI", userPic);
         messageContainerRef.current.appendChild(messageElementAI);
 
-        const questionAI= createMessageElement(response.data['initialQuestion'], "message-AI");
+        const questionAI= createMessageElement(response.data['initialQuestion'], "message-AI", userPic);
         messageContainerRef.current.appendChild(questionAI);
 
         setTyping(false);
@@ -66,20 +80,6 @@ function Home() {
   useEffect(() => {
     lastMessageRef.current?.scrollIntoView();
   }, [userInput]);
-
-  useEffect(() => {
-    axios
-      .get('/get_user_pic')
-      .then((response) => {
-        setUserPic(response.data)
-        if(userPic === "no pfp"){
-          setUserPic(require('../images/d.png'))
-        }
-      })
-      .catch((error) => {
-        console.error('Error: ', error);
-      });
-  }, []);
 
   /*
   function generatePlaylist(){
