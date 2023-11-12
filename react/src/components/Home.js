@@ -66,18 +66,16 @@ function Home() {
     lastMessageRef.current?.scrollIntoView();
   }, [userInput]);
 
-  function generatePlaylist(){
+  function generatePlaylist(currPlaylistDetails){
     console.log("call for generate")
 
     axios.post('/generate_playlist', {
-      playlist_details: playlistDetails
+      playlist_details: currPlaylistDetails
     }).then((response) => {
       
-      setPlaylistUrl(response.data['playlistUrl']);
-      console.log("playlistUrl: ", playlistUrl)
-      const messageElementAI= createMessageElement(playlistUrl, "message-AI");
+      const PURL = response.data['playlistUrl']
+      const messageElementAI= createMessageElement(PURL, "message-AI");
       messageContainerRef.current.appendChild(messageElementAI);
-
     })
   
   }
@@ -93,28 +91,32 @@ function Home() {
         }).then((response) => {
           console.log(response);
 
-          
           setAskFor(response.data['updatedAskList']);
           setPlaylistDetails(response.data['updatedPlaylistDetails']);
           setAIResponse(response.data['AIResponse']);
 
-          console.log("playlist deets: ", playlistDetails);
-          console.log("ask list: ", askFor);
+          const currAskfor = response.data['updatedAskList'];
+          const currPlaylistDetails = response.data['updatedPlaylistDetails'];
+
+          console.log("playlist deets inside: ", playlistDetails);
+          console.log("ask list inside: ", askFor);
         
-          /*
+          
           const messageElementUser = createMessageElement(userInput, "message-user");
           messageContainerRef.current.appendChild(messageElementUser);
 
           const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI");
           messageContainerRef.current.appendChild(messageElementAI);
-          */
-
-          if(askFor.length == 0 && playlistDetails["userMoodOccasion"] != null){
-            console.log("IN GENERATE IF STMNT: ", playlistDetails)
-            generatePlaylist();
-          }
           
+
+          if(currAskfor.length == 0 && currPlaylistDetails["userMoodOccasion"] != null){
+            console.log("IN GENERATE IF STMNT: ", currPlaylistDetails)
+            generatePlaylist(currPlaylistDetails);
+          }
+
         });
+        
+        
   
         //resetting user input in prep for next submit 
         setUserInput('');
