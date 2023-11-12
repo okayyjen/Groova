@@ -3,7 +3,6 @@ export function createMessageElement(input, divName, profile) {
     const textElement = document.createElement('div');
     const aiProfile = document.createElement("IMG");
     const aiElement = document.createElement('div');
-
     const userProfile = document.createElement("IMG");
     const userElement = document.createElement('div');
 
