@@ -21,6 +21,7 @@ function Home() {
   const [typing, setTyping] = useState(true);
   const [playlistUrl, setPlaylistUrl] = useState('');
   const regex = /.*[a-zA-Z]+.*/;
+  const [userPic, setUserPic] = useState('');
 
   useEffect(() => {
     axios
@@ -36,6 +37,20 @@ function Home() {
       });
   }, []);
 
+  useEffect(() => {
+    axios
+      .get('/get_user_pic')
+      .then((response) => {
+        setUserPic(response.data)
+        //if(userPic === "no pfp"){
+        //  setUserPic(require('../images/d.png'))
+        //}
+      })
+      .catch((error) => {
+        console.error('Error: ', error);
+      });
+  }, []);
+
   useLayoutEffect(() => {
     if (!loading && messageContainerRef.current) {
       console.log("element exists in the DOM, focusing...");
@@ -45,10 +60,10 @@ function Home() {
       .get('/get_initial_interaction')
       .then((response) => {
 
-        const messageElementAI= createMessageElement(response.data['greetingMessage'], "message-AI");
+        const messageElementAI= createMessageElement(response.data['greetingMessage'], "message-AI", userPic);
         messageContainerRef.current.appendChild(messageElementAI);
 
-        const questionAI= createMessageElement(response.data['initialQuestion'], "message-AI");
+        const questionAI= createMessageElement(response.data['initialQuestion'], "message-AI", userPic);
         messageContainerRef.current.appendChild(questionAI);
 
         setTyping(false);
@@ -66,6 +81,7 @@ function Home() {
     lastMessageRef.current?.scrollIntoView();
   }, [userInput]);
 
+  /*
   function generatePlaylist(){
     axios.post('/generate_playlist', {
       playlist_details: playlistDetails
@@ -75,6 +91,7 @@ function Home() {
       messageContainerRef.current.appendChild(messageElementAI);
     })
   }
+  */
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -94,14 +111,16 @@ function Home() {
 
           console.log(AIResponse)
   
-          const messageElementUser = createMessageElement(userInput, "message-user");
+          const messageElementUser = createMessageElement(userInput, "message-user", userPic);
           messageContainerRef.current.appendChild(messageElementUser);
         
-          const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI");
+          const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI", userPic);
           messageContainerRef.current.appendChild(messageElementAI);
+          /*
           if(askFor.length == 0 && userMood != null){
             generatePlaylist(userMood)
           }
+          */
         });
   
         //resetting user input in prep for next submit 
