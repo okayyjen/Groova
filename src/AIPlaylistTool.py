@@ -28,11 +28,11 @@ class PlaylistTool(BaseTool):
 
         #convert string dict into dict
         features_dict, genre_list, pdetails_dict = SpotifyTools.extract_and_format(features_genres_pdetails)
-        
+        print("PDEETS DICT: ", pdetails_dict)
         sp = spotipy.Spotify(auth=token)
 
         # Create a new empty playlist
-        user_playlist = sp.user_playlist_create(user, pdetails_dict['playlistName'], public=False, collaborative=False, description="desc")
+        user_playlist = sp.user_playlist_create(user, pdetails_dict['playlistName'], public=False, collaborative=False, description="Made with Groova")
 
         #getting user's top artists
         top_artists = sp.current_user_top_artists(time_range='medium_term', limit=1)
@@ -49,7 +49,8 @@ class PlaylistTool(BaseTool):
         artist_URLs.append(preferred_artist_url)
 
         #get recommended tracks based on users top artists and features
-        recommended_tracks = sp.recommendations(seed_artists=artist_URLs, seed_genres= genre_list , limit=20, target_features=features_dict)
+        #recommended_tracks = sp.recommendations(seed_artists=artist_URLs, seed_genres= genre_list , limit=20, target_features=features_dict)
+        recommended_tracks = sp.recommendations(seed_artists=artist_URLs, limit=20, target_features=features_dict)
         recommended_track_uris = [track['uri'] for track in recommended_tracks['tracks']]
         playlist_id = user_playlist['id']
 

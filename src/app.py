@@ -52,8 +52,8 @@ def get_initial_AI_response():
 
     greeting_message = constants.GREETING_MESSAGE.format(display_name=display_name)
     #getting AI question will go here
-    initial_question = "dookie doo, dookie doo doo?"
-    #initial_question = generate_question(initial_ask_for)
+    #initial_question = "dookie doo, dookie doo doo?"
+    initial_question = generate_question(initial_ask_for)
     print("DONE ", initial_question)
     return {'greetingMessage': greeting_message, 'initialQuestion': initial_question}
 
@@ -71,31 +71,31 @@ def get_user_input():
 
     user_input = react_input["user_input"]
     
-    #playlist_details = set_p_details(react_input["p_details"])
+    playlist_details = set_p_details(react_input["p_details"])
     ask_for = react_input["ask_for"]
 
-    #ask_for, new_details = filter_response(user_input, playlist_details)
-    #playlist_details = update_details(playlist_details, new_details)
+    ask_for, new_details = filter_response(user_input, playlist_details)
+    playlist_details = update_details(playlist_details, new_details)
     
     if ask_for:
-        #ai_response = generate_question(ask_for)
-        ai_response = "STOP"
+        ai_response = generate_question(ask_for)
         print("AI: ", ai_response)
     else:
         ai_response = constants.WOKRING_MESSAGE 
-    #time.sleep(45)
 
-    return{'updatedAskList':[], 
-           'updatedPlaylistDetails':{'playlistName':"Dookie doo",
-                                     'artistName':"Spongebob Squarepants",
-                                     'userMoodOccasion':"sexy"},
-            'AIResponse': "YUH!!!"}
+    time.sleep(45)
 
-    #return{'updatedAskList':ask_for, 
-    #       'updatedPlaylistDetails':{'playlistName':playlist_details.playlist_name,
-    #                                 'artistName':playlist_details.artist_name,
-    #                                 'userMoodOccasion':playlist_details.user_mood_occasion},
-    #        'AIResponse': ai_response}
+    #return{'updatedAskList':[], 
+    #       'updatedPlaylistDetails':{'playlistName':"Dookie doo",
+    #                                 'artistName':"Spongebob Squarepants",
+    #                                 'userMoodOccasion':"sexy"},
+    #        'AIResponse': "YUH!!!"}
+
+    return{'updatedAskList':ask_for, 
+           'updatedPlaylistDetails':{'playlistName':playlist_details.playlist_name,
+                                     'artistName':playlist_details.artist_name,
+                                     'userMoodOccasion':playlist_details.user_mood_occasion},
+            'AIResponse': ai_response}
      
 def set_p_details(p_details_dict):
     p_details = PlaylistDetails(playlist_name=p_details_dict["playlistName"],
@@ -116,11 +116,22 @@ def generate_playlist():
     playlist_details_str = str(playlist_details)
     playlist_details_str = playlist_details_str.strip('{}')
     playlist_details_str = playlist_details_str + " "
-
+    
     features_genres_pdetails = "".join([playlist_details_str, features_and_genres])
 
     playlist_url = AI.playlist_generate(features_genres_pdetails)
 
+    x, y, z = SpotifyTools.extract_and_format("""'artistName': 'Spongebob Squarepants', 'playlistName': 'Dookie doo', 'userMoodOccasion': 'sexy' acousticness: 0.3
+        danceability: 0.8
+        tempo: 100
+        valence: 0.7
+        energy: 0.9
+        instrumentalness: 0.2
+        liveness: 0.5
+        loudness: -3
+        genres: R&B, slow-jam""")
+    
+    print("HERE: ", x, "| ", y, "| ", z)
 
     return {
         'playlistUrl': playlist_url
