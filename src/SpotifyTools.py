@@ -38,7 +38,7 @@ def user_pic():
     token = os.getenv('SPOTIFY_ACCESS_TOKEN')
     sp = spotipy.Spotify(auth=token)
     user_info = sp.current_user()
-    url = user_info['images'][0]['url'] if user_info['images'] else None
+    url = user_info['images'][0]['url'] if user_info['images'] else "no pfp"
     return url
 
 #getter for current user's top 20 artists
