@@ -20,6 +20,7 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const [typing, setTyping] = useState(true);
   const [playlistUrl, setPlaylistUrl] = useState('');
+  
   const regex = /.*[a-zA-Z]+.*/;
 
   useEffect(() => {
@@ -44,6 +45,8 @@ function Home() {
       axios
       .get('/get_initial_interaction')
       .then((response) => {
+
+        setAIResponse(response.data['initialQuestion']);
 
         const messageElementAI= createMessageElement(response.data['greetingMessage'], "message-AI");
         messageContainerRef.current.appendChild(messageElementAI);
@@ -87,7 +90,8 @@ function Home() {
         await axios.post('/get_user_input', {
           user_input: userInput,
           ask_for: askFor,
-          p_details: playlistDetails
+          p_details: playlistDetails,
+          ai_response: AIResponse
         }).then((response) => {
           console.log(response);
 
