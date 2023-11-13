@@ -7,8 +7,10 @@ import os
 import SpotifyTools
 import AI
 import dotenv
-from AIPlaylistDetails import PlaylistDetails, generate_question, filter_response, update_details
+from AIPlaylistDetails import PlaylistDetails, generate_question, filter_response, update_details 
 import constants
+from apscheduler.schedulers.background import BackgroundScheduler
+import threading
 
 from dotenv import load_dotenv
 
@@ -37,6 +39,7 @@ def index():
 def home():
     write_to_dotenv("SPOTIFY_ACCESS_TOKEN")
     write_to_dotenv("SPOTIFY_USER_ID")
+    refresh_token()
        
     return redirect('http://localhost:3000/home')
 
@@ -69,12 +72,17 @@ def get_user_input():
 
     print("Input from react: ", react_input)
 
-    user_input = react_input["user_input"]
+    ai_prev_question = react_input["ai_response"]
+    ai_prev_question = ai_prev_question + " "
     
+    user_input = react_input["user_input"]
+
+    user_input_question = "".join([ai_prev_question, user_input])
+
     playlist_details = set_p_details(react_input["p_details"])
     ask_for = react_input["ask_for"]
 
-    ask_for, new_details = filter_response(user_input, playlist_details)
+    ask_for, new_details = filter_response(user_input_question, playlist_details)
     playlist_details = update_details(playlist_details, new_details)
     
     if ask_for:
@@ -85,10 +93,10 @@ def get_user_input():
 
     time.sleep(45)
 
-    #return{'updatedAskList':[], 
+    #return{'updatedAskList':[''], 
     #       'updatedPlaylistDetails':{'playlistName':"Dookie doo",
     #                                 'artistName':"Spongebob Squarepants",
-    #                                 'userMoodOccasion':"sexy"},
+    #                                 'userMoodOccasion':""},
     #        'AIResponse': "YUH!!!"}
 
     return{'updatedAskList':ask_for, 
@@ -96,7 +104,7 @@ def get_user_input():
                                      'artistName':playlist_details.artist_name,
                                      'userMoodOccasion':playlist_details.user_mood_occasion},
             'AIResponse': ai_response}
-     
+
 def set_p_details(p_details_dict):
     p_details = PlaylistDetails(playlist_name=p_details_dict["playlistName"],
                                 artist_name=p_details_dict["artistName"],
@@ -173,17 +181,6 @@ def callback():
     #if neither, handle error in future. For now, return message
     return "something went wrong"
 
-def get_token():
-    token_info = session.get(TOKEN_INFO, None)
-    if not token_info:
-        raise "exception"
-    now = int(time.time())
-    is_expired = token_info['expires_at'] - now < 60
-    if(is_expired):
-        sp_oauth = SpotifyTools.create_spotify_oauth
-        token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
-
-    return token_info
 
 def write_to_dotenv(name):
     if name == "SPOTIFY_ACCESS_TOKEN":
@@ -197,3 +194,21 @@ def write_to_dotenv(name):
     dotenv.load_dotenv(dotenv_file)
     os.environ[name] = string
     dotenv.set_key(dotenv_file, name, os.environ[name])
+
+def get_token():
+    token_info = session.get(TOKEN_INFO, None)
+    if not token_info:
+        raise "exception"
+    now = int(time.time())
+    is_expired = token_info['expires_at'] - now < 60
+    if(is_expired):
+        sp_oauth = SpotifyTools.create_spotify_oauth
+        token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
+
+    return token_info
+
+def refresh_token():
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(get_token, 'interval', minutes=55)
+    scheduler.start()
+

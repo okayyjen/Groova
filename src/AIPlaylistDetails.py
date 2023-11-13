@@ -10,17 +10,20 @@ from langchain.chat_models import ChatOpenAI
 from langchain.chains import create_tagging_chain, create_tagging_chain_pydantic, LLMChain, TransformChain, SimpleSequentialChain
 
 class PlaylistDetails(BaseModel):
-    playlist_name: str = Field(
+    
+    user_mood_occasion: str = Field(
         default="",
-        description="This is the name of a playlist that the user will choose"
+        description="This is the mood or the occasion that the playlist will be based on. The user may give any mood or occasion."
     )
+
     artist_name: str = Field(
         default="",
         description="This is the name of an artist that a user would like to be featured on the playlist"
     )
-    user_mood_occasion: str = Field(
+
+    playlist_name: str = Field(
         default="",
-        description="This is the mood or the occasion that the playlist will be based on. The user may give any mood or occasion."
+        description="This is the name of a playlist that the user will choose."
     )
 
 content_chain_3 = ChatPromptTemplate.from_template(constants.CONTENT_CHAIN_3)
@@ -65,10 +68,10 @@ def generate_question(ask_for):
         """
     )
     # a chain used for gathering a users playlist details
-    detail_gathering_chain = LLMChain(llm=llm, prompt=first_prompt)
+    question_generating_chain = LLMChain(llm=llm, prompt=first_prompt)
     print("RUNNING QUESTION CHAIN WITH THIS LIST: ", ask_for)
     time.sleep(30)
-    question = detail_gathering_chain.run(ask_for)
+    question = question_generating_chain.run(ask_for)
     
     return question
 
