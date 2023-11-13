@@ -40,17 +40,28 @@ function Home() {
   useLayoutEffect(() => {
     if (!loading && messageContainerRef.current) {
 
-      console.log(messageContainerRef)
+      axios.post('/get_greeting_message', {
+        display_name: displayName,
+      })
+      .then((response) => {
+
+        setAIResponse(response.data['greetingMessage']);
+        const questionAI= createMessageElement(response.data['greetingMessage'], "message-AI");
+        messageContainerRef.current.appendChild(questionAI);
+
+        setTyping(false);
+
+      })
+      .catch((error) => {
+        console.error('Error: ', error);
+        setTyping(false);
+      });
 
       axios
-      .get('/get_initial_interaction')
+      .get('/get_initial_question')
       .then((response) => {
 
         setAIResponse(response.data['initialQuestion']);
-
-        const messageElementAI= createMessageElement(response.data['greetingMessage'], "message-AI");
-        messageContainerRef.current.appendChild(messageElementAI);
-
         const questionAI= createMessageElement(response.data['initialQuestion'], "message-AI");
         messageContainerRef.current.appendChild(questionAI);
 
@@ -83,6 +94,8 @@ function Home() {
   
   }
   const handleSubmit = async (event) => {
+    console.log("yuh")
+    
     event.preventDefault();
     try {
       //sending the user input, ask list, and playlist details to backend
@@ -129,6 +142,7 @@ function Home() {
     } catch (error) {
       console.error('Error sending data:', error);
     }
+
   }
 
   return (
