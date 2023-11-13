@@ -48,17 +48,23 @@ def get_display_name():
 
     return SpotifyTools.display_name()
 
-@app.route('/get_initial_interaction')
-def get_initial_AI_response():
+@app.route('/get_greeting_message', methods=["POST"])
+def get_greeting_message():
 
-    display_name = get_display_name()
+    react_input = request.get_json()
+    display_name = react_input['display_name']
 
     greeting_message = constants.GREETING_MESSAGE.format(display_name=display_name)
-    #getting AI question will go here
-    #initial_question = "dookie doo, dookie doo doo?"
-    initial_question = generate_question(initial_ask_for)
+
+    return{'greetingMessage': greeting_message}
+
+@app.route('/get_initial_question')
+def get_initial_AI_response():
+
+    initial_question = "dookie doo, dookie doo doo?"
+    #initial_question = generate_question(initial_ask_for)
     print("DONE ", initial_question)
-    return {'greetingMessage': greeting_message, 'initialQuestion': initial_question}
+    return {'initialQuestion': initial_question}
 
 @app.route('/get_user_pic')
 def get_user_pic():
