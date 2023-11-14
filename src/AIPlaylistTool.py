@@ -12,7 +12,7 @@ class PlaylistTool(BaseTool):
         "Always use this tool when given input"
         "This tool requires a string representation of musical features, genres, and details of a playlist (including playlistName, artistName, and userMoodOccasion) as one keyword argument. You will get this from the input given to you. The argument is A STRING. This STRING also contains curly braces, but they must be read as strings"
         "The features_genres_pdetails argument is the input you have received"
-        "The return statement of this function is the link to the spotify playlist you have created"
+        "The return statement of this function is a dictionary of the link to the spotify playlist you have created, as well as the result of whether or not we have found an artist that matches avaiable on Spotify."
     )
 
     def _run(self, features_genres_pdetails:str,*args, **kwargs) -> str:
@@ -48,6 +48,12 @@ class PlaylistTool(BaseTool):
         preferred_artist_url = SpotifyTools.get_artist_link(pdetails_dict['artistName'])
         artist_URLs.append(preferred_artist_url)
 
+        if preferred_artist_url:
+            artist_found = True
+        else:
+            artist_found = False
+        
+
         #get recommended tracks based on users top artists and features
         #recommended_tracks = sp.recommendations(seed_artists=artist_URLs, seed_genres= genre_list , limit=20, target_features=features_dict)
         recommended_tracks = sp.recommendations(seed_artists=artist_URLs, limit=20, target_features=features_dict)
@@ -57,7 +63,9 @@ class PlaylistTool(BaseTool):
         #add tracks to playlist
         sp.playlist_add_items(playlist_id, recommended_track_uris, position=None)
         playlist_url = user_playlist['external_urls']['spotify']
-        return playlist_url
+
+        return {'playlist_url': playlist_url,
+                'artist_found': artist_found}
 
     async def _arun(self, features_genres_pdetails,*args, **kwargs) -> str:
         raise NotImplementedError("This tool does not support async")

@@ -11,6 +11,7 @@ from AIPlaylistDetails import PlaylistDetails, generate_question, filter_respons
 import constants
 from apscheduler.schedulers.background import BackgroundScheduler
 import threading
+import ResponseFormat
 
 from dotenv import load_dotenv
 
@@ -61,8 +62,8 @@ def get_greeting_message():
 @app.route('/get_initial_question')
 def get_initial_AI_response():
 
-    initial_question = "dookie doo, dookie doo doo?"
-    #initial_question = generate_question(initial_ask_for)
+    #initial_question = "dookie doo, dookie doo doo?"
+    initial_question = generate_question(initial_ask_for)
     print("DONE ", initial_question)
     return {'initialQuestion': initial_question}
 
@@ -83,12 +84,13 @@ def get_user_input():
     
     user_input = react_input["user_input"]
 
-    user_input_question = "".join([ai_prev_question, user_input])
+    #user_input_question = "".join([ai_prev_question, user_input])
 
     playlist_details = set_p_details(react_input["p_details"])
     ask_for = react_input["ask_for"]
 
-    ask_for, new_details = filter_response(user_input_question, playlist_details)
+    ask_for, new_details = filter_response(user_input, playlist_details)
+    #ask_for, new_details = filter_response(user_input_question, playlist_details)
     playlist_details = update_details(playlist_details, new_details)
     
     if ask_for:
@@ -133,24 +135,17 @@ def generate_playlist():
     
     features_genres_pdetails = "".join([playlist_details_str, features_and_genres])
 
-    playlist_url = AI.playlist_generate(features_genres_pdetails)
+    generated = AI.playlist_generate(features_genres_pdetails)
 
-    x, y, z = SpotifyTools.extract_and_format("""'artistName': 'Spongebob Squarepants', 'playlistName': 'Dookie doo', 'userMoodOccasion': 'sexy' acousticness: 0.3
-        danceability: 0.8
-        tempo: 100
-        valence: 0.7
-        energy: 0.9
-        instrumentalness: 0.2
-        liveness: 0.5
-        loudness: -3
-        genres: R&B, slow-jam""")
+    response = ResponseFormat.filter_ai_response(generated)
     
-    print("HERE: ", x, "| ", y, "| ", z)
+    playlist_url = response.playlist_url
+    
+    #playlist_url = generated.playlist_url
 
     return {
         'playlistUrl': playlist_url
     }
-
 
 @app.route('/getTracks')
 def getTracks():
