@@ -200,6 +200,15 @@ Do not use anything you generated for the list it should all come from user inpu
 
 """
 
+CONTENT_CHAIN_4 = """Extract the desired information from the following passage. Correct the spelling of any misspelled artist names. Do not modify anything 
+else. If you do not know what the artist's name is supposed to be without the misspelling, keep the artist's name with the misspelling.
+
+Only extract the properties mentioned in the 'information_extraction' function.
+
+Passage:
+{input}
+"""
+
 ASK_FOR_INITIAL = ['playlist_name', 'artist_name', 'user_mood_occasion']
 
 GREETING_MESSAGE = "Hello, {display_name}! My name is Groova, and I'll be your assistant today. Before I put together your playlist, I have a few questions for you."

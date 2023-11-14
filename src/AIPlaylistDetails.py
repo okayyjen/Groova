@@ -80,7 +80,8 @@ def generate_question(ask_for):
 # the return is the users updated playlist details, and the new ask_for list containing missing details 
 def filter_response(user_input, playlist_details ):
     time.sleep(25)
-    chain = create_tagging_chain_pydantic(PlaylistDetails, llm)
+    
+    chain = create_tagging_chain_pydantic(PlaylistDetails, llm, prompt=ChatPromptTemplate.from_template(constants.CONTENT_CHAIN_4))
     time.sleep(25)
     res = chain.run(user_input)
     # add filtered info to the
