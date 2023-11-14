@@ -86,15 +86,20 @@ function Home() {
     axios.post('/generate_playlist', {
       playlist_details: currPlaylistDetails
     }).then((response) => {
+
+      if(response.data['AIResponse'] !== "True"){
+        const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI");
+        messageContainerRef.current.appendChild(messageElementAI);
+      }
       
       const PURL = response.data['playlistUrl']
       const messageElementAI= createMessageElement(PURL, "message-AI");
       messageContainerRef.current.appendChild(messageElementAI);
+
     })
   
   }
   const handleSubmit = async (event) => {
-    console.log("yuh")
     
     event.preventDefault();
     try {
@@ -126,7 +131,7 @@ function Home() {
           messageContainerRef.current.appendChild(messageElementAI);
           
 
-          if(currAskfor.length == 0 && currPlaylistDetails["userMoodOccasion"] != null){
+          if(currAskfor.length === 0 && currPlaylistDetails["userMoodOccasion"] != null){
             console.log("IN GENERATE IF STMNT: ", currPlaylistDetails)
             generatePlaylist(currPlaylistDetails);
           }
