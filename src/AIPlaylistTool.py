@@ -34,26 +34,21 @@ class PlaylistTool(BaseTool):
         # Create a new empty playlist
         user_playlist = sp.user_playlist_create(user, pdetails_dict['playlistName'], public=False, collaborative=False, description="Made with Groova")
 
-        #getting user's top artists
-        top_artists = sp.current_user_top_artists(time_range='medium_term', limit=1)
-
-        #extracting user's top artists urls
-        #TODO ADJUST ARTIST LOGIC --> OPTION TO USE TOP ARTISTS OR CHOSEN ONES, ETC, RN ITS USING CHOSEN ONE ONLY
+        #if the user given artist exists, add it to artist_URLs, if not, use user's top artist
         artist_URLs = []
-        for artist in top_artists['items']:
-
-            artist_url = artist['external_urls']['spotify']
-            #artist_URLs.append(artist_url)
 
         preferred_artist_url = SpotifyTools.get_artist_link(pdetails_dict['artistName'])
-        artist_URLs.append(preferred_artist_url)
 
-        if preferred_artist_url:
+        if(preferred_artist_url):
             artist_found = True
+            artist_URLs.append(preferred_artist_url)
         else:
             artist_found = False
-        
-
+            top_artists = sp.current_user_top_artists(time_range='medium_term', limit=1)
+            artist_name = top_artists['items'][0]['name']
+            top_artist_url = SpotifyTools.get_artist_link(artist_name)
+            artist_URLs.append(top_artist_url)
+            
         #get recommended tracks based on users top artists and features
         #recommended_tracks = sp.recommendations(seed_artists=artist_URLs, seed_genres= genre_list , limit=20, target_features=features_dict)
         recommended_tracks = sp.recommendations(seed_artists=artist_URLs, limit=20, target_features=features_dict)

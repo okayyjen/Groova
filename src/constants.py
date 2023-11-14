@@ -213,3 +213,4 @@ ASK_FOR_INITIAL = ['playlist_name', 'artist_name', 'user_mood_occasion']
 
 GREETING_MESSAGE = "Hello, {display_name}! My name is Groova, and I'll be your assistant today. Before I put together your playlist, I have a few questions for you."
 WOKRING_MESSAGE = "Thanks, that's all I need!:) Give me a moment while I put your playlist together..."
+ARTIST_NOT_FOUND_MESSAGE = "I was unable to find the artist you mentioned, so I used some inspiration from your listening habits instead!"

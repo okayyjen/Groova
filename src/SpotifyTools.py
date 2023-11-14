@@ -167,9 +167,9 @@ def get_artist_link(artist_name):
     if results['artists']['total'] > 0:
     # Get the artist URL from the first result
         artist_url = results['artists']['items'][0]['external_urls']['spotify']
-        print(f"Artist URL for {'sza'}: {artist_url}")
+        print(f"Artist URL: {artist_url}")
     else:
-        print(f"No artist found for {'sza'}")
+        artist_url = None
 
     return artist_url
 

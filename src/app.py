@@ -84,13 +84,13 @@ def get_user_input():
     
     user_input = react_input["user_input"]
 
-    #user_input_question = "".join([ai_prev_question, user_input])
+    user_input_question = "".join([ai_prev_question, user_input])
 
     playlist_details = set_p_details(react_input["p_details"])
     ask_for = react_input["ask_for"]
 
-    ask_for, new_details = filter_response(user_input, playlist_details)
     #ask_for, new_details = filter_response(user_input_question, playlist_details)
+    ask_for, new_details = filter_response(user_input, playlist_details)
     playlist_details = update_details(playlist_details, new_details)
     
     if ask_for:
@@ -138,13 +138,19 @@ def generate_playlist():
     generated = AI.playlist_generate(features_genres_pdetails)
 
     response = ResponseFormat.filter_ai_response(generated)
-    
-    playlist_url = response.playlist_url
-    
-    #playlist_url = generated.playlist_url
 
+    playlist_url = response.playlist_url
+
+    artist_found = response.artist_found
+
+    if not artist_found:
+        ai_response = constants.ARTIST_NOT_FOUND_MESSAGE
+    else:
+        ai_response = "True"
+    
     return {
-        'playlistUrl': playlist_url
+        'playlistUrl': playlist_url,
+        'AIResponse': ai_response
     }
 
 @app.route('/getTracks')
