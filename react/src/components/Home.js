@@ -20,6 +20,7 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const [typing, setTyping] = useState(true);
   const [playlistUrl, setPlaylistUrl] = useState('');
+  
   const regex = /.*[a-zA-Z]+.*/;
   const [userPic, setUserPic] = useState('');
 
@@ -53,17 +54,32 @@ function Home() {
 
   useLayoutEffect(() => {
     if (!loading && messageContainerRef.current) {
-      console.log("element exists in the DOM, focusing...");
-      console.log(messageContainerRef)
 
-      axios
-      .get('/get_initial_interaction')
+      axios.post('/get_greeting_message', {
+        display_name: displayName,
+      })
       .then((response) => {
 
-        const messageElementAI= createMessageElement(response.data['greetingMessage'], "message-AI", userPic);
-        messageContainerRef.current.appendChild(messageElementAI);
 
-        const questionAI= createMessageElement(response.data['initialQuestion'], "message-AI", userPic);
+        setAIResponse(response.data['greetingMessage']);
+        const questionAI= createMessageElement(response.data['greetingMessage'], "message-AI");
+        messageContainerRef.current.appendChild(questionAI);
+
+        setTyping(false);
+
+      })
+      .catch((error) => {
+        console.error('Error: ', error);
+        setTyping(false);
+      });
+
+      axios
+      .get('/get_initial_question')
+      .then((response) => {
+
+        setAIResponse(response.data['initialQuestion']);
+        const questionAI= createMessageElement(response.data['initialQuestion'], "message-AI");
+
         messageContainerRef.current.appendChild(questionAI);
 
         setTyping(false);
@@ -81,47 +97,67 @@ function Home() {
     lastMessageRef.current?.scrollIntoView();
   }, [userInput]);
 
-  /*
-  function generatePlaylist(){
+
+  function generatePlaylist(currPlaylistDetails){
     axios.post('/generate_playlist', {
-      playlist_details: playlistDetails
+      playlist_details: currPlaylistDetails
     }).then((response) => {
-      setPlaylistUrl(response.data['playlistUrl'])
-      const messageElementAI= createMessageElement(playlistUrl, "message-AI");
+
+      if(response.data['AIResponse'] !== "True"){
+        const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI");
+        messageContainerRef.current.appendChild(messageElementAI);
+      }
+      
+      //TODO JENNY HERE
+      const playlistID = response.data['playlistID']
+      
+      const PURL = response.data['playlistUrl']
+      const messageElementAI= createMessageElement(PURL, "message-AI");
       messageContainerRef.current.appendChild(messageElementAI);
+
     })
+  
   }
-  */
+  
   const handleSubmit = async (event) => {
+    
     event.preventDefault();
     try {
-
       //sending the user input, ask list, and playlist details to backend
       if(userInput && regex.test(userInput)){
         await axios.post('/get_user_input', {
           user_input: userInput,
           ask_for: askFor,
-          p_details: playlistDetails
+          p_details: playlistDetails,
+          ai_response: AIResponse
         }).then((response) => {
+          console.log(response);
 
-          
           setAskFor(response.data['updatedAskList']);
           setPlaylistDetails(response.data['updatedPlaylistDetails']);
           setAIResponse(response.data['AIResponse']);
 
-          console.log(AIResponse)
+          const currAskfor = response.data['updatedAskList'];
+          const currPlaylistDetails = response.data['updatedPlaylistDetails'];
+
+          console.log("playlist deets inside: ", playlistDetails);
+          console.log("ask list inside: ", askFor);        
   
           const messageElementUser = createMessageElement(userInput, "message-user", userPic);
           messageContainerRef.current.appendChild(messageElementUser);
         
           const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI", userPic);
           messageContainerRef.current.appendChild(messageElementAI);
-          /*
-          if(askFor.length == 0 && userMood != null){
-            generatePlaylist(userMood)
+          
+          if(currAskfor.length === 0 && currPlaylistDetails["userMoodOccasion"] != null){
+            console.log("IN GENERATE IF STMNT: ", currPlaylistDetails)
+            generatePlaylist(currPlaylistDetails);
           }
-          */
+
+
         });
+        
+        
   
         //resetting user input in prep for next submit 
         setUserInput('');
@@ -130,6 +166,7 @@ function Home() {
     } catch (error) {
       console.error('Error sending data:', error);
     }
+
   }
 
   return (
@@ -148,7 +185,7 @@ function Home() {
             </div>
             <div className="chat-box">
               <div className="message-cont" ref={messageContainerRef}></div>
-              <div className = "elipses">{typing && <Elipses/>} </div>
+              <div className = "elipses">{<Elipses typing={typing}/>} </div>
               <div ref={lastMessageRef}></div>
             </div>
             <form onSubmit={handleSubmit} className="form-container">
