@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import '../static/Home.scss';
-import {createMessageElement} from './messageCreator';
+import {createMessageElement, createPlaylistElement} from './messageCreator';
 import Shared from './Shared';
 import Loading from './Loading';
 import Elipses from './Elipses';
@@ -62,7 +62,7 @@ function Home() {
 
 
         setAIResponse(response.data['greetingMessage']);
-        const questionAI= createMessageElement(response.data['greetingMessage'], "message-AI");
+        const questionAI= createMessageElement(response.data['greetingMessage'], "message-AI", userPic);
         messageContainerRef.current.appendChild(questionAI);
 
         setTyping(false);
@@ -78,10 +78,9 @@ function Home() {
       .then((response) => {
 
         setAIResponse(response.data['initialQuestion']);
-        const questionAI= createMessageElement(response.data['initialQuestion'], "message-AI");
+        const questionAI= createMessageElement(response.data['initialQuestion'], "message-AI", userPic);
 
         messageContainerRef.current.appendChild(questionAI);
-
         setTyping(false);
 
       })
@@ -104,16 +103,12 @@ function Home() {
     }).then((response) => {
 
       if(response.data['AIResponse'] !== "True"){
-        const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI");
+        const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI", userPic);
         messageContainerRef.current.appendChild(messageElementAI);
       }
-      
-      //TODO JENNY HERE
       const playlistID = response.data['playlistID']
-      
-      const PURL = response.data['playlistUrl']
-      const messageElementAI= createMessageElement(PURL, "message-AI");
-      messageContainerRef.current.appendChild(messageElementAI);
+      const playlistElement = createPlaylistElement(playlistID, "message-AI")
+      messageContainerRef.current.appendChild(playlistElement);
 
     })
   
