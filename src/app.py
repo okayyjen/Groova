@@ -7,8 +7,11 @@ import os
 import SpotifyTools
 import AI
 import dotenv
-from AIPlaylistDetails import PlaylistDetails, generate_question, filter_response, update_details
+from AIPlaylistDetails import PlaylistDetails, generate_question, filter_response, update_details 
 import constants
+from apscheduler.schedulers.background import BackgroundScheduler
+import threading
+import ResponseFormat
 
 from dotenv import load_dotenv
 
@@ -37,9 +40,8 @@ def index():
 def home():
     write_to_dotenv("SPOTIFY_ACCESS_TOKEN")
     write_to_dotenv("SPOTIFY_USER_ID")
-    
-    #print("AI: ", generate_question(constants.ASK_FOR_INITIAL))    
-    
+    refresh_token()
+       
     return redirect('http://localhost:3000/home')
 
 @app.route('/get_display_name')
@@ -47,17 +49,23 @@ def get_display_name():
 
     return SpotifyTools.display_name()
 
-@app.route('/get_initial_interaction')
-def get_initial_AI_response():
+@app.route('/get_greeting_message', methods=["POST"])
+def get_greeting_message():
 
-    display_name = get_display_name()
+    react_input = request.get_json()
+    display_name = react_input['display_name']
 
     greeting_message = constants.GREETING_MESSAGE.format(display_name=display_name)
-    #getting AI question will go here
+
+    return{'greetingMessage': greeting_message}
+
+@app.route('/get_initial_question')
+def get_initial_AI_response():
+
     initial_question = "dookie doo, dookie doo doo?"
-    #question = generate_question(initial_ask_for)
-    #print("DONE ", question)
-    return {'greetingMessage': greeting_message, 'initialQuestion': initial_question}
+    #initial_question = generate_question(initial_ask_for)
+    print("DONE ", initial_question)
+    return {'initialQuestion': initial_question}
 
 @app.route('/get_user_pic')
 def get_user_pic():
@@ -71,23 +79,33 @@ def get_user_input():
 
     print("Input from react: ", react_input)
 
+    ai_prev_question = react_input["ai_response"]
+    ai_prev_question = ai_prev_question + " "
+    
     user_input = react_input["user_input"]
-    ai_response = user_input
+
+    user_input_question = "".join([ai_prev_question, user_input])
+
     playlist_details = set_p_details(react_input["p_details"])
     ask_for = react_input["ask_for"]
 
-    #ask_for, new_details = filter_response(user_input, playlist_details)
-    #playlist_details = update_details(playlist_details, new_details)
-    
+    #ask_for, new_details = filter_response(user_input_question, playlist_details)
+    ask_for, new_details = filter_response(user_input, playlist_details)
+    playlist_details = update_details(playlist_details, new_details)
     
     if ask_for:
-        #ai_response = generate_question(ask_for)
-        print("AI: ", ai_response)     
+        ai_response = generate_question(ask_for)
+        print("AI: ", ai_response)
     else:
-        print("thats everything, thank you!:) i'll get to creating your playlist now")
-        print(ask_for,  ", ", playlist_details)
+        ai_response = constants.WOKRING_MESSAGE 
 
-    #time.sleep(60)
+    time.sleep(45)
+
+    #return{'updatedAskList':[''], 
+    #       'updatedPlaylistDetails':{'playlistName':"Dookie doo",
+    #                                 'artistName':"Spongebob Squarepants",
+    #                                 'userMoodOccasion':""},
+    #        'AIResponse': "YUH!!!"}
 
     return{'updatedAskList':ask_for, 
            'updatedPlaylistDetails':{'playlistName':playlist_details.playlist_name,
@@ -103,16 +121,40 @@ def set_p_details(p_details_dict):
     return p_details
 
 @app.route('/generate_playlist', methods=["POST"])
-def generate_playlist():    
+def generate_playlist():
     react_input = request.get_json()
+
     playlist_details = react_input['playlist_details']
     user_mood = playlist_details['userMoodOccasion']
-    features_and_genres = AI.get_feature_rating(user_mood)
-    playlist_url = AI.playlist_generate(features_and_genres)
-    return {
-        'playlistUrl': playlist_url
-    }
 
+    features_and_genres = AI.get_feature_rating(user_mood)
+
+    playlist_details_str = str(playlist_details)
+    playlist_details_str = playlist_details_str.strip('{}')
+    playlist_details_str = playlist_details_str + " "
+    
+    features_genres_pdetails = "".join([playlist_details_str, features_and_genres])
+
+    generated = AI.playlist_generate(features_genres_pdetails)
+
+    response = ResponseFormat.filter_ai_response(generated)
+
+    playlist_url = response.playlist_url
+
+    playlist_id = response.playlist_id
+
+    artist_found = response.artist_found
+
+    if not artist_found:
+        ai_response = constants.ARTIST_NOT_FOUND_MESSAGE
+    else:
+        ai_response = "True"
+    
+    return {
+        'playlistUrl': playlist_url,
+        'playlistID': playlist_id,
+        'AIResponse': ai_response
+    }
 
 @app.route('/getTracks')
 def getTracks():
@@ -149,17 +191,6 @@ def callback():
     #if neither, handle error in future. For now, return message
     return "something went wrong"
 
-def get_token():
-    token_info = session.get(TOKEN_INFO, None)
-    if not token_info:
-        raise "exception"
-    now = int(time.time())
-    is_expired = token_info['expires_at'] - now < 60
-    if(is_expired):
-        sp_oauth = SpotifyTools.create_spotify_oauth
-        token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
-
-    return token_info
 
 def write_to_dotenv(name):
     if name == "SPOTIFY_ACCESS_TOKEN":
@@ -173,3 +204,21 @@ def write_to_dotenv(name):
     dotenv.load_dotenv(dotenv_file)
     os.environ[name] = string
     dotenv.set_key(dotenv_file, name, os.environ[name])
+
+def get_token():
+    token_info = session.get(TOKEN_INFO, None)
+    if not token_info:
+        raise "exception"
+    now = int(time.time())
+    is_expired = token_info['expires_at'] - now < 60
+    if(is_expired):
+        sp_oauth = SpotifyTools.create_spotify_oauth
+        token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
+
+    return token_info
+
+def refresh_token():
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(get_token, 'interval', minutes=55)
+    scheduler.start()
+

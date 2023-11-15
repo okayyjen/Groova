@@ -16,7 +16,6 @@ redirectURI = os.getenv("SPOTIPY_REDIRECT_URI")
 #do not have this as global variable. create new oauth object for each use
 def create_spotify_oauth():
 
-
     scopes = ["user-top-read", "playlist-modify-private","playlist-modify-public"]
 
     return spotipy.oauth2.SpotifyOAuth(
@@ -117,9 +116,22 @@ def add_tracks(token_info,session,tracks):
 def extract_and_format(response):
     features_pattern = r'(acousticness|danceability|tempo|valence|energy|loudness|liveness|instrumentalness):?\s*(\d+(\.\d+)?)'
     genres_pattern = r'genres:\s*([^,]+(,\s*[^,]+)*)'
+    pdetails_pattern = r"'artistName': '(.*?)', 'playlistName': '(.*?)', 'userMoodOccasion': '(.*?)'"
 
     features_match = re.findall(features_pattern, response)
     genres_match = re.search(genres_pattern, response)
+    pdetails_match = re.search(pdetails_pattern, response)
+
+    if pdetails_match:
+        artist_name = pdetails_match.group(1)
+        playlist_name = pdetails_match.group(2)
+        user_mood_occasion = pdetails_match.group(3)
+
+        pdetails_dict = {
+            'artistName': artist_name,
+            'playlistName': playlist_name,
+            'userMoodOccasion': user_mood_occasion
+    }
 
     for key, value, _ in features_match:
         if key == "valence":
@@ -140,10 +152,28 @@ def extract_and_format(response):
         genres_data = genres_match.group(1).strip().split(', ')
         genres_list = genres_data
 
-    return features_dict, genres_list
+
+    return features_dict, genres_list, pdetails_dict
 
 def recommendations_genres(token_info):
     sp = spotipy.Spotify(auth=token_info['access_token'])
     print(sp.recommendation_genre_seeds())
 
+def get_artist_link(artist_name):
+    token = os.getenv('SPOTIFY_ACCESS_TOKEN')
+    sp = spotipy.Spotify(auth=token)
+    results = sp.search(q=f'artist:{artist_name}', type='artist', limit=1)
+
+    if results['artists']['total'] > 0:
+    # Get the artist URL from the first result
+        artist_url = results['artists']['items'][0]['external_urls']['spotify']
+        print(f"Artist URL: {artist_url}")
+    else:
+        artist_url = None
+
+    return artist_url
+
+def get_playlist_id(playlist_url):
+    token = os.getenv('SPOTIFY_ACCESS_TOKEN')
+    sp = spotipy.Spotify(auth=token)
 
