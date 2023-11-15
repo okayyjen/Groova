@@ -90,18 +90,40 @@
   color: #fff;
 }
 
+#profile-ai, #profile-user{
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 10px;
+    
+}
+
+#div-ai{
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+#div-user{
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
 #message-AI{
+  display: inline-block;
   max-width: 70%; /* Adjust the maximum width of the bubble */
   padding: 10px 15px;
   margin:10px;
   word-wrap: break-word;
   border-radius: 40px 40px 40px 10px;
   background-color: #837191;
-  align-self: flex-start;
-    
+  align-self: flex-start;  
 }
 
 #message-user{
+  display: inline-block;
   max-width: 70%; /* Adjust the maximum width of the bubble */
   padding: 10px 15px;
   margin: 10px;

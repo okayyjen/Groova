@@ -22,6 +22,7 @@ function Home() {
   const [playlistUrl, setPlaylistUrl] = useState('');
   
   const regex = /.*[a-zA-Z]+.*/;
+  const [userPic, setUserPic] = useState('');
 
   useEffect(() => {
     axios
@@ -37,6 +38,20 @@ function Home() {
       });
   }, []);
 
+  useEffect(() => {
+    axios
+      .get('/get_user_pic')
+      .then((response) => {
+        setUserPic(response.data)
+        //if(userPic === "no pfp"){
+        //  setUserPic(require('../images/d.png'))
+        //}
+      })
+      .catch((error) => {
+        console.error('Error: ', error);
+      });
+  }, []);
+
   useLayoutEffect(() => {
     if (!loading && messageContainerRef.current) {
 
@@ -44,6 +59,7 @@ function Home() {
         display_name: displayName,
       })
       .then((response) => {
+
 
         setAIResponse(response.data['greetingMessage']);
         const questionAI= createMessageElement(response.data['greetingMessage'], "message-AI");
@@ -63,6 +79,7 @@ function Home() {
 
         setAIResponse(response.data['initialQuestion']);
         const questionAI= createMessageElement(response.data['initialQuestion'], "message-AI");
+
         messageContainerRef.current.appendChild(questionAI);
 
         setTyping(false);
@@ -80,9 +97,8 @@ function Home() {
     lastMessageRef.current?.scrollIntoView();
   }, [userInput]);
 
-  function generatePlaylist(currPlaylistDetails){
-    console.log("call for generate")
 
+  function generatePlaylist(currPlaylistDetails){
     axios.post('/generate_playlist', {
       playlist_details: currPlaylistDetails
     }).then((response) => {
@@ -92,6 +108,9 @@ function Home() {
         messageContainerRef.current.appendChild(messageElementAI);
       }
       
+      //TODO JENNY HERE
+      const playlistID = response.data['playlistID']
+      
       const PURL = response.data['playlistUrl']
       const messageElementAI= createMessageElement(PURL, "message-AI");
       messageContainerRef.current.appendChild(messageElementAI);
@@ -99,6 +118,7 @@ function Home() {
     })
   
   }
+  
   const handleSubmit = async (event) => {
     
     event.preventDefault();
@@ -121,20 +141,19 @@ function Home() {
           const currPlaylistDetails = response.data['updatedPlaylistDetails'];
 
           console.log("playlist deets inside: ", playlistDetails);
-          console.log("ask list inside: ", askFor);
-        
-          
-          const messageElementUser = createMessageElement(userInput, "message-user");
+          console.log("ask list inside: ", askFor);        
+  
+          const messageElementUser = createMessageElement(userInput, "message-user", userPic);
           messageContainerRef.current.appendChild(messageElementUser);
-
-          const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI");
+        
+          const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI", userPic);
           messageContainerRef.current.appendChild(messageElementAI);
           
-
           if(currAskfor.length === 0 && currPlaylistDetails["userMoodOccasion"] != null){
             console.log("IN GENERATE IF STMNT: ", currPlaylistDetails)
             generatePlaylist(currPlaylistDetails);
           }
+
 
         });
         
