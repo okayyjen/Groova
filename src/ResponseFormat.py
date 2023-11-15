@@ -17,6 +17,10 @@ class ResponseFormat(BaseModel):
     playlist_url: str = Field(
         default="Playlist not found",
         description = "A url to a spotify playlist")
+    playlist_id: str = Field(
+        default="",
+        description="The id of a spotify playlist"
+    )
     artist_found: bool = Field(
         default=False,
         description="a true or false value")

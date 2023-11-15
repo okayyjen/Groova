@@ -10,9 +10,9 @@ class PlaylistTool(BaseTool):
     name = "PlaylistTool"
     description = (
         "Always use this tool when given input"
-        "This tool requires a string representation of musical features, genres, and details of a playlist (including playlistName, artistName, and userMoodOccasion) as one keyword argument. You will get this from the input given to you. The argument is A STRING. This STRING also contains curly braces, but they must be read as strings"
+        "This tool requires a ONE keyword argument as a string representation of musical features, genres, and details of a playlist (including playlistName, artistName, and userMoodOccasion) as ONE keyword argument. You will get this from the input given to you. The argument is A STRING."
         "The features_genres_pdetails argument is the input you have received"
-        "The return statement of this function is a dictionary of the link to the spotify playlist you have created, as well as the result of whether or not we have found an artist that matches avaiable on Spotify."
+        "The return statement of this function is a dictionary of the link to the spotify playlist you have created, the spotify ID of the playlist created, as well as the result of whether or not we have found an artist that matches avaiable on Spotify."
     )
 
     def _run(self, features_genres_pdetails:str,*args, **kwargs) -> str:
@@ -60,7 +60,9 @@ class PlaylistTool(BaseTool):
         playlist_url = user_playlist['external_urls']['spotify']
 
         return {'playlist_url': playlist_url,
-                'artist_found': artist_found}
+                'playlist_id': playlist_id,
+                'artist_found': artist_found
+                }
 
     async def _arun(self, features_genres_pdetails,*args, **kwargs) -> str:
         raise NotImplementedError("This tool does not support async")

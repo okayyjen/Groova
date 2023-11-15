@@ -173,4 +173,7 @@ def get_artist_link(artist_name):
 
     return artist_url
 
+def get_playlist_id(playlist_url):
+    token = os.getenv('SPOTIFY_ACCESS_TOKEN')
+    sp = spotipy.Spotify(auth=token)
 

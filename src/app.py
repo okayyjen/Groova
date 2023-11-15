@@ -62,8 +62,8 @@ def get_greeting_message():
 @app.route('/get_initial_question')
 def get_initial_AI_response():
 
-    #initial_question = "dookie doo, dookie doo doo?"
-    initial_question = generate_question(initial_ask_for)
+    initial_question = "dookie doo, dookie doo doo?"
+    #initial_question = generate_question(initial_ask_for)
     print("DONE ", initial_question)
     return {'initialQuestion': initial_question}
 
@@ -141,6 +141,8 @@ def generate_playlist():
 
     playlist_url = response.playlist_url
 
+    playlist_id = response.playlist_id
+
     artist_found = response.artist_found
 
     if not artist_found:
@@ -150,6 +152,7 @@ def generate_playlist():
     
     return {
         'playlistUrl': playlist_url,
+        'playlistID': playlist_id,
         'AIResponse': ai_response
     }
 
