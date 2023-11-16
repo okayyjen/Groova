@@ -12,7 +12,7 @@ function Home() {
   const [askFor, setAskFor] = useState(['playlist_name', 'artist_name', 'user_mood_occasion']);
   const [playlistDetails, setPlaylistDetails] = useState({
         playlistName:"",
-        artistName:"",
+        artistName:[],
         userMoodOccasion:""});
   const [AIResponse, setAIResponse] = useState(null);
   const messageContainerRef = useRef(null);
