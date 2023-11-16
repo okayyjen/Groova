@@ -111,6 +111,20 @@
   align-items: flex-end;
 }
 
+#div-playlist{
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+#playlist-display{
+  display: flex;
+  width: 60%; /* Adjust the maximum width of the bubble */
+  max-height: 100%;
+  padding: 10px 12px;
+  align-self: flex-end; 
+}
+
 #message-AI{
   display: inline-block;
   max-width: 70%; /* Adjust the maximum width of the bubble */
