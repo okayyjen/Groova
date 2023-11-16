@@ -40,8 +40,7 @@ def index():
 def home():
     write_to_dotenv("SPOTIFY_ACCESS_TOKEN")
     write_to_dotenv("SPOTIFY_USER_ID")
-    refresh_token()
-       
+    refresh_token() 
     return redirect('http://localhost:3000/home')
 
 @app.route('/get_display_name')
@@ -101,21 +100,15 @@ def get_user_input():
 
     time.sleep(45)
 
-    #return{'updatedAskList':[''], 
-    #       'updatedPlaylistDetails':{'playlistName':"Dookie doo",
-    #                                 'artistName':"Spongebob Squarepants",
-    #                                 'userMoodOccasion':""},
-    #        'AIResponse': "YUH!!!"}
-
     return{'updatedAskList':ask_for, 
            'updatedPlaylistDetails':{'playlistName':playlist_details.playlist_name,
-                                     'artistName':playlist_details.artist_name,
+                                     'artistName':playlist_details.artist_names,
                                      'userMoodOccasion':playlist_details.user_mood_occasion},
             'AIResponse': ai_response}
 
 def set_p_details(p_details_dict):
     p_details = PlaylistDetails(playlist_name=p_details_dict["playlistName"],
-                                artist_name=p_details_dict["artistName"],
+                                artist_names=p_details_dict["artistName"],
                                 user_mood_occasion=p_details_dict["userMoodOccasion"])
     
     return p_details
@@ -124,26 +117,19 @@ def set_p_details(p_details_dict):
 def generate_playlist():
     react_input = request.get_json()
 
-    playlist_details = react_input['playlist_details']
-    user_mood = playlist_details['userMoodOccasion']
+    playlist_details_input = react_input['playlist_details']
+    user_mood = playlist_details_input['userMoodOccasion']
 
     features_and_genres = AI.get_feature_rating(user_mood)
+    playlist_details = set_p_details(playlist_details_input)
 
-    playlist_details_str = str(playlist_details)
-    playlist_details_str = playlist_details_str.strip('{}')
-    playlist_details_str = playlist_details_str + " "
-    
-    features_genres_pdetails = "".join([playlist_details_str, features_and_genres])
+    generated = SpotifyTools.create_playlist(features_and_genres, playlist_details)
 
-    generated = AI.playlist_generate(features_genres_pdetails)
+    playlist_url = generated['playlist_url']
 
-    response = ResponseFormat.filter_ai_response(generated)
+    playlist_id = generated['playlist_id']
 
-    playlist_url = response.playlist_url
-
-    playlist_id = response.playlist_id
-
-    artist_found = response.artist_found
+    artist_found = generated['artist_found']
 
     if not artist_found:
         ai_response = constants.ARTIST_NOT_FOUND_MESSAGE

@@ -4,7 +4,6 @@ import os
 import re
 import json
 
-
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -64,8 +63,6 @@ def create_playlist(session, token_info):
 
     return playlist
 
-
-
 #getter for current user's top 20 tracks
 def get_top_tracks(token_info):
     sp = spotipy.Spotify(auth=token_info['access_token'])
@@ -116,23 +113,11 @@ def add_tracks(token_info,session,tracks):
 def extract_and_format(response):
     features_pattern = r'(acousticness|danceability|tempo|valence|energy|loudness|liveness|instrumentalness):?\s*(\d+(\.\d+)?)'
     genres_pattern = r'genres:\s*([^,]+(,\s*[^,]+)*)'
-    pdetails_pattern = r"'artistName': '(.*?)', 'playlistName': '(.*?)', 'userMoodOccasion': '(.*?)'"
+    
 
     features_match = re.findall(features_pattern, response)
     genres_match = re.search(genres_pattern, response)
-    pdetails_match = re.search(pdetails_pattern, response)
-
-    if pdetails_match:
-        artist_name = pdetails_match.group(1)
-        playlist_name = pdetails_match.group(2)
-        user_mood_occasion = pdetails_match.group(3)
-
-        pdetails_dict = {
-            'artistName': artist_name,
-            'playlistName': playlist_name,
-            'userMoodOccasion': user_mood_occasion
-    }
-
+    
     for key, value, _ in features_match:
         if key == "valence":
             if float(value) <= 0.5:
@@ -153,7 +138,7 @@ def extract_and_format(response):
         genres_list = genres_data
 
 
-    return features_dict, genres_list, pdetails_dict
+    return features_dict, genres_list
 
 def recommendations_genres(token_info):
     sp = spotipy.Spotify(auth=token_info['access_token'])
@@ -177,3 +162,52 @@ def get_playlist_id(playlist_url):
     token = os.getenv('SPOTIFY_ACCESS_TOKEN')
     sp = spotipy.Spotify(auth=token)
 
+def create_playlist(features_and_genres, pdetails):
+    user = os.getenv('SPOTIFY_USER_ID')
+    if not user:
+        raise ValueError("SPOTIFY_USER_ID environment variable is not set.")
+        
+    token = os.getenv('SPOTIFY_ACCESS_TOKEN')
+    if not token:
+        raise ValueError("SPOTIFY_ACCESS_TOKEN environment variable is not set.")
+        
+    #convert string dict into dict
+    features_dict, genre_list = extract_and_format(features_and_genres)
+    
+    sp = spotipy.Spotify(auth=token)
+
+    # Create a new empty playlist
+    user_playlist = sp.user_playlist_create(user, pdetails.playlist_name, public=False, collaborative=False, description="Made with Groova")
+
+    #if the user given artist exists, add it to artist_URLs, if not, use user's top artist
+    artist_URLs = []
+
+    artist_names_list = pdetails.artist_names
+
+    for artist in artist_names_list:
+        artist_link = get_artist_link(artist)
+        if artist_link:
+            artist_found = True
+            artist_URLs.append(artist_link)
+
+    if not artist_URLs:
+        artist_found = False
+        top_artists = sp.current_user_top_artists(time_range='medium_term', limit=1)
+        artist_name = top_artists['items'][0]['name']
+        top_artist_url = get_artist_link(artist_name)
+        artist_URLs.append(top_artist_url)
+    
+    #get recommended tracks based on users top artists and features
+    #recommended_tracks = sp.recommendations(seed_artists=artist_URLs, seed_genres= genre_list , limit=20, target_features=features_dict)
+    recommended_tracks = sp.recommendations(seed_artists=artist_URLs, limit=20, target_features=features_dict)
+    recommended_track_uris = [track['uri'] for track in recommended_tracks['tracks']]
+    playlist_id = user_playlist['id']
+
+    #add tracks to playlist
+    sp.playlist_add_items(playlist_id, recommended_track_uris, position=None)
+    playlist_url = user_playlist['external_urls']['spotify']
+
+    return {'playlist_url': playlist_url,
+            'playlist_id': playlist_id,
+            'artist_found': artist_found
+            }
