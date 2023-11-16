@@ -1,0 +1,80 @@
+#logo-text{
+  margin:0;
+  height: 240px;
+  font-family: 'Dongle', sans-serif;
+  font-weight: 700;
+  font-size: 230px;
+}
+
+.text-container {
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  justify-content: center;
+  align-items: center;
+  font-size: 80px;
+  color: white;
+  opacity: 0.8;
+  user-select: none;
+  text-shadow: 1px 1px rgba(0,0,0,0.1);
+  flex-direction: column;
+}
+  
+#subtext{
+  margin:0;
+  font-size: 50px;
+  font-weight: 300;
+}
+
+#btn-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+    
+    
+}
+  
+.Btn { 
+  background-color: #c14be26b;
+  box-shadow: 10px 10px 0px rgb(90, 4, 107);
+  transition-duration: .3s;
+  border-radius: 30px;
+  color: white; /* Example text color */
+  border: none;
+  padding: 10px;
+  width: 260px;
+  height: 60px;
+}
+  
+.Btn:hover {
+  transform: translateY(5px);
+  box-shadow: 3px 3px 0px rgb(90, 4, 107);
+  transition-duration: .3s;
+}
+  
+#btn-contents {
+  display: flex;
+  justify-content: space-around;
+  align-items: center; /* Center vertically */
+  width: 100%;
+}
+  
+.text {
+    
+  text-align: center;
+  margin: 0;
+  font-family: 'Sora', sans-serif;
+  font-weight: 300;
+  font-size: 20px;
+    
+}
+  
+#spotify-logo {
+  flex: 1;
+  max-width: 50%;
+  height: auto;
+}
