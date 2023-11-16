@@ -12,7 +12,7 @@ function Home() {
   const [askFor, setAskFor] = useState(['playlist_name', 'artist_name', 'user_mood_occasion']);
   const [playlistDetails, setPlaylistDetails] = useState({
         playlistName:"",
-        artistName:"",
+        artistName:[],
         userMoodOccasion:""});
   const [AIResponse, setAIResponse] = useState(null);
   const messageContainerRef = useRef(null);
@@ -43,9 +43,7 @@ function Home() {
       .get('/get_user_pic')
       .then((response) => {
         setUserPic(response.data)
-        //if(userPic === "no pfp"){
-        //  setUserPic(require('../images/d.png'))
-        //}
+
       })
       .catch((error) => {
         console.error('Error: ', error);
@@ -149,12 +147,12 @@ function Home() {
           const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI", userPic);
           messageContainerRef.current.appendChild(messageElementAI);
           
+          
           if(currAskfor.length === 0 && currPlaylistDetails["userMoodOccasion"] != null){
             console.log("IN GENERATE IF STMNT: ", currPlaylistDetails)
             generatePlaylist(currPlaylistDetails);
           }
-
-
+          
         });
         
         
