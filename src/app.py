@@ -56,15 +56,26 @@ def get_greeting_message():
 
     greeting_message = constants.GREETING_MESSAGE.format(display_name=display_name)
 
+    input_dict = {'include_greeting': True,
+                      'instructions': (constants.GREETING_INSTRUCTIONS.format(display_name=display_name))
+
+        }
+    
+    greeting_message = AI.generate_message(input_dict)
+    
     return{'greetingMessage': greeting_message}
 
 @app.route('/get_initial_question')
 def get_initial_AI_response():
 
     initial_question = "dookie doo, dookie doo doo?"
-    #initial_question = generate_question(initial_ask_for)
+    #initial_question = generate_question(constants.ASK_FOR_INITIAL)
     print("DONE ", initial_question)
     return {'initialQuestion': initial_question}
+
+@app.route('/initiate_new_playlist')
+def initiate_new_playlist():
+    return 'hi'
 
 @app.route('/get_user_pic')
 def get_user_pic():
@@ -96,7 +107,9 @@ def get_user_input():
         ai_response = generate_question(ask_for)
         print("AI: ", ai_response)
     else:
-        ai_response = constants.WOKRING_MESSAGE 
+        input_dict = {'include_greeting': False,
+                      'instructions': constants.WORKING_INSTRUCTIONS}
+        ai_response = AI.generate_message(input_dict)
 
     time.sleep(45)
 
@@ -129,10 +142,14 @@ def generate_playlist():
 
     playlist_id = generated['playlist_id']
 
-    artist_found = generated['artist_found']
+    artist_not_found_list = generated['artist_not_found_list']
 
-    if not artist_found:
-        ai_response = constants.ARTIST_NOT_FOUND_MESSAGE
+    if artist_not_found_list:
+        #ai_response = constants.ARTIST_NOT_FOUND_MESSAGE
+        input_dict = {'include_greeting': False,
+                      'instructions': constants.ARTIST_NOT_FOUND_INSTRUCTION
+        }
+        ai_response = AI.generate_message(input_dict)
     else:
         ai_response = "True"
     
