@@ -13,12 +13,12 @@ export function createMessageElement(input, divName, profile) {
     const imageSource = profile === "no pfp" ? require('../images/default_pfp.png') : profile;
 
     userProfile.setAttribute('src', imageSource);
-    userProfile.setAttribute('id', "profile-user");
-
+    userProfile.setAttribute('id', "profile-user");    
     textElement.textContent = input;
     textElement.id = "message-text";
 
     messageElement.appendChild(textElement);
+    messageElement.innerHTML = messageElement.innerHTML.replace(/([\uD800-\uDBFF][\uDC00-\uDFFF])/g, '<span id="emoji-container">$1</span>')
     messageElement.id = divName;
 
     if(divName==="message-user"){
