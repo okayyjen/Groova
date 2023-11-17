@@ -14,16 +14,16 @@ import AIPlaylistDetails
 content_chain_1 = PromptTemplate(input_variables=['user_mood'], template=constants.CONTENT_CHAIN_1)
 content_chain_2 = constants.CONTENT_CHAIN_2
 content_chain_3 = PromptTemplate(input_variables=['ask_for'], template=constants.CONTENT_CHAIN_3)
+content_chain_5 = PromptTemplate(input_variables=['include_greeting','instructions'], template=constants.CONTENT_CHAIN_5)
 
 #language model that BOTH chains will be using
 llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-16k")
 
-#initializing information gathering chain (AI form)
-pydantic_chain = create_tagging_chain_pydantic(PlaylistDetails, llm)
-playlist_detail_gathering_chain = LLMChain(prompt=content_chain_3, llm=llm)
-
 #initializing feature rating agent 
 feature_rating_chain = LLMChain(prompt=content_chain_1, llm=llm)
+
+#initializing message chain
+messenger_chain = LLMChain(prompt=content_chain_5, llm=llm)
 
 #initializing tool agent chain (aka second chain/ tool chain)
 tools = [PlaylistTool()]
@@ -57,3 +57,7 @@ def playlist_generate(features_genres_pdetails):
     response = mrkl.run(features_genres_pdetails)
     print('here: ')
     return response
+
+def generate_message(input_dict):
+    message = messenger_chain.run(input_dict)
+    return message
