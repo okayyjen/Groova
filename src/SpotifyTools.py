@@ -85,7 +85,6 @@ def get_song_features(tracks, token_info):
     features = sp.audio_features(tracks_id_list)
     return features
 
-
 def get_recommendations(token_info, top_artists, target_features) -> dict:
     sp = spotipy.Spotify(auth=token_info['access_token'])
 
@@ -114,7 +113,6 @@ def extract_and_format(response):
     features_pattern = r'(acousticness|danceability|tempo|valence|energy|loudness|liveness|instrumentalness):?\s*(\d+(\.\d+)?)'
     genres_pattern = r'genres:\s*([^,]+(,\s*[^,]+)*)'
     
-
     features_match = re.findall(features_pattern, response)
     genres_match = re.search(genres_pattern, response)
     
@@ -181,14 +179,16 @@ def create_playlist(features_and_genres, pdetails):
 
     #if the user given artist exists, add it to artist_URLs, if not, use user's top artist
     artist_URLs = []
-
+    artist_not_found_list = []
     artist_names_list = pdetails.artist_names
-
+    
     for artist in artist_names_list:
         artist_link = get_artist_link(artist)
         if artist_link:
             artist_found = True
             artist_URLs.append(artist_link)
+        else: 
+            artist_not_found_list.append(artist)
 
     if not artist_URLs:
         artist_found = False
@@ -209,5 +209,6 @@ def create_playlist(features_and_genres, pdetails):
 
     return {'playlist_url': playlist_url,
             'playlist_id': playlist_id,
-            'artist_found': artist_found
+            'artist_found': artist_found,
+            'artist_not_found_list': artist_not_found_list
             }
