@@ -23,13 +23,14 @@ function Home() {
   
   const regex = /.*[a-zA-Z]+.*/;
   const [userPic, setUserPic] = useState('');
+  const [greeted, setGreeted] = useState(false);
 
   useEffect(() => {
     axios
       .get('/get_display_name')
       .then((response) => {
         setDisplayName(response.data);
-        
+        console.log("yuh")
         setLoading(false);
       })
       .catch((error) => {
@@ -60,37 +61,42 @@ function Home() {
       })
       .then((response) => {
 
-
         setAIResponse(response.data['greetingMessage']);
-        const questionAI= createMessageElement(response.data['greetingMessage'], "message-AI", userPic);
-        messageContainerRef.current.appendChild(questionAI);
-
-        setTyping(false);
+        const greetingAI= createMessageElement(response.data['greetingMessage'], "message-AI", userPic);
+        messageContainerRef.current.appendChild(greetingAI);
+        console.log("greeting: ", greetingAI);
+        setGreeted(true);
 
       })
       .catch((error) => {
         console.error('Error: ', error);
-        setTyping(false);
+
       });
 
+    }
+  }, [loading]);
+
+  useLayoutEffect(() => {
+    if (!loading && messageContainerRef.current) {
       axios
       .get('/get_initial_question')
       .then((response) => {
 
         setAIResponse(response.data['initialQuestion']);
         const questionAI= createMessageElement(response.data['initialQuestion'], "message-AI", userPic);
-
+        
         messageContainerRef.current.appendChild(questionAI);
+        console.log("question ", questionAI)
         setTyping(false);
 
       })
       .catch((error) => {
         console.error('Error: ', error);
         setTyping(false);
-      });
+      },[]);
 
     }
-  }, [loading]);
+  }, [greeted]);
 
   useEffect(() => {
     lastMessageRef.current?.scrollIntoView();
@@ -180,7 +186,7 @@ function Home() {
             </div>
             <div className="chat-box">
               <div className="message-cont" ref={messageContainerRef}></div>
-              <div className = "elipses">{<Elipses typing={typing}/>} </div>
+                {typing && (<div className="elipses">{<Elipses typing={typing} />}</div>)}
               <div ref={lastMessageRef}></div>
             </div>
             <form onSubmit={handleSubmit} className="form-container">
