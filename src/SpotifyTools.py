@@ -184,6 +184,8 @@ def create_playlist(features_and_genres, pdetails):
     
     for artist in artist_names_list:
         artist_link = get_artist_link(artist)
+        if len(artist_URLs) == 5:
+            break
         if artist_link:
             artist_found = True
             artist_URLs.append(artist_link)
