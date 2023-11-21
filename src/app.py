@@ -59,7 +59,7 @@ def get_greeting_message():
     input_dict = {'include_greeting': True,
                       'instructions': (constants.GREETING_INSTRUCTIONS.format(display_name=display_name))
 
-        }
+                 }
     
     greeting_message = AI.generate_message(input_dict)
     
@@ -114,15 +114,15 @@ def get_user_input():
     time.sleep(45)
 
     return{'updatedAskList':ask_for, 
-           'updatedPlaylistDetails':{'artistNames':playlist_details.artist_names,
-                                     'userMoodOccasion':playlist_details.user_mood_occasion,
+           'updatedPlaylistDetails':{'userMoodOccasion':playlist_details.user_mood_occasion,
+                                     'artistNames':playlist_details.artist_names,
                                      'playlistName':playlist_details.playlist_name
                                      },
             'AIResponse': ai_response}
 
 def set_p_details(p_details_dict):
-    p_details = PlaylistDetails(artist_names=p_details_dict["artistNames"],
-                                user_mood_occasion=p_details_dict["userMoodOccasion"],
+    p_details = PlaylistDetails(user_mood_occasion=p_details_dict["userMoodOccasion"],
+                                artist_names=p_details_dict["artistNames"],
                                 playlist_name=p_details_dict["playlistName"])
     
     return p_details

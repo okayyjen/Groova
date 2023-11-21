@@ -222,7 +222,7 @@ but do not over do it. Your instructions are below.
 ###INSTRUCTIONS: {instructions}
 """
 
-ASK_FOR_INITIAL = [ 'artist_names', 'user_mood_occasion', 'playlist_name']
+ASK_FOR_INITIAL = ['user_mood_occasion', 'artist_names', 'playlist_name']
 
 ###INSCTRUCTIONS & MESSAGES
 

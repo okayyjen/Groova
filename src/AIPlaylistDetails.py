@@ -19,7 +19,7 @@ class PlaylistDetails(BaseModel):
 
     artist_names: List[str] = Field(
         default=None,
-        description="This is a non-empty list of artist names that a user would like to be featured on the playlist"
+        description="This is a list of artist names that a user would like to be featured on the playlist"
     )
 
     playlist_name: str = Field(
