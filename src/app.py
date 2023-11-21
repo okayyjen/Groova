@@ -26,7 +26,6 @@ TOKEN_INFO = "token_info"
 USER_INFO = "user_info"
 ASK_FOR = "ask_for"
 PLAYLIST_DETAILS = "playlist_details"
-initial_ask_for = ['playlist_name', 'artist_name', 'user_mood_occasion']
 
 CORS(app)
 
@@ -36,11 +35,12 @@ Session(app)
 def index():
     return render_template("index.html")
 
-@app.route('/home')
+@app.route('/Home')
 def home():
     write_to_dotenv("SPOTIFY_ACCESS_TOKEN")
     write_to_dotenv("SPOTIFY_USER_ID")
     refresh_token() 
+
     return redirect('http://localhost:3000/home')
 
 @app.route('/get_display_name')
@@ -69,7 +69,7 @@ def get_greeting_message():
 def get_initial_AI_response():
 
     initial_question = "dookie doo, dookie doo doo?"
-    #initial_question = generate_question(constants.ASK_FOR_INITIAL)
+    initial_question = generate_question(constants.ASK_FOR_INITIAL)
     print("DONE ", initial_question)
     return {'initialQuestion': initial_question}
 
@@ -114,15 +114,16 @@ def get_user_input():
     time.sleep(45)
 
     return{'updatedAskList':ask_for, 
-           'updatedPlaylistDetails':{'playlistName':playlist_details.playlist_name,
-                                     'artistName':playlist_details.artist_names,
-                                     'userMoodOccasion':playlist_details.user_mood_occasion},
+           'updatedPlaylistDetails':{'artistNames':playlist_details.artist_names,
+                                     'userMoodOccasion':playlist_details.user_mood_occasion,
+                                     'playlistName':playlist_details.playlist_name
+                                     },
             'AIResponse': ai_response}
 
 def set_p_details(p_details_dict):
-    p_details = PlaylistDetails(playlist_name=p_details_dict["playlistName"],
-                                artist_names=p_details_dict["artistName"],
-                                user_mood_occasion=p_details_dict["userMoodOccasion"])
+    p_details = PlaylistDetails(artist_names=p_details_dict["artistNames"],
+                                user_mood_occasion=p_details_dict["userMoodOccasion"],
+                                playlist_name=p_details_dict["playlistName"])
     
     return p_details
 
@@ -133,7 +134,7 @@ def generate_playlist():
     playlist_details_input = react_input['playlist_details']
     user_mood = playlist_details_input['userMoodOccasion']
 
-    features_and_genres = AI.get_feature_rating(user_mood)
+    features_and_genres = AI.get_feature_rating(user_mood) 
     playlist_details = set_p_details(playlist_details_input)
 
     generated = SpotifyTools.create_playlist(features_and_genres, playlist_details)
@@ -147,7 +148,7 @@ def generate_playlist():
     if artist_not_found_list:
         #ai_response = constants.ARTIST_NOT_FOUND_MESSAGE
         input_dict = {'include_greeting': False,
-                      'instructions': constants.ARTIST_NOT_FOUND_INSTRUCTION
+                      'instructions': constants.ARTIST_NOT_FOUND_INSTRUCTION.format(artist_not_found_list=artist_not_found_list)
         }
         ai_response = AI.generate_message(input_dict)
     else:

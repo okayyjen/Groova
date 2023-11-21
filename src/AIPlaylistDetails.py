@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import List
 import time
 from pydantic import BaseModel, Field
 from langchain import PromptTemplate, LLMChain
@@ -16,9 +17,9 @@ class PlaylistDetails(BaseModel):
         description="This is the mood or the occasion that the playlist will be based on. The user may give any mood or occasion."
     )
 
-    artist_names: list = Field(
-        default=[],
-        description="This is a list of artist names that a user would like to be featured on the playlist"
+    artist_names: List[str] = Field(
+        default=None,
+        description="This is a non-empty list of artist names that a user would like to be featured on the playlist"
     )
 
     playlist_name: str = Field(
