@@ -9,10 +9,10 @@ import Elipses from './Elipses';
 function Home() {
   const [displayName, setDisplayName] = useState('');
   const [userInput, setUserInput] = useState('');
-  const [askFor, setAskFor] = useState(['artist_names', 'user_mood_occasion', 'playlist_name']);
+  const [askFor, setAskFor] = useState(['user_mood_occasion', 'artist_names', 'playlist_name']);
   const [playlistDetails, setPlaylistDetails] = useState({
-        artistNames:[],
         userMoodOccasion:"",
+        artistNames:null,
         playlistName:""
       });
   const [AIResponse, setAIResponse] = useState(null);
@@ -31,7 +31,6 @@ function Home() {
       .get('/get_display_name')
       .then((response) => {
         setDisplayName(response.data);
-        console.log("yuh")
         setLoading(false);
       })
       .catch((error) => {
@@ -45,9 +44,6 @@ function Home() {
       .get('/get_user_pic')
       .then((response) => {
         setUserPic(response.data)
-        //if(userPic === "no pfp"){
-        //  setUserPic(require('../images/d.png'))
-        //}
       })
       .catch((error) => {
         console.error('Error: ', error);
@@ -65,7 +61,7 @@ function Home() {
         setAIResponse(response.data['greetingMessage']);
         const greetingAI= createMessageElement(response.data['greetingMessage'], "message-AI", userPic);
         messageContainerRef.current.appendChild(greetingAI);
-        console.log("greeting: ", greetingAI);
+
         setGreeted(true);
 
       })
@@ -87,7 +83,7 @@ function Home() {
         const questionAI= createMessageElement(response.data['initialQuestion'], "message-AI", userPic);
         
         messageContainerRef.current.appendChild(questionAI);
-        console.log("question ", questionAI)
+
         setTyping(false);
 
       })
@@ -127,13 +123,13 @@ function Home() {
     try {
       //sending the user input, ask list, and playlist details to backend
       if(userInput && regex.test(userInput)){
+
         await axios.post('/get_user_input', {
           user_input: userInput,
           ask_for: askFor,
           p_details: playlistDetails,
           ai_response: AIResponse
         }).then((response) => {
-          console.log(response);
 
           setAskFor(response.data['updatedAskList']);
           setPlaylistDetails(response.data['updatedPlaylistDetails']);
@@ -141,9 +137,6 @@ function Home() {
 
           const currAskfor = response.data['updatedAskList'];
           const currPlaylistDetails = response.data['updatedPlaylistDetails'];
-
-          console.log("playlist deets inside: ", playlistDetails);
-          console.log("ask list inside: ", askFor);        
   
           const messageElementUser = createMessageElement(userInput, "message-user", userPic);
           messageContainerRef.current.appendChild(messageElementUser);
@@ -152,7 +145,6 @@ function Home() {
           messageContainerRef.current.appendChild(messageElementAI);
           
           if(currAskfor.length === 0 && currPlaylistDetails["userMoodOccasion"] != null){
-            console.log("IN GENERATE IF STMNT: ", currPlaylistDetails)
             generatePlaylist(currPlaylistDetails);
           }
         });
@@ -163,7 +155,6 @@ function Home() {
     } catch (error) {
       console.error('Error sending data:', error);
     }
-
   }
 
   return (
