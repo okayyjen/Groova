@@ -9,11 +9,12 @@ import Elipses from './Elipses';
 function Home() {
   const [displayName, setDisplayName] = useState('');
   const [userInput, setUserInput] = useState('');
-  const [askFor, setAskFor] = useState(['playlist_name', 'artist_name', 'user_mood_occasion']);
+  const [askFor, setAskFor] = useState(['artist_names', 'user_mood_occasion', 'playlist_name']);
   const [playlistDetails, setPlaylistDetails] = useState({
-        playlistName:"",
-        artistName:[],
-        userMoodOccasion:""});
+        artistNames:[],
+        userMoodOccasion:"",
+        playlistName:""
+      });
   const [AIResponse, setAIResponse] = useState(null);
   const messageContainerRef = useRef(null);
   const lastMessageRef = useRef(null);
@@ -154,12 +155,7 @@ function Home() {
             console.log("IN GENERATE IF STMNT: ", currPlaylistDetails)
             generatePlaylist(currPlaylistDetails);
           }
-
-
         });
-        
-        
-  
         //resetting user input in prep for next submit 
         setUserInput('');
       }
