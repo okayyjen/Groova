@@ -21,7 +21,6 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const [typing, setTyping] = useState(true);
   const [playlistUrl, setPlaylistUrl] = useState('');
-  
   const regex = /.*[a-zA-Z]+.*/;
   const [userPic, setUserPic] = useState('');
   const [greeted, setGreeted] = useState(false);
@@ -97,8 +96,7 @@ function Home() {
 
   useEffect(() => {
     lastMessageRef.current?.scrollIntoView();
-  }, [userInput]);
-
+  }, [userInput, playlistUrl]);
 
   function generatePlaylist(currPlaylistDetails){
     axios.post('/generate_playlist', {
@@ -109,6 +107,7 @@ function Home() {
         const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI", userPic);
         messageContainerRef.current.appendChild(messageElementAI);
       }
+      setPlaylistUrl(response.data['playlistUrl'])
       const playlistID = response.data['playlistID']
       const playlistElement = createPlaylistElement(playlistID, "message-AI")
       messageContainerRef.current.appendChild(playlistElement);
