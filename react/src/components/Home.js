@@ -117,7 +117,7 @@ function Home() {
   }
   
   const handleSubmit = async (event) => {
-    
+    setTyping(true);
     event.preventDefault();
     try {
       //sending the user input, ask list, and playlist details to backend
@@ -154,6 +154,7 @@ function Home() {
     } catch (error) {
       console.error('Error sending data:', error);
     }
+    setTyping(false);
   }
 
   return (
