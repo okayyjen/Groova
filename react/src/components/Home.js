@@ -184,7 +184,7 @@ function Home() {
                 onChange={(e) => setUserInput(e.target.value)}
                 className="input-bar"
               />
-              <button type="submit" className="submit-button">
+                <button type="submit" className="submit-button" disabled={typing}>
                 <img id="send-icon" src={require('../images/send_icon_groova.png')} alt="spotify logo" />
               </button>
             </form>
