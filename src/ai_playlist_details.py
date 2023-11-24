@@ -1,14 +1,12 @@
-from enum import Enum
 from typing import List
 import time
 from pydantic import BaseModel, Field
-from langchain import PromptTemplate, LLMChain
+from langchain import LLMChain
 from langchain.chat_models import ChatOpenAI
-from langchain.schema.messages import SystemMessage
-from langchain.prompts import MessagesPlaceholder, ChatPromptTemplate, PromptTemplate
+from langchain.prompts import ChatPromptTemplate
 import constants
 from langchain.chat_models import ChatOpenAI
-from langchain.chains import create_tagging_chain, create_tagging_chain_pydantic, LLMChain, TransformChain, SimpleSequentialChain
+from langchain.chains import create_tagging_chain_pydantic, LLMChain
 
 class PlaylistDetails(BaseModel):
     
@@ -31,7 +29,6 @@ content_chain_3 = ChatPromptTemplate.from_template(constants.CONTENT_CHAIN_3)
 
 #language model that ALL chains will be using
 llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-16k")
-
 
 first_prompt = ChatPromptTemplate.from_template(template=constants.CONTENT_CHAIN_3)
 
@@ -60,7 +57,7 @@ def update_details(current_playlist_details: PlaylistDetails, new_playlist_detai
 def generate_question(ask_for):
     # prompt template 1
     first_prompt = ChatPromptTemplate.from_template(
-        """ You are a happy go lucky AI assistant.Below are some things to ask the user for in a conversation way. You should only ask one question at a time even if you don't get all the info \
+        """ You are a happy AI assistant.Below are some things to ask the user for in a conversation way. You should only ask one question at a time even if you don't get all the info \
             don't ask as a list! Don't greet the user! Don't say Hi. If the ask_for list is empty then thank them and let them know you will get to work now. Change up the way you ask the questions,
             and keep the way you're asking positive and fun! The playlist_name does not have to match user_mood_occasion.Do not modify playlist names to match the user's mood / occasion. 
             It is important that you DO NOT modify any of the fields to what you think is appropriate. The user has full creative freedom over the playlist's customization. The user_mood_occasion can
@@ -93,6 +90,13 @@ def filter_response(user_input, playlist_details ):
     print("NEW PLAYLIST DETAILS AFTER UPDATE: ", new_playlist_details)
 
     return ask_for, new_playlist_details
+
+def set_p_details(p_details_dict):
+    p_details = PlaylistDetails(user_mood_occasion=p_details_dict["userMoodOccasion"],
+                                artist_names=p_details_dict["artistNames"],
+                                playlist_name=p_details_dict["playlistName"])
+
+    return p_details
 
 
 

@@ -2,14 +2,13 @@ from langchain import PromptTemplate, LLMChain
 from langchain.agents import initialize_agent, AgentType
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
-from AIPlaylistTool import PlaylistTool
+from ai_playlist_tool import PlaylistTool
 from langchain.schema.messages import SystemMessage
 from langchain.prompts import MessagesPlaceholder
 import constants
 from langchain.chat_models import ChatOpenAI
-from langchain.chains import create_tagging_chain, create_tagging_chain_pydantic, LLMChain, TransformChain, SimpleSequentialChain
-from AIPlaylistDetails import PlaylistDetails
-import AIPlaylistDetails
+from langchain.chains import LLMChain
+import ai_playlist_details
 
 content_chain_1 = PromptTemplate(input_variables=['user_mood'], template=constants.CONTENT_CHAIN_1)
 content_chain_2 = constants.CONTENT_CHAIN_2
@@ -37,27 +36,23 @@ agent_kwargs = {
 memory = ConversationBufferMemory(memory_key="memory", return_messages=True)
 mrkl = initialize_agent(tools, llm, agent=AgentType.OPENAI_FUNCTIONS, agent_kwargs=agent_kwargs, memory=memory, verbose=True)
 
-#functions to run chains and pass chain 1 response to chain 2
-
+#information gathering chain
 def gather_playlist_details(user_input, ask_for, playlist_details):
     if ask_for:
-        print(AIPlaylistDetails.ask_question(ask_for))
-        playlist_details, ask_for = AIPlaylistDetails.filter_response(user_input, playlist_details)
+        print(ai_playlist_details.ask_question(ask_for))
+        playlist_details, ask_for = ai_playlist_details.filter_response(user_input, playlist_details)
         
     return playlist_details
 
-def get_feature_rating(user_prompt):
-    print("thinking...")
+#generative functions
+def generate_feature_rating(user_prompt):
     features_and_genres = feature_rating_chain.run(user_prompt)
-    print('your rating is: ')
     return features_and_genres
-
-def playlist_generate(features_genres_pdetails):
-    print('thinking bout dooks...')
-    response = mrkl.run(features_genres_pdetails)
-    print('here: ')
-    return response
 
 def generate_message(input_dict):
     message = messenger_chain.run(input_dict)
     return message
+
+def generate_playlist_ai(features_genres_pdetails):
+    response = mrkl.run(features_genres_pdetails)
+    return response

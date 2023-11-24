@@ -2,8 +2,6 @@ from flask import url_for
 import spotipy
 import os
 import re
-import json
-
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -12,7 +10,6 @@ clientID = os.getenv("SPOTIPY_CLIENT_ID")
 clientSecret = os.getenv("SPOTIPY_CLIENT_SECRET")
 redirectURI = os.getenv("SPOTIPY_REDIRECT_URI")
 
-#do not have this as global variable. create new oauth object for each use
 def create_spotify_oauth():
 
     scopes = ["user-top-read", "playlist-modify-private","playlist-modify-public"]
@@ -22,7 +19,6 @@ def create_spotify_oauth():
             client_secret=clientSecret,
             redirect_uri=url_for('callback', _external=True),
             scope=' '.join(scopes))
-
 
 def display_name():
     
@@ -39,8 +35,9 @@ def user_pic():
     url = user_info['images'][0]['url'] if user_info['images'] else "no pfp"
     return url
 
-#getter for current user's top 20 artists
+#getter for current user's top 5 artists
 def get_top_artists(token_info):
+
     sp = spotipy.Spotify(auth=token_info['access_token'])
 
     top_artists = sp.current_user_top_artists(time_range='medium_term', limit=5)
@@ -65,6 +62,7 @@ def create_playlist(session, token_info):
 
 #getter for current user's top 20 tracks
 def get_top_tracks(token_info):
+
     sp = spotipy.Spotify(auth=token_info['access_token'])
     top_tracks = sp.current_user_top_tracks(limit=3, offset=0)
     top_tracks_names = [track['name'] for track in top_tracks['items']]
@@ -75,6 +73,7 @@ def get_top_tracks(token_info):
     return top_tracks
 
 def get_song_features(tracks, token_info):
+
     sp = spotipy.Spotify(auth=token_info['access_token'])
 
     tracks_id_list = []
@@ -86,6 +85,7 @@ def get_song_features(tracks, token_info):
     return features
 
 def get_recommendations(token_info, top_artists, target_features) -> dict:
+
     sp = spotipy.Spotify(auth=token_info['access_token'])
 
     artist_URLs = []
@@ -199,8 +199,6 @@ def create_playlist(features_and_genres, pdetails):
         top_artist_url = get_artist_link(artist_name)
         artist_URLs.append(top_artist_url)
     
-    #get recommended tracks based on users top artists and features
-    #recommended_tracks = sp.recommendations(seed_artists=artist_URLs, seed_genres= genre_list , limit=20, target_features=features_dict)
     recommended_tracks = sp.recommendations(seed_artists=artist_URLs, limit=20, target_features=features_dict)
     recommended_track_uris = [track['uri'] for track in recommended_tracks['tracks']]
     playlist_id = user_playlist['id']

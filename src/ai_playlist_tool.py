@@ -1,8 +1,7 @@
-import json
 from langchain.tools.base import BaseTool
 import spotipy
 import os
-import SpotifyTools
+import spotify_tools
 
 class PlaylistTool(BaseTool):
     """Tool that creates a new playlist and adds tracks to it on Spotify based on the given features and genres received on input."""
@@ -27,7 +26,7 @@ class PlaylistTool(BaseTool):
         print("RECEIVED ",features_genres_pdetails)
 
         #convert string dict into dict
-        features_dict, genre_list, pdetails_dict = SpotifyTools.extract_and_format(features_genres_pdetails)
+        features_dict, genre_list, pdetails_dict = spotify_tools.extract_and_format(features_genres_pdetails)
         print("PDEETS DICT: ", pdetails_dict)
         sp = spotipy.Spotify(auth=token)
 
@@ -37,7 +36,7 @@ class PlaylistTool(BaseTool):
         #if the user given artist exists, add it to artist_URLs, if not, use user's top artist
         artist_URLs = []
 
-        preferred_artist_url = SpotifyTools.get_artist_link(pdetails_dict['artistName'])
+        preferred_artist_url = spotify_tools.get_artist_link(pdetails_dict['artistName'])
 
         if(preferred_artist_url):
             artist_found = True
@@ -46,7 +45,7 @@ class PlaylistTool(BaseTool):
             artist_found = False
             top_artists = sp.current_user_top_artists(time_range='medium_term', limit=1)
             artist_name = top_artists['items'][0]['name']
-            top_artist_url = SpotifyTools.get_artist_link(artist_name)
+            top_artist_url = spotify_tools.get_artist_link(artist_name)
             artist_URLs.append(top_artist_url)
             
         #get recommended tracks based on users top artists and features

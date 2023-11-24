@@ -1,4 +1,4 @@
-
+#CONTENT CHAINS
 CONTENT_CHAIN_1 = """
                         ### Instruction:
                         About you:
@@ -234,3 +234,7 @@ WORKING_INSTRUCTIONS = "Tell the user that you have all the information you need
 
 ARTIST_NOT_FOUND_MESSAGE = "I was unable to find the artist you mentioned, so I used some inspiration from your listening habits instead!"
 ARTIST_NOT_FOUND_INSTRUCTION = "Do not change any spelling of the artist's names given to you. Tell the user you were not able to find the artists from this list: {artist_not_found_list} on spotify, so you used some of the user's top artists instead."
+
+#GENERAL
+USER_INFO = "user_info"
+TOKEN_INFO = "token_info"
