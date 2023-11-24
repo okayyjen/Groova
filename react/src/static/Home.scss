@@ -104,7 +104,12 @@
   border-radius: 50%;
   overflow: hidden;
   margin-bottom: 10px;
-    
+  
+}
+
+@media all and (max-width: 965px) {
+  #profile-ai, #profile-user { 
+    display: none; }
 }
 
 #div-ai{
