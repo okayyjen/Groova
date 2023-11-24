@@ -59,3 +59,36 @@ export function createPlaylistElement(playlistID, divName){
     aiElement.appendChild(messageElement);
     return aiElement;
 }
+
+export function createResetMessage(){
+    const messageElement = document.createElement('div');
+    const button = document.createElement('button');
+    const buttonPic = document.createElement("IMG");
+    button.setAttribute('type', "button");
+    button.setAttribute('id', "reset-btn");
+
+    buttonPic.setAttribute('src', require('../images/reset.png'));
+    button.appendChild(buttonPic);
+
+    const textElement = document.createElement('div');
+    textElement.textContent = "would you like to reset?";
+    textElement.id = "message-text";
+
+    const aiProfile = document.createElement("IMG");
+    const aiElement = document.createElement('div');
+    aiProfile.setAttribute('src', require('../images/groova_pfp.png'));
+    aiProfile.setAttribute('id', "profile-ai");
+
+    messageElement.appendChild(textElement);
+    messageElement.appendChild(button);
+    messageElement.id = "message-AI";
+
+    aiElement.id = "div-ai";
+    aiElement.appendChild(aiProfile);
+    aiElement.appendChild(messageElement);
+
+
+    return aiElement;
+
+
+}

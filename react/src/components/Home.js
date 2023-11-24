@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import '../static/Home.scss';
-import {createMessageElement, createPlaylistElement} from './messageCreator';
+import {createMessageElement, createPlaylistElement, createResetMessage} from './ElementCreator';
 import Shared from './Shared';
 import Loading from './Loading';
 import Elipses from './Elipses';
@@ -56,6 +56,9 @@ function Home() {
         display_name: displayName,
       })
       .then((response) => {
+        const resetting= createResetMessage();
+        console.log(resetting);
+        messageContainerRef.current.appendChild(resetting);
 
         setAIResponse(response.data['greetingMessage']);
         const greetingAI= createMessageElement(response.data['greetingMessage'], "message-AI", userPic);
@@ -113,7 +116,16 @@ function Home() {
       messageContainerRef.current.appendChild(playlistElement);
 
     })
-  
+  }
+
+  function reset(){
+    setAskFor(['user_mood_occasion', 'artist_names', 'playlist_name']);
+    setPlaylistDetails({
+      userMoodOccasion:"",
+      artistNames:null,
+      playlistName:""
+    });
+
   }
   
   const handleSubmit = async (event) => {
