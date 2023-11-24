@@ -185,7 +185,7 @@ function Home() {
                 className="input-bar"
               />
                 <button type="submit" className="submit-button" disabled={typing}>
-                <img id="send-icon" src={require('../images/send_icon_groova.png')} alt="spotify logo" />
+                <img id="send-icon" src={typing ? require('../images/pause.png') : require('../images/send_icon_groova.png')} alt="send button icon"/>
               </button>
             </form>
           </div>

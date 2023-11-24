@@ -27,6 +27,10 @@
   border: none;
 }
 
+.submit-button:disabled{
+  background-color: #ccc;
+}
+
 .home-greeting{
   font-size: 40px;
 }
