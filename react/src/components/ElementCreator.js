@@ -92,3 +92,26 @@ export function createResetMessage(){
 
 
 }
+
+export function createResetDiv(resetFunc){
+    const resetElement = document.createElement('div');
+    resetElement.id = "reset-element";
+    const button = document.createElement('button');
+    button.id = "reset-btn";
+
+    button.setAttribute('type', "button");
+    button.setAttribute('id', "reset-btn");
+    //button.setAttribute('onclick', resetFunc);
+    
+    const textElement = document.createElement('div');
+    textElement.textContent = "Create New Playlist";
+    textElement.id = "btn-text";
+
+    button.appendChild(textElement);
+
+    //resetElement.appendChild(textElement);
+    resetElement.appendChild(button);
+    button.addEventListener("click", resetFunc);
+    //return resetElement;
+    return {'resetElement': resetElement, 'buttonRef': button};
+}

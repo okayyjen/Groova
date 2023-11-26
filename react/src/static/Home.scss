@@ -161,6 +161,39 @@
   align-self: flex-end;
 }
 
+#reset-element {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 30px;
+}
+
+#reset-btn { 
+  background-color: #837191;
+  box-shadow: 10px 10px 0px rgb(65, 37, 82);;
+  transition-duration: .3s;
+  border-radius: 30px;
+  color: white; 
+  border: none;
+  padding: 10px;
+  width: 260px;
+  height: 60px;
+}
+  
+#reset-btn:hover {
+  transform: translateY(5px);
+  box-shadow: 3px 3px 0px rgb(65, 37, 82);;
+  transition-duration: .3s;
+}
+
+#btn-text{
+  text-align: center;
+  margin: 0;
+  font-family: 'Sora', sans-serif;
+  font-weight: 300;
+  font-size: 20px;
+}
+
 #send-icon{
   padding-top: 1px;
   padding-right: 1px;

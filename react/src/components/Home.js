@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import '../static/Home.scss';
-import {createMessageElement, createPlaylistElement, createResetMessage} from './ElementCreator';
+import {createMessageElement, createPlaylistElement, createResetDiv} from './ElementCreator';
 import Shared from './Shared';
 import Loading from './Loading';
 import Elipses from './Elipses';
@@ -24,7 +24,9 @@ function Home() {
   const regex = /.*[a-zA-Z]+.*/;
   const [userPic, setUserPic] = useState('');
   const [greeted, setGreeted] = useState(false);
-
+  const [resetClicked, setResetClicked] = useState(false);
+  const [disabled, setDisabled] = useState(false);
+  const [buttonRef, setButtonRef] = useState(null);
   useEffect(() => {
     axios
       .get('/get_display_name')
@@ -56,9 +58,6 @@ function Home() {
         display_name: displayName,
       })
       .then((response) => {
-        const resetting= createResetMessage();
-        console.log(resetting);
-        messageContainerRef.current.appendChild(resetting);
 
         setAIResponse(response.data['greetingMessage']);
         const greetingAI= createMessageElement(response.data['greetingMessage'], "message-AI", userPic);
@@ -76,6 +75,25 @@ function Home() {
   }, [loading]);
 
   useLayoutEffect(() => {
+    initialQuestion();
+    setTyping(false);
+  }, [greeted]);
+
+  useEffect(() => {
+    setTyping(true);
+    if (resetClicked && !disabled){
+      initialQuestion()
+      setTyping(false);
+      setDisabled(true);
+      //setResetClicked(false);
+      console.log(typeof(buttonRef));
+      //buttonRef.disabled = true;
+    }
+    console.log(disabled);
+    console.log(resetClicked);
+  },[resetClicked])
+
+  const initialQuestion = () =>{
     if (!loading && messageContainerRef.current) {
       axios
       .get('/get_initial_question')
@@ -83,23 +101,20 @@ function Home() {
 
         setAIResponse(response.data['initialQuestion']);
         const questionAI= createMessageElement(response.data['initialQuestion'], "message-AI", userPic);
-        
-        messageContainerRef.current.appendChild(questionAI);
 
-        setTyping(false);
+        messageContainerRef.current.appendChild(questionAI);
 
       })
       .catch((error) => {
         console.error('Error: ', error);
-        setTyping(false);
       },[]);
 
     }
-  }, [greeted]);
+  };
 
   useEffect(() => {
     lastMessageRef.current?.scrollIntoView();
-  }, [userInput, playlistUrl]);
+  }, [userInput, playlistUrl, typing, messageContainerRef]);
 
   function generatePlaylist(currPlaylistDetails){
     axios.post('/generate_playlist', {
@@ -110,11 +125,16 @@ function Home() {
         const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI", userPic);
         messageContainerRef.current.appendChild(messageElementAI);
       }
-      setPlaylistUrl(response.data['playlistUrl'])
+      
       const playlistID = response.data['playlistID']
       const playlistElement = createPlaylistElement(playlistID, "message-AI")
       messageContainerRef.current.appendChild(playlistElement);
-
+      setPlaylistUrl(response.data['playlistUrl'])
+      const resetDict = createResetDiv(reset);
+      const resetElement = resetDict['resetElement'];
+      const button = resetDict['button'];
+      messageContainerRef.current.appendChild(resetElement);
+      setButtonRef(button)
     })
   }
 
@@ -125,7 +145,8 @@ function Home() {
       artistNames:null,
       playlistName:""
     });
-
+    setResetClicked(true);
+    setDisabled(false);
   }
   
   const handleSubmit = async (event) => {
@@ -158,6 +179,9 @@ function Home() {
           if(currAskfor.length === 0 && currPlaylistDetails["userMoodOccasion"] != null){
             generatePlaylist(currPlaylistDetails);
           }
+          else{
+            setTyping(false);
+          }
         });
         //resetting user input in prep for next submit 
         setUserInput('');
@@ -166,7 +190,6 @@ function Home() {
     } catch (error) {
       console.error('Error sending data:', error);
     }
-    setTyping(false);
   }
 
   return (
