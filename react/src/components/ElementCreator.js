@@ -1,3 +1,5 @@
+import ResetButton from './ResetButton';
+
 export function createMessageElement(input, divName, profile) {
     const messageElement = document.createElement('div');
     const textElement = document.createElement('div');
@@ -114,4 +116,8 @@ export function createResetDiv(resetFunc){
     button.addEventListener("click", resetFunc);
     //return resetElement;
     return {'resetElement': resetElement, 'buttonRef': button};
+}
+
+export function createResetDivComponent(condition, handleClick){
+    return <ResetButton condition={condition} onClick={handleClick} />
 }

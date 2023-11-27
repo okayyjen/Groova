@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import '../static/Home.scss';
-import {createMessageElement, createPlaylistElement, createResetDiv} from './ElementCreator';
+import {createMessageElement, createPlaylistElement, createResetDiv, createResetDivComponent} from './ElementCreator';
 import Shared from './Shared';
 import Loading from './Loading';
 import Elipses from './Elipses';
+import ResetButton from './ResetButton';
 
 function Home() {
   const [displayName, setDisplayName] = useState('');
@@ -24,9 +25,9 @@ function Home() {
   const regex = /.*[a-zA-Z]+.*/;
   const [userPic, setUserPic] = useState('');
   const [greeted, setGreeted] = useState(false);
-  const [resetClicked, setResetClicked] = useState(false);
   const [disabled, setDisabled] = useState(false);
-  const [buttonRef, setButtonRef] = useState(null);
+  const [playlistComplete, setPlaylistComplete] = useState(false);
+
   useEffect(() => {
     axios
       .get('/get_display_name')
@@ -79,21 +80,10 @@ function Home() {
     setTyping(false);
   }, [greeted]);
 
-  useEffect(() => {
-    setTyping(true);
-    if (resetClicked && !disabled){
-      initialQuestion()
-      setTyping(false);
-      setDisabled(true);
-      //setResetClicked(false);
-      console.log(typeof(buttonRef));
-      //buttonRef.disabled = true;
-    }
-    console.log(disabled);
-    console.log(resetClicked);
-  },[resetClicked])
-
-  const initialQuestion = () =>{
+  
+  
+  const initialQuestion = async () =>{
+    
     if (!loading && messageContainerRef.current) {
       axios
       .get('/get_initial_question')
@@ -103,6 +93,8 @@ function Home() {
         const questionAI= createMessageElement(response.data['initialQuestion'], "message-AI", userPic);
 
         messageContainerRef.current.appendChild(questionAI);
+
+        setTyping(false);
 
       })
       .catch((error) => {
@@ -130,11 +122,7 @@ function Home() {
       const playlistElement = createPlaylistElement(playlistID, "message-AI")
       messageContainerRef.current.appendChild(playlistElement);
       setPlaylistUrl(response.data['playlistUrl'])
-      const resetDict = createResetDiv(reset);
-      const resetElement = resetDict['resetElement'];
-      const button = resetDict['button'];
-      messageContainerRef.current.appendChild(resetElement);
-      setButtonRef(button)
+      setPlaylistComplete(true);
     })
   }
 
@@ -145,8 +133,9 @@ function Home() {
       artistNames:null,
       playlistName:""
     });
-    setResetClicked(true);
+    initialQuestion();
     setDisabled(false);
+    setPlaylistComplete(false);
   }
   
   const handleSubmit = async (event) => {
@@ -155,6 +144,11 @@ function Home() {
     try {
       //sending the user input, ask list, and playlist details to backend
       if(userInput && regex.test(userInput)){
+
+        const messageElementUser = createMessageElement(userInput, "message-user", userPic);
+        messageContainerRef.current.appendChild(messageElementUser);
+        //resetting user input in prep for next submit 
+        setUserInput('');
 
         await axios.post('/get_user_input', {
           user_input: userInput,
@@ -169,10 +163,7 @@ function Home() {
 
           const currAskfor = response.data['updatedAskList'];
           const currPlaylistDetails = response.data['updatedPlaylistDetails'];
-  
-          const messageElementUser = createMessageElement(userInput, "message-user", userPic);
-          messageContainerRef.current.appendChild(messageElementUser);
-        
+
           const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI", userPic);
           messageContainerRef.current.appendChild(messageElementAI);
           
@@ -183,8 +174,6 @@ function Home() {
             setTyping(false);
           }
         });
-        //resetting user input in prep for next submit 
-        setUserInput('');
       }
       
     } catch (error) {
@@ -208,6 +197,7 @@ function Home() {
             </div>
             <div className="chat-box">
               <div className="message-cont" ref={messageContainerRef}></div>
+                {playlistComplete && (<ResetButton onClick = {reset} ></ResetButton>)}
                 {typing && (<div className="elipses">{<Elipses typing={typing} />}</div>)}
               <div ref={lastMessageRef}></div>
             </div>
