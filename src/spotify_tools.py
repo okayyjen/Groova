@@ -156,9 +156,56 @@ def get_artist_link(artist_name):
 
     return artist_url
 
+def get_song_link(song_name):
+    token = os.getenv('SPOTIFY_ACCESS_TOKEN')
+    sp = spotipy.Spotify(auth=token)
+    results = sp.search(q=song_name, type='track', limit=1)
+
+    if results['tracks']['total'] > 0:
+        #Get the song URL from the first result
+        song_url = results['tracks']['items'][0]['external_urls']['spotify']
+    else:
+        song_url = None
+
+    return song_url
+
+
 def get_playlist_id(playlist_url):
     token = os.getenv('SPOTIFY_ACCESS_TOKEN')
     sp = spotipy.Spotify(auth=token)
+
+def create_playlist_song_list(song_list, playlist_name):
+
+    user = os.getenv('SPOTIFY_USER_ID')
+    if not user:
+        raise ValueError("SPOTIFY_USER_ID environment variable is not set.")
+        
+    token = os.getenv('SPOTIFY_ACCESS_TOKEN')
+    if not token:
+        raise ValueError("SPOTIFY_ACCESS_TOKEN environment variable is not set.")
+    
+    sp = spotipy.Spotify(auth=token)
+
+    # Create a new empty playlist
+    user_playlist = sp.user_playlist_create(user, playlist_name, public=False, collaborative=False, description="Made with Groova")
+    playlist_id = user_playlist['id']
+
+    song_URLs = []
+    #if the user given song exists, add it to song_URLs
+    for song in song_list:
+        song_link = get_song_link(song)
+
+        if song_link:
+            song_URLs.append(song_link)
+
+    #add tracks to playlist
+    sp.playlist_add_items(playlist_id, song_URLs, position=None)
+    playlist_url = user_playlist['external_urls']['spotify']
+
+    return {'playlist_url': playlist_url,
+            'playlist_id': playlist_id
+            }
+
 
 def create_playlist(features_and_genres, pdetails):
     user = os.getenv('SPOTIFY_USER_ID')
