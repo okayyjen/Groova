@@ -21,6 +21,7 @@ function Home() {
   const lastMessageRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [typing, setTyping] = useState(true);
+  const [pause, setPause] = useState(true);
   const [playlistUrl, setPlaylistUrl] = useState('');
   const regex = /.*[a-zA-Z]+.*/;
   const [userPic, setUserPic] = useState('');
@@ -77,11 +78,14 @@ function Home() {
 
   useLayoutEffect(() => {
     initialQuestion();
-    setTyping(false);
   }, [greeted]);
 
-  
-  
+  useEffect(() => {
+    if(playlistComplete === true){
+      setTyping(false);
+    }
+  }, [playlistComplete]);
+
   const initialQuestion = async () =>{
     
     if (!loading && messageContainerRef.current) {
@@ -95,6 +99,7 @@ function Home() {
         messageContainerRef.current.appendChild(questionAI);
 
         setTyping(false);
+        setPause(false);
 
       })
       .catch((error) => {
@@ -133,6 +138,7 @@ function Home() {
       artistNames:null,
       playlistName:""
     });
+    setTyping(true);
     initialQuestion();
     setDisabled(false);
     setPlaylistComplete(false);
@@ -140,6 +146,7 @@ function Home() {
   
   const handleSubmit = async (event) => {
     setTyping(true);
+    setPause(true);
     event.preventDefault();
     try {
       //sending the user input, ask list, and playlist details to backend
@@ -209,8 +216,8 @@ function Home() {
                 onChange={(e) => setUserInput(e.target.value)}
                 className="input-bar"
               />
-                <button type="submit" className="submit-button" disabled={typing}>
-                <img id="send-icon" src={typing ? require('../images/pause.png') : require('../images/send_icon_groova.png')} alt="send button icon"/>
+                <button type="submit" className="submit-button" disabled={pause}>
+                <img id="send-icon" src={pause ? require('../images/pause.png') : require('../images/send_icon_groova.png')} alt="send button icon"/>
               </button>
             </form>
           </div>
