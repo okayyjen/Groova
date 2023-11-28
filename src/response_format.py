@@ -1,4 +1,5 @@
 import time
+from typing import List
 from pydantic import BaseModel, Field
 from langchain.chains import create_tagging_chain_pydantic
 import time
@@ -8,22 +9,15 @@ from langchain.chat_models import ChatOpenAI
 from langchain.chains import create_tagging_chain_pydantic
 
 class ResponseFormat(BaseModel):
-    playlist_url: str = Field(
-        default="Playlist not found",
-        description = "A url to a spotify playlist")
-    playlist_id: str = Field(
-        default="",
-        description="The id of a spotify playlist"
-    )
-    artist_found: bool = Field(
-        default=False,
-        description="a true or false value")
+    song_list: List[str] = Field(
+        default=None,
+        description = "A list of 45 song names. No artist names included.")
+
 
 def filter_ai_response(user_input):
-    llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-16k")
-    time.sleep(60)   
+    print("before: ", user_input)
+    llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
     chain = create_tagging_chain_pydantic(ResponseFormat, llm)
-    time.sleep(25)   
     response = chain.run(user_input)  
-    
+    print("after: ", response.song_list)
     return response
