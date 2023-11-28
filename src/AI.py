@@ -9,14 +9,20 @@ import constants
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
 import ai_playlist_details
+import response_format
 
 content_chain_1 = PromptTemplate(input_variables=['user_mood'], template=constants.CONTENT_CHAIN_1)
 content_chain_2 = constants.CONTENT_CHAIN_2
 content_chain_3 = PromptTemplate(input_variables=['ask_for'], template=constants.CONTENT_CHAIN_3)
 content_chain_5 = PromptTemplate(input_variables=['include_greeting','instructions'], template=constants.CONTENT_CHAIN_5)
 
+content_chain_1_new = PromptTemplate(input_variables=['keywords'], template=constants.CONTENT_CHAIN_CHAIN_NEW)
+
 #language model that BOTH chains will be using
-llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-16k")
+llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
+
+#new AI TESTING agent
+song_curator = LLMChain(prompt=content_chain_1_new, llm=llm)
 
 #initializing feature rating agent 
 feature_rating_chain = LLMChain(prompt=content_chain_1, llm=llm)
@@ -56,3 +62,10 @@ def generate_message(input_dict):
 def generate_playlist_ai(features_genres_pdetails):
     response = mrkl.run(features_genres_pdetails)
     return response
+
+def curate_songs(keywords):
+    song_list = song_curator.run(keywords)
+
+    song_list_filtered = response_format.filter_ai_response(song_list)
+
+    return song_list_filtered

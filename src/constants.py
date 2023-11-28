@@ -1,4 +1,23 @@
 #CONTENT CHAINS
+CONTENT_CHAIN_CHAIN_NEW = """
+
+###Instructions:
+
+You are an AI agent tasked with curating a playlist of 45 songs based on a list of given keywords. The keywords will include artist names, moods, and occasions. You must select
+songs that match these keywords. When given artist keywords, do not  give songs exclusively by that specific artist. You should also include songs by other artists that align 
+with the keyword artist. The songs genre, artist and themes should intersect with as many keywords as possible. Each keyword must be used when curating the playlist. All given 
+keyword artists must be included. Actual titles of songs do not necessarily need to include the keywords as long as the themes of the song match.
+
+
+### List of keywords:
+{keywords}
+
+
+
+###
+
+"""
+
 CONTENT_CHAIN_1 = """
                         ### Instruction:
                         About you:
