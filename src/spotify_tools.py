@@ -1,8 +1,13 @@
+from datetime import datetime
 from flask import url_for
 import spotipy
 import os
 import re
 from dotenv import load_dotenv
+import requests
+from lyricsgenius import Genius
+import random
+import response_format
 
 load_dotenv()
 
@@ -156,25 +161,74 @@ def get_artist_link(artist_name):
 
     return artist_url
 
-def get_song_link(song_name):
+def get_song_link(song_name, artist_list):
     token = os.getenv('SPOTIFY_ACCESS_TOKEN')
     sp = spotipy.Spotify(auth=token)
-    results = sp.search(q=song_name, type='track', limit=1)
-
+    
+    query = f"{song_name} AND {artist_list}"
+    results = sp.search(q=query, type='track', limit=1)
+    song_url = None
     if results['tracks']['total'] > 0:
         #Get the song URL from the first result
-        song_url = results['tracks']['items'][0]['external_urls']['spotify']
-    else:
-        song_url = None
+        track = results['tracks']['items'][0]
+        if track['name'].lower() == song_name.lower() and artist_list[0].lower() in track['artists'][0]['name'].lower():
+            song_url = results['tracks']['items'][0]['external_urls']['spotify']
 
     return song_url
+
+def get_artist_id(artist_name):
+    token = os.getenv('SPOTIFY_ACCESS_TOKEN')
+    sp = spotipy.Spotify(auth=token)
+
+    results = sp.search(q=artist_name, type='artist', limit=1)
+    
+    # Extract the artist ID from the search results
+    if results['artists']['items']:
+        return results['artists']['items'][0]['id']
+    else:
+        return None
+
+def get_artist_recent_discography(artist_name):
+    token = os.getenv('SPOTIFY_ACCESS_TOKEN')
+    sp = spotipy.Spotify(auth=token)
+
+    artist_id = get_artist_id(artist_name)
+
+    albums = sp.artist_albums(artist_id, album_type='album', limit=10)
+    albums_recent = []
+    for album in albums['items']:
+
+        string = album['release_date']
+        date = datetime.strptime(string, "%Y-%m-%d")
+
+        if date.year < 2023:
+            albums_recent.append(album)
+
+    songs = []
+    for album in albums_recent:
+        album_tracks = sp.album_tracks(album['id'])
+        
+        for track in album_tracks['items']:
+
+            song_name = track['name']
+            songs.append(song_name)
+
+    return songs
+
+def get_lyrics(song_title, artist_name):
+    genius_token = os.getenv('SPOTIFY_USER_ID')
+    genius = Genius(genius_token)
+    song = genius.search_song(song_title, artist_name)
+
+    return song.lyrics
+    
 
 
 def get_playlist_id(playlist_url):
     token = os.getenv('SPOTIFY_ACCESS_TOKEN')
     sp = spotipy.Spotify(auth=token)
 
-def create_playlist_song_list(song_list, playlist_name):
+def create_playlist_song_list(song_info_list, playlist_name):
 
     user = os.getenv('SPOTIFY_USER_ID')
     if not user:
@@ -192,11 +246,24 @@ def create_playlist_song_list(song_list, playlist_name):
 
     song_URLs = []
     #if the user given song exists, add it to song_URLs
-    for song in song_list:
-        song_link = get_song_link(song)
+    for song_info in song_info_list:
+        song_link = get_song_link(song_info.song_name, song_info.artist_name_list)
 
-        if song_link:
+        if song_link and song_link not in song_URLs:
             song_URLs.append(song_link)
+        
+        if len(song_URLs) == 30:
+            break
+
+    if song_URLs:
+        random.shuffle(song_URLs)
+
+    if len(song_URLs) < 30:
+        extra = 30 - len(song_URLs)
+        recommended_tracks = sp.recommendations(seed_tracks=song_URLs[:5], limit=extra)
+        recommended_track_uris = [track['uri'] for track in recommended_tracks['tracks']]
+        
+        song_URLs.extend(recommended_track_uris)
 
     #add tracks to playlist
     sp.playlist_add_items(playlist_id, song_URLs, position=None)
