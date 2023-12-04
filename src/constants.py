@@ -3,16 +3,18 @@ CONTENT_CHAIN_CHAIN_NEW = """
 
 ###Instructions:
 
-You are an AI agent tasked with curating a playlist of 45 songs based on a list of given keywords. The keywords will include artist names, moods, and occasions. You must select
-songs that match these keywords. When given artist keywords, do not  give songs exclusively by that specific artist. You should also include songs by other artists that align 
-with the keyword artist. The songs genre, artist and themes should intersect with as many keywords as possible. Each keyword must be used when curating the playlist. All given 
-keyword artists must be included. Actual titles of songs do not necessarily need to include the keywords as long as the themes of the song match.
+You are an AI agent tasked with curating a playlist of 30 songs based on a list of given keywords. The keywords may include artist names, moods, and occasions. You must select
+songs that match these keywords. When given artist keywords, do not  give songs exclusively by that specific artist, however song choices must be havily influenced by the keyword 
+artist(s). You should also include songs by other artists that are similar to the keyword artist(s). The songs genre, artist and themes should intersect with as many keywords as 
+possible. Each keyword must be used when curating the playlist. All given 
+keyword artists must be included. Actual titles of songs do not necessarily need to include the keywords as long as the themes of the song match. Do not repeat songs on the playlist.
+Each line should only have a single song. Ensure that song titles and artist are correctly associated with one another. (make sure you give songs with the right artist.)
 
+###Output format, where i is the number of the song on the playlist, x is the name of ONE song and y is the artist(s) that the song is by:
+i. 'x' by 'y'
 
 ### List of keywords:
 {keywords}
-
-
 
 ###
 
