@@ -28,7 +28,7 @@ class PlaylistDetails(BaseModel):
 content_chain_3 = ChatPromptTemplate.from_template(constants.CONTENT_CHAIN_3)
 
 #language model that ALL chains will be using
-llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-16k")
+llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
 
 first_prompt = ChatPromptTemplate.from_template(template=constants.CONTENT_CHAIN_3)
 
@@ -68,7 +68,7 @@ def generate_question(ask_for):
     # a chain used for gathering a users playlist details
     question_generating_chain = LLMChain(llm=llm, prompt=first_prompt)
     print("RUNNING QUESTION CHAIN WITH THIS LIST: ", ask_for)
-    time.sleep(30)
+    
     question = question_generating_chain.run(ask_for)
     
     return question
@@ -77,10 +77,9 @@ def generate_question(ask_for):
 # it then filters the user response, and extracts relevant playlist details, and adds them to the user's current playlist details object.
 # the return is the users updated playlist details, and the new ask_for list containing missing details 
 def filter_response(user_input, playlist_details ):
-    time.sleep(25)
     
     chain = create_tagging_chain_pydantic(PlaylistDetails, llm, prompt=ChatPromptTemplate.from_template(constants.CONTENT_CHAIN_4))
-    time.sleep(25)
+    
     res = chain.run(user_input)
     # add filtered info to the
     new_playlist_details = update_details(playlist_details,res)
