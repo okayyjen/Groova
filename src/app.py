@@ -58,21 +58,14 @@ def get_greeting_message():
 
                  }
     
-    greeting_message = ai.generate_message(input_dict)
-    
     return{'greetingMessage': greeting_message}
 
 @app.route('/get_initial_question')
 def get_initial_AI_response():
 
     initial_question = generate_question(constants.ASK_FOR_INITIAL)
-
+    
     return {'initialQuestion': initial_question}
-
-#TODO reset function here
-@app.route('/initiate_new_playlist')
-def initiate_new_playlist():
-    return 'hi'
 
 @app.route('/get_user_pic')
 def get_user_pic():
@@ -107,8 +100,6 @@ def get_user_input():
                       'instructions': constants.WORKING_INSTRUCTIONS}
         ai_response = ai.generate_message(input_dict)
 
-    time.sleep(45)
-
     return{'updatedAskList':ask_for, 
            'updatedPlaylistDetails':{'userMoodOccasion':playlist_details.user_mood_occasion,
                                      'artistNames':playlist_details.artist_names,
@@ -118,35 +109,21 @@ def get_user_input():
 
 @app.route('/generate_playlist', methods=["POST"])
 def generate_playlist():
+
     react_input = request.get_json()
-
     playlist_details_input = react_input['playlist_details']
-    user_mood = playlist_details_input['userMoodOccasion']
 
-    features_and_genres = ai.generate_feature_rating(user_mood) 
-    playlist_details = set_p_details(playlist_details_input)
+    keywords_list = playlist_details_input['artistNames']
+    keywords_list.append(playlist_details_input['userMoodOccasion'])
 
-    generated = spotify_tools.create_playlist(features_and_genres, playlist_details)
-
-    playlist_url = generated['playlist_url']
-
-    playlist_id = generated['playlist_id']
-
-    artist_not_found_list = generated['artist_not_found_list']
-
-    if artist_not_found_list:
-        #ai_response = constants.ARTIST_NOT_FOUND_MESSAGE
-        input_dict = {'include_greeting': False,
-                      'instructions': constants.ARTIST_NOT_FOUND_INSTRUCTION.format(artist_not_found_list=artist_not_found_list)
-        }
-        ai_response = ai.generate_message(input_dict)
-    else:
-        ai_response = "True"
+    songs = ai.curate_songs(keywords_list)
     
+    playlist = spotify_tools.create_playlist_song_list(songs.song_list, playlist_details_input['playlistName'])
+
     return {
-        'playlistUrl': playlist_url,
-        'playlistID': playlist_id,
-        'AIResponse': ai_response
+        'playlistUrl': playlist['playlist_url'],
+        'playlistID': playlist['playlist_id'],
+        'AIResponse': 'donezo: '
     }
 
 @app.route('/getTracks')

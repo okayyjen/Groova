@@ -1,5 +1,5 @@
-from langchain import PromptTemplate, LLMChain
-from langchain.agents import initialize_agent, AgentType
+from langchain import PromptTemplate, LLMChain, OpenAI, SerpAPIWrapper
+from langchain.agents import initialize_agent, AgentType, Tool
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 from ai_playlist_tool import PlaylistTool
@@ -10,6 +10,8 @@ from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
 import ai_playlist_details
 import response_format
+from ai_lyric_tool import LyricSearch, get_lyrics
+from langchain.tools.base import StructuredTool
 
 content_chain_1 = PromptTemplate(input_variables=['user_mood'], template=constants.CONTENT_CHAIN_1)
 content_chain_2 = constants.CONTENT_CHAIN_2
@@ -22,7 +24,7 @@ content_chain_1_new = PromptTemplate(input_variables=['keywords'], template=cons
 llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
 
 #new AI TESTING agent
-song_curator = LLMChain(prompt=content_chain_1_new, llm=llm)
+song_curator = LLMChain(prompt=content_chain_1_new, llm=llm, verbose=True)
 
 #initializing feature rating agent 
 feature_rating_chain = LLMChain(prompt=content_chain_1, llm=llm)
@@ -31,16 +33,36 @@ feature_rating_chain = LLMChain(prompt=content_chain_1, llm=llm)
 messenger_chain = LLMChain(prompt=content_chain_5, llm=llm)
 
 #initializing tool agent chain (aka second chain/ tool chain)
-tools = [PlaylistTool()]
+toolss = [PlaylistTool()]
 agent_kwargs = {
     "extra_prompt_messages": [MessagesPlaceholder(variable_name="memory")],
     "system_message": SystemMessage(
             content= content_chain_2
         ),
 }
+"""
+tool = StructuredTool.from_function(get_lyrics)
+
+toolsss = [
+    Tool(LyricSearch())
+]
+agent_kwargs = {
+    "extra_prompt_messages": [MessagesPlaceholder(variable_name="memory")],
+    "system_message": SystemMessage(
+            content= "You are an AI agent that answers questions about songs. You should use the tools provided to you with liberty whenever you do not know a song. Once you have the lyrics from the function provided to you, you should analyze the lyrics and answer any questions"
+        ),
+}
+agent_executor = initialize_agent(
+    [toolsss],
+    llm,
+    agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
+    verbose=True,
+    agent_kwargs=agent_kwargs
+)
+"""
 
 memory = ConversationBufferMemory(memory_key="memory", return_messages=True)
-mrkl = initialize_agent(tools, llm, agent=AgentType.OPENAI_FUNCTIONS, agent_kwargs=agent_kwargs, memory=memory, verbose=True)
+#mrkl = initialize_agent(toolss, llm, agent=AgentType.OPENAI_FUNCTIONS, agent_kwargs=agent_kwargs, memory=memory, verbose=True)
 
 #information gathering chain
 def gather_playlist_details(user_input, ask_for, playlist_details):
@@ -60,7 +82,8 @@ def generate_message(input_dict):
     return message
 
 def generate_playlist_ai(features_genres_pdetails):
-    response = mrkl.run(features_genres_pdetails)
+    #response = mrkl.run(features_genres_pdetails)
+    response = 'yuh!!!'
     return response
 
 def curate_songs(keywords):
