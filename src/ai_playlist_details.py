@@ -56,15 +56,7 @@ def update_details(current_playlist_details: PlaylistDetails, new_playlist_detai
 #given a list of things to ask for, this function generates a new question in order to fill in missing details
 def generate_question(ask_for):
     # prompt template 1
-    first_prompt = ChatPromptTemplate.from_template(
-        """ You are a happy AI assistant.Below are some things to ask the user for in a conversation way. You should only ask one question at a time even if you don't get all the info \
-            don't ask as a list! Don't greet the user! Don't say Hi. If the ask_for list is empty then thank them and let them know you will get to work now. Change up the way you ask the questions,
-            and keep the way you're asking positive and fun! The playlist_name does not have to match user_mood_occasion.Do not modify playlist names to match the user's mood / occasion. 
-            It is important that you DO NOT modify any of the fields to what you think is appropriate. The user has full creative freedom over the playlist's customization. The user_mood_occasion can
-            be any situation / mood the user replies. Do not use anything you generated for the list it should all come from user input. the user input should not be modified. \n\n \
-            ### ask_for list: {ask_for}
-        """
-    )
+    first_prompt = ChatPromptTemplate.from_template(constants.CONTENT_CHAIN_6)
     # a chain used for gathering a users playlist details
     question_generating_chain = LLMChain(llm=llm, prompt=first_prompt)
     print("RUNNING QUESTION CHAIN WITH THIS LIST: ", ask_for)
