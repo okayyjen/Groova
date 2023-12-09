@@ -165,13 +165,15 @@ def get_song_link(song_name, artist_list):
     token = os.getenv('SPOTIFY_ACCESS_TOKEN')
     sp = spotipy.Spotify(auth=token)
     
-    query = f"{song_name} AND {artist_list}"
+    query = f"track:{song_name} artist:{artist_list}"
     results = sp.search(q=query, type='track', limit=1)
+
     song_url = None
     if results['tracks']['total'] > 0:
         #Get the song URL from the first result
         track = results['tracks']['items'][0]
-        if track['name'].lower() == song_name.lower() and artist_list[0].lower() in track['artists'][0]['name'].lower():
+
+        if song_name.lower() in track['name'].lower() and artist_list[0].lower() in track['artists'][0]['name'].lower():
             song_url = results['tracks']['items'][0]['external_urls']['spotify']
 
     return song_url
@@ -221,8 +223,6 @@ def get_lyrics(song_title, artist_name):
     song = genius.search_song(song_title, artist_name)
 
     return song.lyrics
-    
-
 
 def get_playlist_id(playlist_url):
     token = os.getenv('SPOTIFY_ACCESS_TOKEN')
