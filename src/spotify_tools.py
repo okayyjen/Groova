@@ -326,3 +326,12 @@ def create_playlist(features_and_genres, pdetails):
             'artist_found': artist_found,
             'artist_not_found_list': artist_not_found_list
             }
+
+def isExist(song_name, artist_name):
+    token = os.getenv('SPOTIFY_ACCESS_TOKEN')
+    sp = spotipy.Spotify(auth=token)
+    results = sp.search(q=f"track:{song_name} artist:{artist_name}", type='track', limit=1)
+    if results['tracks']['items']:
+        return True
+    else:
+        return False
