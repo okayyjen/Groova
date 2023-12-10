@@ -93,10 +93,9 @@ function Home() {
       .get('/get_initial_question')
       .then((response) => {
 
-        setAIResponse(response.data['initialQuestion']);
         const questionAI= createMessageElement(response.data['initialQuestion'], "message-AI", userPic);
-
         messageContainerRef.current.appendChild(questionAI);
+        setAIResponse(response.data['initialQuestion']);
 
         setTyping(false);
         setPause(false);
@@ -111,7 +110,7 @@ function Home() {
 
   useEffect(() => {
     lastMessageRef.current?.scrollIntoView();
-  }, [userInput, playlistUrl, typing, messageContainerRef]);
+  }, [userInput, playlistUrl, typing, messageContainerRef, AIResponse]);
 
   function generatePlaylist(currPlaylistDetails){
     axios.post('/generate_playlist', {
@@ -179,6 +178,7 @@ function Home() {
           }
           else{
             setTyping(false);
+            setPause(false);
           }
         });
       }
