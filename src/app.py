@@ -54,7 +54,7 @@ def get_greeting_message():
     greeting_message = constants.GREETING_MESSAGE.format(display_name=display_name)
 
     input_dict = {'include_greeting': True,
-                      'instructions': (constants.GREETING_INSTRUCTIONS.format(display_name=display_name))
+                  'instructions': (constants.GREETING_INSTRUCTIONS.format(display_name=display_name))
 
                  }
     
@@ -93,7 +93,15 @@ def get_user_input():
     playlist_details = update_details(playlist_details, new_details)
     
     if ask_for:
+
+        input_dict = {'include_greeting': False,
+                      'instructions': constants.COMMENT_INSTRUCTIONS.format(user_input=user_input)}
+        
+        ai_comment = ai.generate_message(input_dict)
+
         ai_response = generate_question(ask_for)
+
+        ai_response = " ".join([ai_comment, ai_response])
         print("AI: ", ai_response)
     else:
         input_dict = {'include_greeting': False,
