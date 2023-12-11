@@ -1,3 +1,5 @@
+import ResetButton from './ResetButton';
+
 export function createMessageElement(input, divName, profile) {
     const messageElement = document.createElement('div');
     const textElement = document.createElement('div');
@@ -58,4 +60,64 @@ export function createPlaylistElement(playlistID, divName){
     aiElement.appendChild(aiProfile);
     aiElement.appendChild(messageElement);
     return aiElement;
+}
+
+export function createResetMessage(){
+    const messageElement = document.createElement('div');
+    const button = document.createElement('button');
+    const buttonPic = document.createElement("IMG");
+    button.setAttribute('type', "button");
+    button.setAttribute('id', "reset-btn");
+
+    buttonPic.setAttribute('src', require('../images/reset.png'));
+    button.appendChild(buttonPic);
+
+    const textElement = document.createElement('div');
+    textElement.textContent = "would you like to reset?";
+    textElement.id = "message-text";
+
+    const aiProfile = document.createElement("IMG");
+    const aiElement = document.createElement('div');
+    aiProfile.setAttribute('src', require('../images/groova_pfp.png'));
+    aiProfile.setAttribute('id', "profile-ai");
+
+    messageElement.appendChild(textElement);
+    messageElement.appendChild(button);
+    messageElement.id = "message-AI";
+
+    aiElement.id = "div-ai";
+    aiElement.appendChild(aiProfile);
+    aiElement.appendChild(messageElement);
+
+
+    return aiElement;
+
+
+}
+
+export function createResetDiv(resetFunc){
+    const resetElement = document.createElement('div');
+    resetElement.id = "reset-element";
+    const button = document.createElement('button');
+    button.id = "reset-btn";
+
+    button.setAttribute('type', "button");
+    button.setAttribute('id', "reset-btn");
+    //button.setAttribute('onclick', resetFunc);
+    
+    const textElement = document.createElement('div');
+    textElement.textContent = "Create New Playlist";
+    textElement.id = "btn-text";
+
+    button.appendChild(textElement);
+
+    //resetElement.appendChild(textElement);
+    resetElement.appendChild(button);
+    button.addEventListener("click", resetFunc);
+    //return resetElement;
+    return {'resetElement': resetElement, 'buttonRef': button};
+}
+
+export function createResetDivComponent(condition, handleClick){
+    return <ResetButton condition={condition} onClick={handleClick} />
 }

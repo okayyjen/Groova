@@ -27,6 +27,10 @@
   border: none;
 }
 
+.submit-button:disabled{
+  background-color: #ccc;
+}
+
 .home-greeting{
   font-size: 40px;
 }
@@ -54,7 +58,7 @@
   background-color:rgba(65, 37, 82, 0.667);
   overflow-y: hidden;
   margin: 0 auto;
-  padding: 20px;
+  padding: 20px 20px  0px 20px;
   overflow-y: scroll;
     
 }
@@ -100,7 +104,12 @@
   border-radius: 50%;
   overflow: hidden;
   margin-bottom: 10px;
-    
+  
+}
+
+@media all and (max-width: 965px) {
+  #profile-ai, #profile-user { 
+    display: none; }
 }
 
 #div-ai{
@@ -150,6 +159,39 @@
   border-radius: 40px 40px 10px 40px;
   background-color: #7b48a4;
   align-self: flex-end;
+}
+
+#reset-element {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 30px;
+}
+
+#reset-btn { 
+  background-color: #837191;
+  box-shadow: 10px 10px 0px rgb(65, 37, 82);;
+  transition-duration: .3s;
+  border-radius: 30px;
+  color: white; 
+  border: none;
+  padding: 10px;
+  width: 260px;
+  height: 60px;
+}
+  
+#reset-btn:hover {
+  transform: translateY(5px);
+  box-shadow: 3px 3px 0px rgb(65, 37, 82);;
+  transition-duration: .3s;
+}
+
+#btn-text{
+  text-align: center;
+  margin: 0;
+  font-family: 'Sora', sans-serif;
+  font-weight: 300;
+  font-size: 20px;
 }
 
 #send-icon{
@@ -203,4 +245,55 @@
 @keyframes overall-scale {
   0%, 95% { transform: scale(0); }
   5%, 90% { transform: scale(1); }
+}
+
+//typing indicator
+
+:root{
+  --bg-color:#36393F;
+  --bg-msg:#40444B;
+  --msg-color:#656F6B;
+  --loader-main:#DCDDDE;
+  --loader-bg:#8e9297;
+}
+
+
+.wrapper{
+  font-family: 'Dongle', sans-serif;
+  font-size: 25px;
+  align-self: flex-end;
+  
+}
+
+.loader{
+  display: flex;
+  align-items: center;
+  color:var(--loader-main);
+  font-size: 18px;
+  font-weight: 700;
+}
+.loader > span{
+  height: 6px;
+  width: 6px;
+  margin: 0.3rem 0 0.3rem .2rem;
+  background-color: var(--loader-bg);
+  border-radius:50%;
+
+}
+.loader span:nth-child(3){
+  margin-right:0.3rem;
+  margin-left: .2rem;
+  animation:blink 1s ease-in-out .66s infinite;
+}
+.loader span:nth-child(2){
+    animation:blink 1s ease-in-out .33s infinite;
+}
+.loader span:nth-child(1){  
+  animation:blink 1s ease-in-out infinite;
+}
+@keyframes blink{
+  50%{
+    background-color: var(--loader-main);
+    transform: scale(1.2);
+  }
 }

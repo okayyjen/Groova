@@ -23,27 +23,28 @@
   text-shadow: 1px 1px rgba(0,0,0,0.1);
   flex-direction: column;
 }
-  
 #subtext{
   margin:0;
   font-size: 50px;
   font-weight: 300;
 }
 
+@media all and (max-width: 965px) {
+  #subtext { display: none; }
+}
+
 #btn-container {
   display: flex;
   justify-content: center;
   align-items: center;
-    
-    
 }
-  
+
 .Btn { 
   background-color: #c14be26b;
   box-shadow: 10px 10px 0px rgb(90, 4, 107);
   transition-duration: .3s;
   border-radius: 30px;
-  color: white; /* Example text color */
+  color: white; 
   border: none;
   padding: 10px;
   width: 260px;
@@ -59,7 +60,7 @@
 #btn-contents {
   display: flex;
   justify-content: space-around;
-  align-items: center; /* Center vertically */
+  align-items: center;
   width: 100%;
 }
   

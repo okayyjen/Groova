@@ -3,12 +3,17 @@ import '../static/Loading.scss';
 
 function Elipses({ typing }){
   return (
-    <div className="dots" style={{animation: typing ? 'overall-scale 8000s infinite' : 'overall-scale 5s infinite',}}>
-      <div className="dot"></div>
-      <div className="dot"></div>
-      <div className="dot"></div>
+  <div className="wrapper">
+    <div className="loader">
+        <span></span>
+        <span></span>
+        <span></span>
+        Groova is Typing...
     </div>
+  </div>
   );
 };
+
+
 
 export default Elipses;
