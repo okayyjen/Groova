@@ -202,11 +202,13 @@ function Home() {
             <div className="chat-top-bar">
               <div id="text">Groova</div>
             </div>
-            <div className="chat-box">
-              <div className="message-cont" ref={messageContainerRef}></div>
-                {playlistComplete && (<ResetButton onClick = {reset} ></ResetButton>)}
-                {typing && (<div className="elipses">{<Elipses typing={typing} />}</div>)}
-              <div ref={lastMessageRef}></div>
+            <div className="chat-wrapper">
+                <div className="chat-box">
+                <div className="message-cont" ref={messageContainerRef}></div>
+                  {playlistComplete && (<ResetButton onClick = {reset} ></ResetButton>)}
+                  {typing && (<div className="elipses">{<Elipses typing={typing} />}</div>)}
+                <div ref={lastMessageRef}></div>
+              </div>
             </div>
             <form onSubmit={handleSubmit} className="form-container">
               <input
