@@ -63,6 +63,8 @@
   height: 100%;
   overflow-y: scroll;
   padding-right: 5px; /* Adjusted the padding here */
+  display: flex;
+  flex-direction: column;
 }
 
 ::-webkit-scrollbar {
@@ -264,11 +266,13 @@
 
 .loader{
   display: flex;
+  align-self: flex-end;
   align-items: center;
   color:var(--loader-main);
   font-size: 18px;
   font-weight: 700;
 }
+
 .loader > span{
   height: 6px;
   width: 6px;
