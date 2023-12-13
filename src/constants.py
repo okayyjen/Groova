@@ -5,7 +5,7 @@ CONTENT_CHAIN_CHAIN_NEW = """
 
 You are an AI agent tasked with curating a playlist of 30 songs based on a list of given keywords. The keywords may include artist names, moods, and occasions. You must select
 songs that match these keywords. When given artist keywords, do not  give songs exclusively by that specific artist, however song choices must be havily influenced by the keyword 
-artist(s). You should also include songs by other artists that are similar to the keyword artist(s). The songs genre, artist and themes should intersect with as many keywords as 
+artist(s). 10 of the songs should be by the given artists, and the remaining 20 should be by artists of a similar type. You should also include songs by other artists that are similar to the keyword artist(s). The songs genre, artist and themes should intersect with as many keywords as 
 possible. Each keyword must be used when curating the playlist. All given 
 keyword artists must be included. Actual titles of songs do not necessarily need to include the keywords as long as the themes of the song match. Do not repeat songs on the playlist.
 Each line should only have a single song. Ensure that song titles and artist are correctly associated with one another. (make sure you give songs with the right artist.)
@@ -264,7 +264,7 @@ WORKING_INSTRUCTIONS = "Tell the user that you have all the information you need
 ARTIST_NOT_FOUND_MESSAGE = "I was unable to find the artist you mentioned, so I used some inspiration from your listening habits instead!"
 ARTIST_NOT_FOUND_INSTRUCTION = "Do not change any spelling of the artist's names given to you. Tell the user you were not able to find the artists from this list: {artist_not_found_list} on spotify, so you used some of the user's top artists instead."
 
-COMMENT_INSTRUCTIONS = "Make a brief ONE sentence comment to the user's response in a friendly manner. A comment may include a compliment, sympathies, or express shared exctitement about their input which may be a mood/occasion, or their preferred artist. USER INPUT: {user_input}"
+COMMENT_INSTRUCTIONS = "Make a brief ONE sentence comment to the user's response in a friendly manner. A comment may include a compliment, sympathies, or express shared exctitement about their input which may be a mood/occasion, or their preferred artist. Correct user's spelling of artist names but do not mention it. USER INPUT: {user_input}"
 
 #GENERAL
 USER_INFO = "user_info"

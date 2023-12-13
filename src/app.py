@@ -55,7 +55,6 @@ def get_greeting_message():
 
     input_dict = {'include_greeting': True,
                   'instructions': (constants.GREETING_INSTRUCTIONS.format(display_name=display_name))
-
                  }
     
     return{'greetingMessage': greeting_message}
@@ -91,6 +90,8 @@ def get_user_input():
 
     ask_for, new_details = filter_response(user_input_question, playlist_details)
     playlist_details = update_details(playlist_details, new_details)
+
+    ai_comment = ""
     
     if ask_for:
 
@@ -101,8 +102,6 @@ def get_user_input():
 
         ai_response = generate_question(ask_for)
 
-        ai_response = " ".join([ai_comment, ai_response])
-        print("AI: ", ai_response)
     else:
         input_dict = {'include_greeting': False,
                       'instructions': constants.WORKING_INSTRUCTIONS}
@@ -113,7 +112,8 @@ def get_user_input():
                                      'artistNames':playlist_details.artist_names,
                                      'playlistName':playlist_details.playlist_name
                                      },
-            'AIResponse': ai_response}
+            'AIResponse': ai_response,
+            'AIComment': ai_comment}
 
 @app.route('/generate_playlist', methods=["POST"])
 def generate_playlist():
