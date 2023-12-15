@@ -8,6 +8,7 @@ import requests
 from lyricsgenius import Genius
 import random
 import response_format
+import base64
 
 load_dotenv()
 
@@ -17,7 +18,7 @@ redirectURI = os.getenv("SPOTIPY_REDIRECT_URI")
 
 def create_spotify_oauth():
 
-    scopes = ["user-top-read", "playlist-modify-private","playlist-modify-public"]
+    scopes = ["user-top-read", "playlist-modify-private","playlist-modify-public", "ugc-image-upload"]
 
     return spotipy.oauth2.SpotifyOAuth(
             client_id=clientID,
@@ -169,11 +170,12 @@ def get_song_link(song_name, artist_list):
     results = sp.search(q=query, type='track', limit=1)
 
     song_url = None
+
     if results['tracks']['total'] > 0:
         #Get the song URL from the first result
         track = results['tracks']['items'][0]
 
-        if song_name.lower() in track['name'].lower() and artist_list[0].lower() in track['artists'][0]['name'].lower():
+        if song_name.lower() in track['name'].lower() and artist_list[0].lower() in track['artists'][0]['name'].lower() and track['artists'][0]['name'].lower().count(artist_list[0].lower()) == 1:
             song_url = results['tracks']['items'][0]['external_urls']['spotify']
 
     return song_url
@@ -240,30 +242,51 @@ def create_playlist_song_list(song_info_list, playlist_name):
     
     sp = spotipy.Spotify(auth=token)
 
-    # Create a new empty playlist
-    user_playlist = sp.user_playlist_create(user, playlist_name, public=False, collaborative=False, description="Made with Groova")
-    playlist_id = user_playlist['id']
-
-    song_URLs = []
     #if the user given song exists, add it to song_URLs
     for song_info in song_info_list:
         song_link = get_song_link(song_info.song_name, song_info.artist_name_list)
 
-        if song_link and song_link not in song_URLs:
+        #Ensure no duplicates
+        if song_link not in song_URLs:
             song_URLs.append(song_link)
-        
+
+        #cut playlist off at len == 30
         if len(song_URLs) == 30:
             break
 
+    #if song url list is not empty, shuffle songs
     if song_URLs:
         random.shuffle(song_URLs)
-
+    song_URLs = []
+    #if songs are between 1 - 29, fill out playlist until 30
     if len(song_URLs) < 30:
+        print(len(song_URLs))
         extra = 30 - len(song_URLs)
         recommended_tracks = sp.recommendations(seed_tracks=song_URLs[:5], limit=extra)
         recommended_track_uris = [track['uri'] for track in recommended_tracks['tracks']]
         
         song_URLs.extend(recommended_track_uris)
+
+    # Create a new empty playlist
+    user_playlist = sp.user_playlist_create(user, playlist_name, public=False, collaborative=False, description="Made with Groova")
+    playlist_id = user_playlist['id']
+
+    #Get playlist cover
+
+    try:
+        with open('images/playlist_cover_1.png', 'rb') as image_file:
+            # Read image data
+            image_data = image_file.read()
+
+            # Encode image data to Base64
+            image_b64 = base64.b64encode(image_data).decode('utf-8')
+
+            # Upload and set playlist cover
+            sp.playlist_upload_cover_image(playlist_id, image_b64)
+
+        print("Playlist cover image updated successfully.")
+    except spotipy.SpotifyException as e:
+        print(f"Error: {e}")
 
     #add tracks to playlist
     sp.playlist_add_items(playlist_id, song_URLs, position=None)
@@ -313,7 +336,7 @@ def create_playlist(features_and_genres, pdetails):
         top_artist_url = get_artist_link(artist_name)
         artist_URLs.append(top_artist_url)
     
-    recommended_tracks = sp.recommendations(seed_artists=artist_URLs, limit=20, target_features=features_dict)
+    recommended_tracks = sp.recommendations(seed_artists=artist_URLs, limit=30, target_features=features_dict)
     recommended_track_uris = [track['uri'] for track in recommended_tracks['tracks']]
     playlist_id = user_playlist['id']
 

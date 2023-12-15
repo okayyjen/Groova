@@ -120,13 +120,24 @@ def generate_playlist():
 
     react_input = request.get_json()
     playlist_details_input = react_input['playlist_details']
+    user_mood = playlist_details_input['userMoodOccasion']
 
     keywords_list = playlist_details_input['artistNames']
-    keywords_list.append(playlist_details_input['userMoodOccasion'])
+    keywords_list.append(user_mood)
 
-    songs = ai.curate_songs(keywords_list)
-    
-    playlist = spotify_tools.create_playlist_song_list(songs.song_list, playlist_details_input['playlistName'])
+    try: 
+        songs = ai.curate_songs(keywords_list)
+        playlist = spotify_tools.create_playlist_song_list(songs.song_list, playlist_details_input['playlistName'])
+    except Exception as e:
+        print(f"First attempt failed: {e}")
+        try:
+            songs = ai.curate_songs(keywords_list)
+            playlist = spotify_tools.create_playlist_song_list(songs.song_list, playlist_details_input['playlistName'])
+        except Exception as e:
+            print(f"Second attempt failed, initiating other method: {e}")
+            features_and_genres = ai.generate_feature_rating(user_mood)
+            playlist_details = set_p_details(playlist_details_input)
+            playlist = spotify_tools.create_playlist(features_and_genres, playlist_details)
 
     return {
         'playlistUrl': playlist['playlist_url'],

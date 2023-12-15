@@ -10,7 +10,6 @@ from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
 import ai_playlist_details
 import response_format
-from ai_lyric_tool import LyricSearch, get_lyrics
 from langchain.tools.base import StructuredTool
 
 content_chain_1 = PromptTemplate(input_variables=['user_mood'], template=constants.CONTENT_CHAIN_1)
@@ -62,7 +61,7 @@ agent_executor = initialize_agent(
 """
 
 memory = ConversationBufferMemory(memory_key="memory", return_messages=True)
-#mrkl = initialize_agent(toolss, llm, agent=AgentType.OPENAI_FUNCTIONS, agent_kwargs=agent_kwargs, memory=memory, verbose=True)
+mrkl = initialize_agent(toolss, llm, agent=AgentType.OPENAI_FUNCTIONS, agent_kwargs=agent_kwargs, memory=memory, verbose=True)
 
 #information gathering chain
 def gather_playlist_details(user_input, ask_for, playlist_details):
@@ -82,8 +81,8 @@ def generate_message(input_dict):
     return message
 
 def generate_playlist_ai(features_genres_pdetails):
-    #response = mrkl.run(features_genres_pdetails)
-    response = 'yuh!!!'
+    response = mrkl.run(features_genres_pdetails)
+    
     return response
 
 def curate_songs(keywords):
