@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import '../static/Home.scss';
-import {createMessageElement, createPlaylistElement, createResetDiv, createResetDivComponent} from './ElementCreator';
+import {createMessageElement, createPlaylistElement } from './ElementCreator';
 import Shared from './Shared';
 import Loading from './Loading';
 import Elipses from './Elipses';
@@ -72,7 +72,6 @@ function Home() {
         console.error('Error: ', error);
 
       });
-
     }
   }, [loading]);
 
@@ -169,8 +168,8 @@ function Home() {
 
           const currAskfor = response.data['updatedAskList'];
           const currPlaylistDetails = response.data['updatedPlaylistDetails'];
-
-          const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI", userPic);
+          const text = response.data['AIComment'] + " " + response.data['AIResponse']
+          const messageElementAI= createMessageElement(text, "message-AI", userPic);
           messageContainerRef.current.appendChild(messageElementAI);
           
           if(currAskfor.length === 0 && currPlaylistDetails["userMoodOccasion"] != null){
@@ -182,7 +181,6 @@ function Home() {
           }
         });
       }
-      
     } catch (error) {
       console.error('Error sending data:', error);
     }

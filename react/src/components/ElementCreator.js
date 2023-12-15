@@ -44,12 +44,9 @@ export function createPlaylistElement(playlistID, divName){
     const aiElement = document.createElement('div');
     aiProfile.setAttribute('src', require('../images/groova_pfp.png'));
     aiProfile.setAttribute('id', "profile-ai");
+    playlistElement.setAttribute('id', 'playlist-element')
 
-    playlistElement.setAttribute('style', "border-radius:40px 40px 40px 10px");
     playlistElement.setAttribute('src', "https://open.spotify.com/embed/playlist/" + playlistID + "?utm_source=generator");
-    playlistElement.setAttribute('width', "100%");
-    playlistElement.setAttribute('height', "352px");
-    playlistElement.setAttribute('frameBorder', "0");
     playlistElement.setAttribute('allowfullscreen', "");
     playlistElement.setAttribute('allow', "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture");
     playlistElement.setAttribute('loading', "lazy");
@@ -93,31 +90,4 @@ export function createResetMessage(){
     return aiElement;
 
 
-}
-
-export function createResetDiv(resetFunc){
-    const resetElement = document.createElement('div');
-    resetElement.id = "reset-element";
-    const button = document.createElement('button');
-    button.id = "reset-btn";
-
-    button.setAttribute('type', "button");
-    button.setAttribute('id', "reset-btn");
-    //button.setAttribute('onclick', resetFunc);
-    
-    const textElement = document.createElement('div');
-    textElement.textContent = "Create New Playlist";
-    textElement.id = "btn-text";
-
-    button.appendChild(textElement);
-
-    //resetElement.appendChild(textElement);
-    resetElement.appendChild(button);
-    button.addEventListener("click", resetFunc);
-    //return resetElement;
-    return {'resetElement': resetElement, 'buttonRef': button};
-}
-
-export function createResetDivComponent(condition, handleClick){
-    return <ResetButton condition={condition} onClick={handleClick} />
 }
