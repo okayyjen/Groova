@@ -145,6 +145,7 @@ def generate_playlist():
         'AIResponse': 'donezo: '
     }
 
+
 @app.route('/getTracks')
 def getTracks():
 
@@ -163,6 +164,7 @@ def callback():
     sp_oauth = spotify_tools.create_spotify_oauth()
     session.clear()
     # if given access, continue to home page
+    
     if request.args.get('code'):
         tokenInfo = sp_oauth.get_access_token(request.args.get('code'))
         session[TOKEN_INFO] = tokenInfo
@@ -172,12 +174,11 @@ def callback():
         
         return home()
 
-    #if denied access, return to landing page ('/')
+
+    #if denied access, return to landing page ('/') 
     if request.args.get('error'):
 
         return redirect('http://localhost:3000')
 
     #TODO if neither, handle error in future. For now, return message
     return "something went wrong"
-
-
