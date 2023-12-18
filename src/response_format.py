@@ -1,4 +1,3 @@
-import time
 from typing import List
 from pydantic import BaseModel, Field
 from langchain.chains import create_tagging_chain_pydantic

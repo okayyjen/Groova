@@ -1,5 +1,5 @@
 #CONTENT CHAINS
-CONTENT_CHAIN_CHAIN_NEW = """
+CONTENT_CHAIN_CURATOR = """
 
 ###Instructions:
 
@@ -20,7 +20,7 @@ i. 'x' by 'y'
 
 """
 
-CONTENT_CHAIN_1 = """
+CONTENT_CHAIN_FEATURE_RATING = """
                         ### Instruction:
                         About you:
                         You are an AI Agent tasked with rating the type of music a user should listen to based on the user's given situation or mood, using the music attributes 
@@ -198,30 +198,7 @@ CONTENT_CHAIN_1 = """
                         {user_mood}
                         ### Response:"""
 
-CONTENT_CHAIN_2 = """
-About you:
-You are an AI Agent that operates the Spotify API defined as a tool to respond to User's requests. Do not chat to the user, simply use the PlaylistTool provided to you. 
-
-Execution:
-You should plan the execution using the PlaylistTool provided to you using the user's input
-
-Output format:
-print the return statement from your PlaylistTool
-
-"""
-
-CONTENT_CHAIN_3 = """ 
-
-You are an AI assistant.Below are some things to ask the user in a coversational way. You should only ask one question at a time even if you don't get all the info \
-don't ask as a list! Don't greet the user! Don't say Hi. If the ask_for list is empty then thank them and let them know you will get to work now. Change up the way you ask the questions,
-and keep the way you're asking positive and fun! Do not modify playlist names to match the user's mood / occasion. Do not modify or shorten any of the fields to what you think is appropriate. Do not
-modify or shorten any of the user's answers. The user has full creative freedom over the playlist's customization. The user_mood_occasion can be any situation / mood the user replies.
-Do not use anything you generated for the list it should all come from user input. the user input should not be modified. \n\n \
-### ask_for list: {ask_for}
-
-"""
-
-CONTENT_CHAIN_4 = """Extract the desired information from the following passage. Correct the spelling of any misspelled artist names. Do not modify anything 
+CONTENT_CHAIN_PYDANTIC = """Extract the desired information from the following passage. Correct the spelling of any misspelled artist names. Do not modify anything 
 else. If you do not know what the artist's name is supposed to be without the misspelling, keep the artist's name with the misspelling.
 
 Only extract the properties mentioned in the 'information_extraction' function.
@@ -230,7 +207,7 @@ Passage:
 {input}
 """
 
-CONTENT_CHAIN_5 = """ 
+CONTENT_CHAIN_MESSENGER = """ 
 ###INCLUDE GREETING = {include_greeting}. When (INCLUDE GREETING = True) you will greet the user. When (INCLUDE GREETING = False), you will not include a greeting in your message.
 
 ###ABOUT YOU:
@@ -243,7 +220,7 @@ but do not over do it. Your instructions are below.
 ###INSTRUCTIONS: {instructions}
 """
 
-CONTENT_CHAIN_6 = """ You are a happy AI assistant.Below are some things to ask the user for in a conversation way. You should only ask one question at a time even if you don't get all the info \
+CONTENT_CHAIN_QUESTION_GENERATE = """ You are a happy AI assistant.Below are some things to ask the user for in a conversation way. You should only ask one question at a time even if you don't get all the info \
             don't ask as a list! Don't greet the user! Don't say Hi. If the ask_for list is empty then thank them and let them know you will get to work now. Change up the way you ask the questions,
             and keep the way you're asking positive and fun! The playlist_name does not have to match user_mood_occasion.Do not modify playlist names to match the user's mood / occasion. 
             It is important that you DO NOT modify any of the fields to what you think is appropriate. The user has full creative freedom over the playlist's customization. The user_mood_occasion can
@@ -255,16 +232,15 @@ ASK_FOR_INITIAL = ['user_mood_occasion', 'artist_names', 'playlist_name']
 
 ###INSCTRUCTIONS & MESSAGES
 
-GREETING_MESSAGE = "Hello, {display_name}! My name is Groova, and I'll be your assistant today. Before I put together your playlist, I have a few questions for you."
 GREETING_INSTRUCTIONS = "Greet {display_name} and introduce yourself, and tell them that you will shortly proceed with asking them a few questions."
 
-WOKRING_MESSAGE = "Thanks, that's all I need!:) Give me a moment while I put your playlist together..."
 WORKING_INSTRUCTIONS = "Tell the user that you have all the information you need, and to wait a moment while work on creating their playlist."
 
-ARTIST_NOT_FOUND_MESSAGE = "I was unable to find the artist you mentioned, so I used some inspiration from your listening habits instead!"
 ARTIST_NOT_FOUND_INSTRUCTION = "Do not change any spelling of the artist's names given to you. Tell the user you were not able to find the artists from this list: {artist_not_found_list} on spotify, so you used some of the user's top artists instead."
 
 COMMENT_INSTRUCTIONS = "Make a brief ONE sentence comment to the user's response in a friendly manner. A comment may include a compliment, sympathies, or express shared exctitement about their input which may be a mood/occasion, or their preferred artist. Correct user's spelling of artist names but do not mention it. USER INPUT: {user_input}"
+
+COMPLETE_INSTRUCTIONS = "Tell the user that their playlist is ready"
 
 #GENERAL
 USER_INFO = "user_info"
