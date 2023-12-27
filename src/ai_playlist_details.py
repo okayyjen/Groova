@@ -16,7 +16,7 @@ class PlaylistDetails(BaseModel):
 
     artist_names: List[str] = Field(
         default=None,
-        description="This is a list of artist names that a user would like to be featured on the playlist"
+        description="This is a list of artist names that a user would like to be featured on the playlist."
     )
 
     playlist_name: str = Field(
@@ -33,7 +33,7 @@ def check_empty_fields(playlist_details):
     ask_for = []
     # Check if fields are empty
     for field, value in playlist_details.dict().items():
-        if value in [None, "", 0]:  # You can add other 'empty' conditions as per your requirements
+        if value in [None, "", 0]:
             print(f"Field '{field}' is empty.")
             ask_for.append(f'{field}')
     print("EMPTY FIELDS FUNC", ask_for)
@@ -68,7 +68,7 @@ def filter_response(user_input, playlist_details ):
     chain = create_tagging_chain_pydantic(PlaylistDetails, llm, prompt=ChatPromptTemplate.from_template(constants.CONTENT_CHAIN_PYDANTIC))
     
     res = chain.run(user_input)
-    # add filtered info to the
+    # add filtered info
     new_playlist_details = update_details(playlist_details,res)
 
     ask_for = check_empty_fields(new_playlist_details)

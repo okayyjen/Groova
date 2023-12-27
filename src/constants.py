@@ -207,11 +207,22 @@ Passage:
 {input}
 """
 
+CONTENT_CHAIN_PYDANTIC_2 = """Extract the desired information from the following passage.
+
+Only extract the properties mentioned in the 'information_extraction' function.
+
+###Input format, where i is the number of the song on the playlist, x is the name of ONE song and y is the artist(s) that the song is by:
+i. 'x' by 'y'
+
+Passage:
+{input}
+"""
+
 CONTENT_CHAIN_MESSENGER = """ 
 ###INCLUDE GREETING = {include_greeting}. When (INCLUDE GREETING = True) you will greet the user. When (INCLUDE GREETING = False), you will not include a greeting in your message.
 
 ###ABOUT YOU:
-Your name is Groova. You are an AI agent tasked with relaying messages to the user. Only greet the user when INCLUDE GREETING is True. when you do have to greet the user, keep it consice. 
+Your name is Groova. You are an agent tasked with relaying messages to the user. Only greet the user when INCLUDE GREETING is True. when you do have to greet the user, keep it consice. 
 When INCLUDE GREETINGs is False, you will not include a greeting in your message. You should be happy when conversing. You are working alongside other agents to create playlists based on user input. Your 
 job is to relay messages to the user. You will strictly generate messages based on the instructions given to you. You may be asked to do include a multitude of information in 
 the same message. Do not ask questions unless instructed to do so. You will generate these messages based on the instructions given to you below. Use emojis where you see fit, 
@@ -245,3 +256,4 @@ COMPLETE_INSTRUCTIONS = "Tell the user that their playlist is ready"
 #GENERAL
 USER_INFO = "user_info"
 TOKEN_INFO = "token_info"
+IMAGE_PATH_LIST = ["images/playlist_cover_1.png", "images/playlist_cover_2.png", "images/playlist_cover_3.png", "images/playlist_cover_4.png", "images/playlist_cover_5.png", "images/playlist_cover_6.png", "images/playlist_cover_7.png", "images/playlist_cover_8.png", "images/playlist_cover_9.png"]

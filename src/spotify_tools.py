@@ -1,10 +1,13 @@
 from flask import url_for
+from unidecode import unidecode
 import spotipy
 import os
 import re
 from dotenv import load_dotenv
 import random
 import base64
+import random
+import constants
 
 load_dotenv()
 
@@ -150,8 +153,11 @@ def get_song_URL_list(song_info_list, sp):
     return song_URLs
 
 def add_playlist_cover(sp, playlist_id):
+
+    path = random.choice(constants.IMAGE_PATH_LIST)
+
     try:
-        with open('images/playlist_cover_1.png', 'rb') as image_file:
+        with open(path, 'rb') as image_file:
             # Read image data
             image_data = image_file.read()
 
@@ -191,13 +197,22 @@ def get_song_link(song_name, artist_list):
     if results['tracks']['total'] > 0:
         #Get the song URL from the first result
         track = results['tracks']['items'][0]
-
-        song_name_match = song_name.lower() in track['name'].lower()
-        contains_artist_name = artist_list[0].lower() in track['artists'][0]['name'].lower()
-        artist_name_length_match = track['artists'][0]['name'].lower().count(artist_list[0].lower()) == 1
         
+        translation_table = {ord('\'') : None, ord('"') : None}
+
+        song_name_str = unidecode(song_name.lower().translate(translation_table))
+        song_name_spotify = unidecode(track['name'].lower().translate(translation_table))
+        artist_name = unidecode(artist_list[0].lower().translate(translation_table))
+        artist_name_spotify = unidecode(track['artists'][0]['name'].lower().translate(translation_table))
+
+        song_name_match = song_name_str in song_name_spotify
+        contains_artist_name = artist_name in artist_name_spotify
+        artist_name_length_match = artist_name_spotify.count(artist_name) == 1
+
         if  song_name_match and contains_artist_name and artist_name_length_match:
-            song_url = results['tracks']['items'][0]['external_urls']['spotify']
+            song_url = track['external_urls']['spotify']
+        else:
+            print("NOT FOUND: ", song_name_str, " ", song_name_spotify, " ", artist_name, " ", artist_name_spotify)
 
     return song_url
 

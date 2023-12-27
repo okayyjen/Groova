@@ -1,4 +1,3 @@
-import time
 from flask import Flask, request, session, redirect, render_template
 from flask_cors import CORS
 from flask_session import Session
@@ -11,6 +10,7 @@ import spotify_tools
 import ai
 from ai_playlist_details import generate_question, filter_response, update_details 
 import constants
+from response_format import SongInfo
 
 from dotenv import load_dotenv
 
@@ -51,11 +51,11 @@ def get_greeting_message():
     react_input = request.get_json()
     display_name = react_input['display_name']
 
-    greeting_message = constants.GREETING_MESSAGE.format(display_name=display_name)
-
     input_dict = {'include_greeting': True,
                   'instructions': (constants.GREETING_INSTRUCTIONS.format(display_name=display_name))
                  }
+    
+    greeting_message = ai.generate_message(input_dict)
     
     return{'greetingMessage': greeting_message}
 
@@ -125,24 +125,33 @@ def generate_playlist():
     keywords_list = playlist_details_input['artistNames']
     keywords_list.append(user_mood)
 
+    input_dict = {'include_greeting': True,
+                  'instructions': (constants.COMPLETE_INSTRUCTIONS)
+                 }
+    
+    ai_response = ai.generate_message(input_dict)
+
     try: 
         songs = ai.curate_songs(keywords_list)
         playlist = spotify_tools.create_playlist_song_list(songs.song_list, playlist_details_input['playlistName'])
+        
     except Exception as e:
         print(f"First attempt failed: {e}")
         try:
             songs = ai.curate_songs(keywords_list)
             playlist = spotify_tools.create_playlist_song_list(songs.song_list, playlist_details_input['playlistName'])
         except Exception as e:
-            print(f"Second attempt failed, initiating other method: {e}")
+            print(f"Second attempt failed, initiating alternate method: {e}")
             features_and_genres = ai.generate_feature_rating(user_mood)
             playlist_details = set_p_details(playlist_details_input)
             playlist = spotify_tools.create_playlist(features_and_genres, playlist_details)
+    
+    
 
     return {
         'playlistUrl': playlist['playlist_url'],
         'playlistID': playlist['playlist_id'],
-        'AIResponse': 'donezo: '
+        'AIResponse': ai_response
     }
 
 
@@ -174,11 +183,4 @@ def callback():
         
         return home()
 
-
-    #if denied access, return to landing page ('/') 
-    if request.args.get('error'):
-
-        return redirect('http://localhost:3000')
-
-    #TODO if neither, handle error in future. For now, return message
-    return "something went wrong"
+    return redirect('http://localhost:3000')
