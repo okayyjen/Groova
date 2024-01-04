@@ -59,7 +59,7 @@ def create_playlist_song_list(song_info_list, playlist_name):
     song_URLs = get_song_URL_list(song_info_list, sp)
 
     # Create a new empty playlist
-    user_playlist = sp.user_playlist_create(user, playlist_name, public=False, collaborative=False, description="Made with Groova")
+    user_playlist = sp.user_playlist_create(user, playlist_name, public=False, collaborative=False, description="Made with Groovify")
     playlist_id = user_playlist['id']
 
     #Add playlist cover
