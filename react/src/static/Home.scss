@@ -146,7 +146,7 @@
 
 #playlist-display{
   display: flex;
-  width: 60%; /* Adjust the maximum width of the bubble */
+  width: 60%; 
   max-height: 100%;
   padding: 10px 12px;
   align-self: flex-end; 
@@ -154,7 +154,7 @@
 
 #message-AI{
   display: inline-block;
-  max-width: 70%; /* Adjust the maximum width of the bubble */
+  max-width: 70%; 
   padding: 10px 8px 10px 15px;
   margin:10px;
   word-wrap: break-word;
@@ -165,7 +165,7 @@
 
 #message-user{
   display: inline-block;
-  max-width: 70%; /* Adjust the maximum width of the bubble */
+  max-width: 70%;
   padding: 10px 15px;
   margin: 10px;
   border-radius: 20px;
@@ -183,7 +183,7 @@
 }
 
 #reset-btn { 
-  background-color: #7e4ba5;
+  background-color: #9d4ba5;
   transition-duration: .3s;
   border-radius: 30px;
   color: white; 

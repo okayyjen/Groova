@@ -23,7 +23,7 @@ function Login() {
       <Shared></Shared>
         <div className = "text-container">
           <header>
-              <h1 id= "logo-text">Groova</h1>
+              <h1 id= "logo-text">Groovify</h1>
           </header>
           <p id = "subtext">Connect your Spotify account to get started</p>
           <div id = "btn-container">

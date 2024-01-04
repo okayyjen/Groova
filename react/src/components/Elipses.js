@@ -1,7 +1,7 @@
 import React from 'react';
 import '../static/Loading.scss';
 
-function Elipses({ typing }){
+function Elipses({}){
   return (
   <div className="wrapper">
     <div className="loader">

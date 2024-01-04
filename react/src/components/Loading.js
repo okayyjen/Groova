@@ -1,5 +1,4 @@
 import React from 'react';
-import Shared from './Shared';
 import '../static/Loading.scss';
 
 const Loading = () => {

@@ -17,17 +17,16 @@ function Home() {
         playlistName:""
       });
   const [AIResponse, setAIResponse] = useState(null);
-  const messageContainerRef = useRef(null);
-  const lastMessageRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [typing, setTyping] = useState(true);
   const [pause, setPause] = useState(true);
   const [playlistUrl, setPlaylistUrl] = useState('');
-  const regex = /.*[a-zA-Z]+.*/;
   const [userPic, setUserPic] = useState('');
   const [greeted, setGreeted] = useState(false);
-  const [disabled, setDisabled] = useState(false);
   const [playlistComplete, setPlaylistComplete] = useState(false);
+  const messageContainerRef = useRef(null);
+  const lastMessageRef = useRef(null);
+  const regex = /.*[a-zA-Z]+.*/;
 
   useEffect(() => {
     axios
@@ -85,6 +84,10 @@ function Home() {
     }
   }, [playlistComplete]);
 
+  useEffect(() => {
+    lastMessageRef.current?.scrollIntoView();
+  }, [userInput, playlistUrl, typing, messageContainerRef, AIResponse]);
+
   const initialQuestion = async () =>{
     
     if (!loading && messageContainerRef.current) {
@@ -106,10 +109,6 @@ function Home() {
 
     }
   };
-
-  useEffect(() => {
-    lastMessageRef.current?.scrollIntoView();
-  }, [userInput, playlistUrl, typing, messageContainerRef, AIResponse]);
 
   function generatePlaylist(currPlaylistDetails){
     axios.post('/generate_playlist', {
@@ -138,7 +137,6 @@ function Home() {
     });
     setTyping(true);
     initialQuestion();
-    setDisabled(false);
     setPlaylistComplete(false);
   }
   
@@ -204,7 +202,7 @@ function Home() {
                 <div className="chat-box">
                 <div className="message-cont" ref={messageContainerRef}></div>
                   {playlistComplete && (<ResetButton onClick = {reset} ></ResetButton>)}
-                  {typing && (<div className="elipses">{<Elipses typing={typing} />}</div>)}
+                  {typing && (<div className="elipses">{<Elipses/>}</div>)}
                 <div ref={lastMessageRef}></div>
               </div>
             </div>
