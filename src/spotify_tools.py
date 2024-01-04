@@ -69,8 +69,13 @@ def create_playlist_song_list(song_info_list, playlist_name):
     sp.playlist_add_items(playlist_id, song_URLs, position=None)
     playlist_url = user_playlist['external_urls']['spotify']
 
+    #get playlist cover
+    playlist_cover_url = sp.playlist_cover_image(playlist_id)
+    print(playlist_cover_url)
+
     return {'playlist_url': playlist_url,
-            'playlist_id': playlist_id
+            'playlist_id': playlist_id,
+            'playlist_cover_url': playlist_cover_url
             }
 
 def create_playlist(features_and_genres, pdetails):
@@ -117,8 +122,13 @@ def create_playlist(features_and_genres, pdetails):
     sp.playlist_add_items(playlist_id, recommended_track_uris, position=None)
     playlist_url = user_playlist['external_urls']['spotify']
 
+    #get playlist cover
+    playlist_cover_url = sp.playlist_cover_image(playlist_id)
+    print(playlist_cover_url)
+
     return {'playlist_url': playlist_url,
             'playlist_id': playlist_id,
+            'playlist_cover_url': playlist_cover_url,
             'artist_found': artist_found,
             'artist_not_found_list': artist_not_found_list
             }
