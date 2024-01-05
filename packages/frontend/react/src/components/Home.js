@@ -141,13 +141,12 @@ function Home() {
   }
   
   const handleSubmit = async (event) => {
-    setTyping(true);
-    setPause(true);
     event.preventDefault();
     try {
       //sending the user input, ask list, and playlist details to backend
       if(userInput && regex.test(userInput)){
-
+        setTyping(true);
+        setPause(true);
         const messageElementUser = createMessageElement(userInput, "message-user", userPic);
         messageContainerRef.current.appendChild(messageElementUser);
         //resetting user input in prep for next submit 
