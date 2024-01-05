@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import '../static/Home.scss';
-import {createMessageElement, createPlaylistElement, createResetDiv, createResetDivComponent} from './ElementCreator';
+import {createMessageElement, createPlaylistElement } from './ElementCreator';
 import Shared from './Shared';
 import Loading from './Loading';
 import Elipses from './Elipses';
@@ -17,17 +17,16 @@ function Home() {
         playlistName:""
       });
   const [AIResponse, setAIResponse] = useState(null);
-  const messageContainerRef = useRef(null);
-  const lastMessageRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [typing, setTyping] = useState(true);
   const [pause, setPause] = useState(true);
   const [playlistUrl, setPlaylistUrl] = useState('');
-  const regex = /.*[a-zA-Z]+.*/;
   const [userPic, setUserPic] = useState('');
   const [greeted, setGreeted] = useState(false);
-  const [disabled, setDisabled] = useState(false);
   const [playlistComplete, setPlaylistComplete] = useState(false);
+  const messageContainerRef = useRef(null);
+  const lastMessageRef = useRef(null);
+  const regex = /.*[a-zA-Z]+.*/;
 
   useEffect(() => {
     axios
@@ -72,7 +71,6 @@ function Home() {
         console.error('Error: ', error);
 
       });
-
     }
   }, [loading]);
 
@@ -85,6 +83,10 @@ function Home() {
       setTyping(false);
     }
   }, [playlistComplete]);
+
+  useEffect(() => {
+    lastMessageRef.current?.scrollIntoView();
+  }, [userInput, playlistUrl, typing, messageContainerRef, AIResponse]);
 
   const initialQuestion = async () =>{
     
@@ -107,10 +109,6 @@ function Home() {
 
     }
   };
-
-  useEffect(() => {
-    lastMessageRef.current?.scrollIntoView();
-  }, [userInput, playlistUrl, typing, messageContainerRef, AIResponse]);
 
   function generatePlaylist(currPlaylistDetails){
     axios.post('/generate_playlist', {
@@ -139,18 +137,16 @@ function Home() {
     });
     setTyping(true);
     initialQuestion();
-    setDisabled(false);
     setPlaylistComplete(false);
   }
   
   const handleSubmit = async (event) => {
-    setTyping(true);
-    setPause(true);
     event.preventDefault();
     try {
       //sending the user input, ask list, and playlist details to backend
       if(userInput && regex.test(userInput)){
-
+        setTyping(true);
+        setPause(true);
         const messageElementUser = createMessageElement(userInput, "message-user", userPic);
         messageContainerRef.current.appendChild(messageElementUser);
         //resetting user input in prep for next submit 
@@ -169,8 +165,8 @@ function Home() {
 
           const currAskfor = response.data['updatedAskList'];
           const currPlaylistDetails = response.data['updatedPlaylistDetails'];
-
-          const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI", userPic);
+          const text = response.data['AIComment'] + " " + response.data['AIResponse']
+          const messageElementAI= createMessageElement(text, "message-AI", userPic);
           messageContainerRef.current.appendChild(messageElementAI);
           
           if(currAskfor.length === 0 && currPlaylistDetails["userMoodOccasion"] != null){
@@ -182,7 +178,6 @@ function Home() {
           }
         });
       }
-      
     } catch (error) {
       console.error('Error sending data:', error);
     }
@@ -202,11 +197,13 @@ function Home() {
             <div className="chat-top-bar">
               <div id="text">Groova</div>
             </div>
-            <div className="chat-box">
-              <div className="message-cont" ref={messageContainerRef}></div>
-                {playlistComplete && (<ResetButton onClick = {reset} ></ResetButton>)}
-                {typing && (<div className="elipses">{<Elipses typing={typing} />}</div>)}
-              <div ref={lastMessageRef}></div>
+            <div className="chat-wrapper">
+                <div className="chat-box">
+                <div className="message-cont" ref={messageContainerRef}></div>
+                  {playlistComplete && (<ResetButton onClick = {reset} ></ResetButton>)}
+                  {typing && (<div className="elipses">{<Elipses/>}</div>)}
+                <div ref={lastMessageRef}></div>
+              </div>
             </div>
             <form onSubmit={handleSubmit} className="form-container">
               <input
