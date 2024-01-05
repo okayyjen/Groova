@@ -19,7 +19,10 @@
     "webfontloader": "^1.6.28"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "concurrently \"yarn start-flask\" \"yarn wait-on-api && yarn start-react\"",
+    "start-flask": "cd ../../backend/src && pip install -r requirements.txt && flask run",
+    "start-react": "react-scripts start",
+    "wait-on-api": "wait-on http://127.0.0.1:5000/",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -48,7 +51,9 @@
     "@types/node": "^20.8.3",
     "@types/react": "^18.2.25",
     "@types/react-dom": "^18.2.11",
+    "concurrently": "^8.2.2",
     "sass": "^1.69.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "wait-on": "^7.2.0"
   }
 }
