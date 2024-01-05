@@ -1,5 +1,4 @@
 import time
-from apscheduler.schedulers.background import BackgroundScheduler
 import dotenv
 from flask import session
 
@@ -31,8 +30,3 @@ def write_to_dotenv(name):
     dotenv.load_dotenv(dotenv_file)
     os.environ[name] = string
     dotenv.set_key(dotenv_file, name, os.environ[name])
-
-def refresh_token():
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(get_token, 'interval', minutes=55)
-    scheduler.start()

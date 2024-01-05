@@ -5,7 +5,7 @@ import spotipy
 import os
 from ai_playlist_details import set_p_details
 from constants import TOKEN_INFO, USER_INFO
-from tools import get_token, refresh_token, write_to_dotenv
+from tools import get_token, write_to_dotenv
 import spotify_tools
 import ai
 from ai_playlist_details import generate_question, filter_response, update_details 
@@ -36,7 +36,6 @@ def home():
 
     write_to_dotenv("SPOTIFY_ACCESS_TOKEN")
     write_to_dotenv("SPOTIFY_USER_ID")
-    refresh_token() 
 
     return redirect('http://localhost:3000/home')
 
