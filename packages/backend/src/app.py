@@ -29,7 +29,7 @@ Session(app)
 @app.route('/')
 def index():
 
-    return render_template("index.html")
+    return "Hello, world!-Jenny & Amirah"
 
 @app.route('/Home')
 def home():
