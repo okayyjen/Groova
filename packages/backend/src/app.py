@@ -10,6 +10,7 @@ import spotify_tools
 import ai
 from ai_playlist_details import generate_question, filter_response, update_details 
 import constants
+from packages.backend.configuration import config
 
 app = Flask(__name__)
 
@@ -171,8 +172,8 @@ def callback():
         sp = spotipy.Spotify(auth=tokenInfo['access_token'])
         userInfo = sp.current_user()
         session[USER_INFO] = userInfo
-        write_token("SPOTIFY_ACCESS_TOKEN")
-        write_token("SPOTIFY_USER_ID")
+        write_token("SPOTIFY_ACCESS_TOKEN", config.key)
+        write_token("SPOTIFY_USER_ID", config.key)
         return home()
 
     return redirect('http://localhost:3000')

@@ -7,19 +7,14 @@ import random
 import base64
 import random
 import constants
-import yaml
+import yaml_tools
+from packages.backend.configuration import config
 
 clientID = os.environ["SPOTIPY_CLIENT_ID"]
 clientSecret = os.environ["SPOTIPY_CLIENT_SECRET"]
 redirectURI = os.environ["SPOTIPY_REDIRECT_URI"]
 
-def load_yaml():
-    with open('../config/access_token.yml', 'r') as file:
-        data = yaml.safe_load(file)
-    return data
-
 def create_spotify_oauth():
-
     scopes = ["user-top-read", "playlist-modify-private","playlist-modify-public", "ugc-image-upload"]
 
     return spotipy.oauth2.SpotifyOAuth(
@@ -29,7 +24,7 @@ def create_spotify_oauth():
             scope=' '.join(scopes))
 
 def get_spotify_user_token():
-    data = load_yaml()
+    data = yaml_tools.decrypt_yaml(config.key)
     user = data['SPOTIFY_USER_ID']
     if not user:
         raise ValueError("SPOTIFY_USER_ID environment variable is not set.")
@@ -41,7 +36,7 @@ def get_spotify_user_token():
     return user, token
 
 def display_name():
-    data = load_yaml()
+    data = yaml_tools.decrypt_yaml(config.key)
     token = data['SPOTIFY_ACCESS_TOKEN']
     sp = spotipy.Spotify(auth=token)
     user_info = sp.current_user()
@@ -49,7 +44,7 @@ def display_name():
     return user_info['display_name']
 
 def user_pic():
-    data = load_yaml()
+    data = yaml_tools.decrypt_yaml(config.key)
     token = data['SPOTIFY_ACCESS_TOKEN']
     sp = spotipy.Spotify(auth=token)
     user_info = sp.current_user()
@@ -184,7 +179,7 @@ def add_playlist_cover(sp, playlist_id):
         print(f"Error: {e}")
 
 def get_artist_link(artist_name):
-    data = load_yaml()
+    data = yaml_tools.decrypt_yaml(config.key)
     token = data['SPOTIFY_ACCESS_TOKEN']
     sp = spotipy.Spotify(auth=token)
     results = sp.search(q=f'artist:{artist_name}', type='artist', limit=1)
@@ -199,7 +194,7 @@ def get_artist_link(artist_name):
     return artist_url
 
 def get_song_link(song_name, artist_list):
-    data = load_yaml()
+    data = yaml_tools.decrypt_yaml(config.key)
     token = data['SPOTIFY_ACCESS_TOKEN']
     sp = spotipy.Spotify(auth=token)
     

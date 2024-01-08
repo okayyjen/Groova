@@ -3,6 +3,7 @@ from flask import session
 import yaml
 import spotify_tools
 from constants import TOKEN_INFO
+import yaml_tools
 
 def get_token():
     token_info = session.get(TOKEN_INFO, None)
@@ -16,17 +17,12 @@ def get_token():
 
     return token_info
 
-def write_token(name):
+def write_token(name, key):
     if name == "SPOTIFY_ACCESS_TOKEN":
         token_info = get_token()
         string = token_info['access_token']
 
     if name == "SPOTIFY_USER_ID":
         string = session['user_info']['id']
-
-    with open('../config/access_token.yml', 'r') as file:
-        data = yaml.safe_load(file)
-    data[name] = string
-
-    with open('../config/access_token.yml', 'w') as file:
-        yaml.dump(data, file)
+    
+    yaml_tools.encrypt_yaml(string, key)
