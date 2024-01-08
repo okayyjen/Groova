@@ -11,9 +11,9 @@ import constants
 
 load_dotenv()
 
-clientID = os.getenv("SPOTIPY_CLIENT_ID")
-clientSecret = os.getenv("SPOTIPY_CLIENT_SECRET")
-redirectURI = os.getenv("SPOTIPY_REDIRECT_URI")
+clientID = os.environ["SPOTIPY_CLIENT_ID"]
+clientSecret = os.environ["SPOTIPY_CLIENT_SECRET"]
+redirectURI = os.environ["SPOTIPY_REDIRECT_URI"]
 
 def create_spotify_oauth():
 
