@@ -1,8 +1,6 @@
 import time
-import dotenv
 from flask import session
-
-import os
+import yaml
 import spotify_tools
 from constants import TOKEN_INFO
 
@@ -18,7 +16,7 @@ def get_token():
 
     return token_info
 
-def write_to_dotenv(name):
+def write_token(name):
     if name == "SPOTIFY_ACCESS_TOKEN":
         token_info = get_token()
         string = token_info['access_token']
@@ -26,7 +24,9 @@ def write_to_dotenv(name):
     if name == "SPOTIFY_USER_ID":
         string = session['user_info']['id']
 
-    dotenv_file = dotenv.find_dotenv()
-    dotenv.load_dotenv(dotenv_file)
-    os.environ[name] = string
-    dotenv.set_key(dotenv_file, name, os.environ[name])
+    with open('../config/access_token.yml', 'r') as file:
+        data = yaml.safe_load(file)
+    data[name] = string
+
+    with open('../config/access_token.yml', 'w') as file:
+        yaml.dump(data, file)

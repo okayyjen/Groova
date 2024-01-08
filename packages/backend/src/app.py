@@ -1,20 +1,15 @@
-from flask import Flask, request, session, redirect, render_template
+from flask import Flask, request, session, redirect
 from flask_cors import CORS
 from flask_session import Session
 import spotipy
 import os
 from ai_playlist_details import set_p_details
 from constants import TOKEN_INFO, USER_INFO
-from tools import get_token, write_to_dotenv
+from tools import get_token, write_token
 import spotify_tools
 import ai
 from ai_playlist_details import generate_question, filter_response, update_details 
 import constants
-from response_format import SongInfo
-
-from dotenv import load_dotenv
-
-load_dotenv()
 
 app = Flask(__name__)
 
@@ -33,9 +28,6 @@ def index():
 
 @app.route('/Home')
 def home():
-
-    write_to_dotenv("SPOTIFY_ACCESS_TOKEN")
-    write_to_dotenv("SPOTIFY_USER_ID")
 
     return redirect('http://localhost:3000/home')
 
@@ -179,7 +171,8 @@ def callback():
         sp = spotipy.Spotify(auth=tokenInfo['access_token'])
         userInfo = sp.current_user()
         session[USER_INFO] = userInfo
-        
+        write_token("SPOTIFY_ACCESS_TOKEN")
+        write_token("SPOTIFY_USER_ID")
         return home()
 
     return redirect('http://localhost:3000')
