@@ -30,7 +30,7 @@ function Home() {
 
   useEffect(() => {
     axios
-      .get('/get_display_name')
+      .get('/api/get_display_name')
       .then((response) => {
         setDisplayName(response.data);
         setLoading(false);
@@ -43,7 +43,7 @@ function Home() {
 
   useEffect(() => {
     axios
-      .get('/get_user_pic')
+      .get('/api/get_user_pic')
       .then((response) => {
         setUserPic(response.data)
       })
@@ -55,7 +55,7 @@ function Home() {
   useLayoutEffect(() => {
     if (!loading && messageContainerRef.current) {
 
-      axios.post('/get_greeting_message', {
+      axios.post('/api/get_greeting_message', {
         display_name: displayName,
       })
       .then((response) => {
@@ -92,7 +92,7 @@ function Home() {
     
     if (!loading && messageContainerRef.current) {
       axios
-      .get('/get_initial_question')
+      .get('/api/get_initial_question')
       .then((response) => {
 
         const questionAI= createMessageElement(response.data['initialQuestion'], "message-AI", userPic);
@@ -111,7 +111,7 @@ function Home() {
   };
 
   function generatePlaylist(currPlaylistDetails){
-    axios.post('/generate_playlist', {
+    axios.post('/api/generate_playlist', {
       playlist_details: currPlaylistDetails
     }).then((response) => {
 
@@ -152,7 +152,7 @@ function Home() {
         //resetting user input in prep for next submit 
         setUserInput('');
 
-        await axios.post('/get_user_input', {
+        await axios.post('/api/get_user_input', {
           user_input: userInput,
           ask_for: askFor,
           p_details: playlistDetails,

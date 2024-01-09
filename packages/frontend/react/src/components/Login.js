@@ -8,7 +8,7 @@ function Login() {
   const [url, setUrl] = useState('ERRA');
 
   useEffect(() => {
-    axios.get('/login')
+    axios.get('/api/login')
         .then(response => {
             setUrl(response.data);
         })
