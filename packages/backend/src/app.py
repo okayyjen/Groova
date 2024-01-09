@@ -3,13 +3,13 @@ from flask_cors import CORS
 from flask_session import Session
 import spotipy
 import os
-from ai_playlist_details import set_p_details
 from constants import TOKEN_INFO, USER_INFO
 from tools import get_token, write_token
 import spotify_tools
 import ai
-from ai_playlist_details import generate_question, filter_response, update_details 
+from ai_playlist_details import generate_question, filter_response, update_details, set_p_details 
 import constants
+import key
 
 app = Flask(__name__)
 
