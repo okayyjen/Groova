@@ -26,17 +26,17 @@ def index():
 
     return "Hello, world!-Jenny & Amirah"
 
-@app.route('/Home')
+@app.route('/api/Home')
 def home():
 
     return redirect('http://localhost:3000/home')
 
-@app.route('/get_display_name')
+@app.route('/api/get_display_name')
 def get_display_name():
 
     return spotify_tools.display_name()
 
-@app.route('/get_greeting_message', methods=["POST"])
+@app.route('/api/get_greeting_message', methods=["POST"])
 def get_greeting_message():
 
     react_input = request.get_json()
@@ -50,19 +50,19 @@ def get_greeting_message():
     
     return{'greetingMessage': greeting_message}
 
-@app.route('/get_initial_question')
+@app.route('/api/get_initial_question')
 def get_initial_AI_response():
 
     initial_question = generate_question(constants.ASK_FOR_INITIAL)
     
     return {'initialQuestion': initial_question}
 
-@app.route('/get_user_pic')
+@app.route('/api/get_user_pic')
 def get_user_pic():
 
     return spotify_tools.user_pic()
 
-@app.route('/get_user_input', methods=["POST"])
+@app.route('/api/get_user_input', methods=["POST"])
 def get_user_input():
 
     react_input = request.get_json()
@@ -106,7 +106,7 @@ def get_user_input():
             'AIResponse': ai_response,
             'AIComment': ai_comment}
 
-@app.route('/generate_playlist', methods=["POST"])
+@app.route('/api/generate_playlist', methods=["POST"])
 def generate_playlist():
 
     react_input = request.get_json()
@@ -146,12 +146,12 @@ def generate_playlist():
     }
 
 
-@app.route('/getTracks')
+@app.route('/api/getTracks')
 def getTracks():
 
     return spotify_tools.get_top_tracks(get_token())
 
-@app.route('/login')
+@app.route('/api/login')
 def login():
 
     sp_oauth = spotify_tools.create_spotify_oauth()
@@ -159,7 +159,7 @@ def login():
     
     return authURL
 
-@app.route('/redirect')
+@app.route('/api/redirect')
 def callback():
     sp_oauth = spotify_tools.create_spotify_oauth()
     session.clear()
