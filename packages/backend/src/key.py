@@ -1,3 +1,3 @@
-from ..src import yaml_tools
+import yaml_tools
 
 key = yaml_tools.generate_key()
