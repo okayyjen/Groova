@@ -1,4 +1,4 @@
-from flask import Flask, request, session, redirect, g
+from flask import Flask, request, session, redirect
 from flask_cors import CORS
 from flask_session import Session
 import spotipy
@@ -10,7 +10,6 @@ import ai
 from ai_playlist_details import generate_question, filter_response, update_details, set_p_details 
 import constants
 import key
-import psutil
 
 app = Flask(__name__)
 
@@ -27,21 +26,6 @@ def index():
 
     return "Hello, world!-Jenny & Amirah"
 
-@app.before_request
-def before_request():
-    g.start_memory = psutil.virtual_memory().used
-
-@app.after_request
-def after_request(response):
-    # Calculate the memory used during the request
-    end_memory = psutil.virtual_memory().used
-    memory_used = end_memory - g.start_memory
-
-    # Log or handle the memory_used value as needed
-    app.logger.info(f"Memory used: {memory_used} bytes")
-
-    return response
-
 @app.route('/api/Home')
 def home():
 
@@ -54,7 +38,7 @@ def get_display_name():
 
 @app.route('/api/get_greeting_message', methods=["POST"])
 def get_greeting_message():
-    before_request()
+
     react_input = request.get_json()
     display_name = react_input['display_name']
 
@@ -63,7 +47,7 @@ def get_greeting_message():
                  }
     
     greeting_message = ai.generate_message(input_dict)
-    after_request(request)
+    
     return{'greetingMessage': greeting_message}
 
 @app.route('/api/get_initial_question')
