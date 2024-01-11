@@ -9,6 +9,9 @@ import random
 import constants
 import yaml_tools
 import key
+from dotenv import load_dotenv
+
+load_dotenv()
 
 clientID = os.environ["SPOTIPY_CLIENT_ID"]
 clientSecret = os.environ["SPOTIPY_CLIENT_SECRET"]
