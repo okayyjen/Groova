@@ -6,21 +6,21 @@ from constants import TOKEN_INFO
 import yaml_tools
 import key
 
-def get_token():
+def get_token(session):
     token_info = session.get(TOKEN_INFO, None)
     if not token_info:
         raise "exception"
     now = int(time.time())
     is_expired = token_info['expires_at'] - now < 60
     if(is_expired):
-        sp_oauth = spotify_tools.create_spotify_oauth
+        sp_oauth = spotify_tools.create_spotify_oauth(session)
         token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
 
     return token_info
 
-def write_token(name):
+def write_token(name, session):
     if name == "SPOTIFY_ACCESS_TOKEN":
-        token_info = get_token()
+        token_info = get_token(session)
         string = token_info['access_token']
 
     if name == "SPOTIFY_USER_ID":

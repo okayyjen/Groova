@@ -1,4 +1,4 @@
-from flask import url_for
+from flask import Flask, url_for, session
 from unidecode import unidecode
 import spotipy
 import os
@@ -11,48 +11,49 @@ import yaml_tools
 import key
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 clientID = os.environ["SPOTIPY_CLIENT_ID"]
 clientSecret = os.environ["SPOTIPY_CLIENT_SECRET"]
 redirectURI = os.environ["SPOTIPY_REDIRECT_URI"]
 
-def create_spotify_oauth():
+def create_spotify_oauth(session):
+    cache_handler = spotipy.cache_handler.FlaskSessionCacheHandler(session)
     scopes = ["user-top-read", "playlist-modify-private","playlist-modify-public", "ugc-image-upload"]
 
     return spotipy.oauth2.SpotifyOAuth(
             client_id=clientID,
             client_secret=clientSecret,
             redirect_uri=url_for('callback', _external=True),
-            scope=' '.join(scopes))
-
-def load_and_decrypt(name):
-    data = yaml_tools.load_yaml()
-    decrypted = yaml_tools.decrypt(data[name], key.key)
-    return decrypted
+            scope=' '.join(scopes),
+            cache_handler = cache_handler,
+            show_dialog=True)
 
 def get_spotify_user_token():
-    user = load_and_decrypt('SPOTIFY_USER_ID')
+    #user = load_and_decrypt('SPOTIFY_USER_ID')
+    user = session.get('user_id')
     if not user:
         raise ValueError("SPOTIFY_USER_ID environment variable is not set.")
         
-    token = load_and_decrypt('SPOTIFY_ACCESS_TOKEN')
+    #token = load_and_decrypt('SPOTIFY_ACCESS_TOKEN')
+    token_info = session.get('token_info')
+    token = token_info['access_token']
     if not token:
         raise ValueError("SPOTIFY_ACCESS_TOKEN environment variable is not set.")
     
     return user, token
 
 def display_name():
-    token = load_and_decrypt('SPOTIFY_ACCESS_TOKEN')
-    sp = spotipy.Spotify(auth=token)
-    user_info = sp.current_user()
-    
+
+    user_info = session.get('user_info')
+    print(user_info)
+
     return user_info['display_name']
 
 def user_pic():
-    token = load_and_decrypt('SPOTIFY_ACCESS_TOKEN')
-    sp = spotipy.Spotify(auth=token)
-    user_info = sp.current_user()
+
+    user_info = session.get('user_info')
     url = user_info['images'][0]['url'] if user_info['images'] else "no pfp"
     return url
 
@@ -184,7 +185,10 @@ def add_playlist_cover(sp, playlist_id):
         print(f"Error: {e}")
 
 def get_artist_link(artist_name):
-    token = load_and_decrypt('SPOTIFY_ACCESS_TOKEN')
+    
+    token_info = session.get('token_info')
+    token = token_info['access_token']
+
     sp = spotipy.Spotify(auth=token)
     results = sp.search(q=f'artist:{artist_name}', type='artist', limit=1)
 
@@ -198,7 +202,9 @@ def get_artist_link(artist_name):
     return artist_url
 
 def get_song_link(song_name, artist_list):
-    token = load_and_decrypt('SPOTIFY_ACCESS_TOKEN')
+    #token = load_and_decrypt('SPOTIFY_ACCESS_TOKEN')
+    token_info = session.get('token_info')
+    token = token_info['access_token']
     sp = spotipy.Spotify(auth=token)
     
     query = f"track:{song_name} artist:{artist_list}"

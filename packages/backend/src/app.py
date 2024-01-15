@@ -13,7 +13,7 @@ import key
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = os.urandom(64)
+app.config['SECRET_KEY'] = '4evJEHqfPw1epn0Z5MLQUw=='
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = './.flask_session/'
 
@@ -46,15 +46,15 @@ def get_greeting_message():
                   'instructions': (constants.GREETING_INSTRUCTIONS.format(display_name=display_name))
                  }
     
-    greeting_message = ai.generate_message(input_dict)
-    
+    #greeting_message = ai.generate_message(input_dict)
+    greeting_message = 'yuh'
     return{'greetingMessage': greeting_message}
 
 @app.route('/api/get_initial_question')
 def get_initial_AI_response():
 
-    initial_question = generate_question(constants.ASK_FOR_INITIAL)
-    
+    #initial_question = generate_question(constants.ASK_FOR_INITIAL)
+    initial_question = 'yuh?'
     return {'initialQuestion': initial_question}
 
 @app.route('/api/get_user_pic')
@@ -149,20 +149,22 @@ def generate_playlist():
 @app.route('/api/getTracks')
 def getTracks():
 
-    return spotify_tools.get_top_tracks(get_token())
+    return spotify_tools.get_top_tracks(get_token(session))
 
 @app.route('/api/login')
 def login():
 
-    sp_oauth = spotify_tools.create_spotify_oauth()
+    sp_oauth = spotify_tools.create_spotify_oauth(session)
     authURL = sp_oauth.get_authorize_url()
     
     return authURL
 
 @app.route('/api/redirect')
 def callback():
-    sp_oauth = spotify_tools.create_spotify_oauth()
+
+    sp_oauth = spotify_tools.create_spotify_oauth(session)
     session.clear()
+    
     # if given access, continue to home page
     
     if request.args.get('code'):
@@ -171,8 +173,8 @@ def callback():
         sp = spotipy.Spotify(auth=tokenInfo['access_token'])
         userInfo = sp.current_user()
         session[USER_INFO] = userInfo
-        write_token("SPOTIFY_ACCESS_TOKEN")
-        write_token("SPOTIFY_USER_ID")
+        #write_token("SPOTIFY_ACCESS_TOKEN")
+        #write_token("SPOTIFY_USER_ID")
         return home()
 
     return redirect('http://localhost:3000')

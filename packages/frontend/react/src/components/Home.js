@@ -30,7 +30,7 @@ function Home() {
 
   useEffect(() => {
     axios
-      .get('/api/get_display_name')
+      .get('/api/get_display_name', {withCredentials:true})
       .then((response) => {
         setDisplayName(response.data);
         setLoading(false);
@@ -43,7 +43,7 @@ function Home() {
 
   useEffect(() => {
     axios
-      .get('/api/get_user_pic')
+      .get('/api/get_user_pic', {withCredentials:true})
       .then((response) => {
         setUserPic(response.data)
       })
@@ -57,7 +57,7 @@ function Home() {
 
       axios.post('/api/get_greeting_message', {
         display_name: displayName,
-      })
+      }, {withCredentials:true})
       .then((response) => {
 
         setAIResponse(response.data['greetingMessage']);
@@ -92,7 +92,7 @@ function Home() {
     
     if (!loading && messageContainerRef.current) {
       axios
-      .get('/api/get_initial_question')
+      .get('/api/get_initial_question', {withCredentials:true})
       .then((response) => {
 
         const questionAI= createMessageElement(response.data['initialQuestion'], "message-AI", userPic);
@@ -113,7 +113,7 @@ function Home() {
   function generatePlaylist(currPlaylistDetails){
     axios.post('/api/generate_playlist', {
       playlist_details: currPlaylistDetails
-    }).then((response) => {
+    }, {withCredentials:true}).then((response) => {
 
       if(response.data['AIResponse'] !== "True"){
         const messageElementAI= createMessageElement(response.data['AIResponse'], "message-AI", userPic);
