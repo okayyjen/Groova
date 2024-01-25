@@ -2,10 +2,31 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Shared from './Shared';
 import '../static/Login.scss';
+import { io } from 'socket.io-client';
 
+let socket;
 
 function Login() {
   const [url, setUrl] = useState('ERRA');
+  const [chatInput, setChatInput] = useState("");
+  const [messages, setMessages] = useState([])
+
+  useEffect(() => {
+
+    // create websocket
+    socket = io();
+    
+    // listen for chat events
+    socket.on("chat", (chat) => {
+        // when we recieve a chat, add it into our messages array in state
+        setMessages(messages => [...messages, chat])
+    })
+    
+    // when component unmounts, disconnect
+    return (() => {
+        socket.disconnect()
+    })
+  }, [])
 
   useEffect(() => {
     axios.get('/api/login', {withCredentials:true})
