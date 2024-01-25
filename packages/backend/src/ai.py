@@ -5,9 +5,6 @@ from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
 import ai_playlist_details
 import response_format
-from dotenv import load_dotenv
-
-load_dotenv()
 
 content_chain_curator = PromptTemplate(input_variables=['keywords'], template=constants.CONTENT_CHAIN_CURATOR)
 content_chain_feature_rating = PromptTemplate(input_variables=['user_mood'], template=constants.CONTENT_CHAIN_FEATURE_RATING)

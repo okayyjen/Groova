@@ -10,36 +10,16 @@ import ai
 from ai_playlist_details import generate_question, filter_response, update_details, set_p_details 
 import constants
 import key
-from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = 'dksnjck'
+app.config['SECRET_KEY'] = '4evJEHqfPw1epn0Z5MLQUw=='
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = './.flask_session/'
-app.config['SESSION_PERMANENT'] = False
 
-#app.config["SESSION_COOKIE_NAME"] = 'spotify_user'
-app.config["SESSION_COOKIE_SAMESITE"] = "None"
-app.config["SESSION_COOKIE_SECURE"] = True
-#app.config['SESSION_USE_SIGNER'] = True
-app.config['SESSION_COOKIE_DOMAIN'] = 'groovify.azurewebsites.net'
-#app.config['WTF_CSRF_SSL_STRICT'] = False
+CORS(app)
 
-allowed_origins = ['https://groovify.azurewebsites.net']
-CORS(app, supports_credentials=True, origins=allowed_origins)
-
-socketio = SocketIO(cors_allowed_origins=allowed_origins)
-socketio.init_app(app)
 Session(app)
-
-
-
-
-@socketio.on("chat")
-def handle_chat(data):
-    emit("chat", data, broadcast=True)
-
 
 @app.route('/')
 def index():
@@ -67,21 +47,20 @@ def get_greeting_message():
                  }
     
     #greeting_message = ai.generate_message(input_dict)
-    greeting_message = 'hi'
-    
+    greeting_message = 'yuh'
     return{'greetingMessage': greeting_message}
 
 @app.route('/api/get_initial_question')
 def get_initial_AI_response():
 
     #initial_question = generate_question(constants.ASK_FOR_INITIAL)
-    initial_question = 'bye'
+    initial_question = 'yuh?'
     return {'initialQuestion': initial_question}
 
 @app.route('/api/get_user_pic')
 def get_user_pic():
-    return 'no pfp'
-    #return spotify_tools.user_pic()
+
+    return spotify_tools.user_pic()
 
 @app.route('/api/get_user_input', methods=["POST"])
 def get_user_input():
@@ -199,7 +178,3 @@ def callback():
         return home()
 
     return redirect('http://localhost:3000')
-
-
-if __name__ == '__main__':
-    socketio.run(app)

@@ -6,9 +6,6 @@ from langchain.prompts import ChatPromptTemplate
 import constants
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import create_tagging_chain_pydantic, LLMChain
-from dotenv import load_dotenv
-
-load_dotenv()
 
 class PlaylistDetails(BaseModel):
     

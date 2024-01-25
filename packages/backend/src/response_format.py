@@ -7,9 +7,6 @@ from langchain.chat_models import ChatOpenAI
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import create_tagging_chain_pydantic
 from langchain.prompts import ChatPromptTemplate
-from dotenv import load_dotenv
-
-load_dotenv()
 
 class SongInfo(BaseModel):
     song_name: str = Field(..., description="The name of the song")
