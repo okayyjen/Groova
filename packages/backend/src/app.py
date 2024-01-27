@@ -48,15 +48,13 @@ def get_greeting_message():
                   'instructions': (constants.GREETING_INSTRUCTIONS.format(display_name=display_name))
                  }
     
-    #greeting_message = ai.generate_message(input_dict)
-    greeting_message = 'yuh'
+    greeting_message = ai.generate_message(input_dict)
     return{'greetingMessage': greeting_message}
 
 @app.route('/api/get_initial_question')
 def get_initial_AI_response():
 
-    #initial_question = generate_question(constants.ASK_FOR_INITIAL)
-    initial_question = 'yuh?'
+    initial_question = generate_question(constants.ASK_FOR_INITIAL)
     return {'initialQuestion': initial_question}
 
 @app.route('/api/get_user_pic')
