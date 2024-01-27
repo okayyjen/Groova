@@ -22,6 +22,7 @@ Ensure that you have [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/#wi
 
 Create a Spotify for Developers account
 - [Link to Spotify for Developers](https://developer.spotify.com/)
+
 Navigate to your Spotify for Developers dashboard and create a new app
 - add your corresponding redirect URI. For Mac users, add http://localhost:8000/api/redirect and for Windows users, add http://127.0.0.1:5000/api/redirect
 - make sure to select the web API option
