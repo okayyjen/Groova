@@ -4,7 +4,7 @@ from flask_session import Session
 import spotipy
 import os
 from constants import TOKEN_INFO, USER_INFO, USER_ID
-from tools import get_token, write_token
+from tools import get_token
 import spotify_tools
 import ai
 from ai_playlist_details import generate_question, filter_response, update_details, set_p_details 
