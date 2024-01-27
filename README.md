@@ -92,7 +92,7 @@ cd packages/frontend/react/src
 yarn install
 ``` 
 **Run the app**
-- from the forntend source directory, run the application
+- from the frontend source directory, run the application
 ```bash
 yarn start
 ``` 
