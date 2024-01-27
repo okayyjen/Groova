@@ -4,7 +4,7 @@ Your personal mood based AI playlist generator
 
 ## About Groova
 
-Groova is a web application designed to curate personalized playlists for users based on their mood. By integrating OpenAI API, Groova leverages a LLM to understand and interpret user input to generate the customized playlist. The app utilizes the Spotify API to seamlessly create and save playlists directly to users' Spotify profiles. Through the Spotify API, Groova personalizes user experience through listening history analysis.
+Groova is a web application designed to curate personalized playlists for users based on their mood. By integrating OpenAI API, Groova leverages a LLM to understand and interpret user input to generate customized playlists! The app utilizes the Spotify API to seamlessly create and save playlists directly to users' Spotify profiles. Through the Spotify API, Groova personalizes user experience through listening history analysis.
 
 
 ![Alt text](/../screenshots/screenshots/ss1.png?raw=true "Groova login page")
