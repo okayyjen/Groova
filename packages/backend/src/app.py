@@ -3,13 +3,15 @@ from flask_cors import CORS
 from flask_session import Session
 import spotipy
 import os
-from constants import TOKEN_INFO, USER_INFO
+from constants import TOKEN_INFO, USER_INFO, USER_ID
 from tools import get_token, write_token
 import spotify_tools
 import ai
 from ai_playlist_details import generate_question, filter_response, update_details, set_p_details 
 import constants
-import key
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -171,10 +173,9 @@ def callback():
         tokenInfo = sp_oauth.get_access_token(request.args.get('code'))
         session[TOKEN_INFO] = tokenInfo
         sp = spotipy.Spotify(auth=tokenInfo['access_token'])
-        userInfo = sp.current_user()
-        session[USER_INFO] = userInfo
-        #write_token("SPOTIFY_ACCESS_TOKEN")
-        #write_token("SPOTIFY_USER_ID")
+        user_info = sp.current_user()
+        session[USER_INFO] = user_info
+        session[USER_ID] = user_info['id']
         return home()
 
     return redirect('http://localhost:3000')

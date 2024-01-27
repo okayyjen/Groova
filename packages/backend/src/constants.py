@@ -255,5 +255,6 @@ COMPLETE_INSTRUCTIONS = "Tell the user that their playlist is ready"
 
 #GENERAL
 USER_INFO = "user_info"
+USER_ID = "user_id"
 TOKEN_INFO = "token_info"
 IMAGE_PATH_LIST = ["images/playlist_cover_1.png", "images/playlist_cover_2.png", "images/playlist_cover_3.png", "images/playlist_cover_4.png", "images/playlist_cover_5.png", "images/playlist_cover_6.png", "images/playlist_cover_7.png", "images/playlist_cover_8.png", "images/playlist_cover_9.png"]
