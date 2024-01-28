@@ -10,6 +10,7 @@ import ai
 from ai_playlist_details import generate_question, filter_response, update_details, set_p_details 
 import constants
 from dotenv import load_dotenv
+from tools import write_to_dotenv
 
 load_dotenv()
 
@@ -28,8 +29,11 @@ def index():
 
     return "Hello, world!-Jenny & Amirah"
 
-@app.route('/api/Home')
+@app.route('/Home')
 def home():
+
+    write_to_dotenv("SPOTIFY_ACCESS_TOKEN")
+    write_to_dotenv("SPOTIFY_USER_ID")
 
     return redirect('http://localhost:3000/home')
 
@@ -149,12 +153,12 @@ def generate_playlist():
 @app.route('/api/getTracks')
 def getTracks():
 
-    return spotify_tools.get_top_tracks(get_token(session))
+    return spotify_tools.get_top_tracks(get_token())
 
 @app.route('/api/login')
 def login():
 
-    sp_oauth = spotify_tools.create_spotify_oauth(session)
+    sp_oauth = spotify_tools.create_spotify_oauth()
     authURL = sp_oauth.get_authorize_url()
     
     return authURL
@@ -162,7 +166,7 @@ def login():
 @app.route('/api/redirect')
 def callback():
 
-    sp_oauth = spotify_tools.create_spotify_oauth(session)
+    sp_oauth = spotify_tools.create_spotify_oauth()
     session.clear()
     
     # if given access, continue to home page

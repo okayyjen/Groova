@@ -21,9 +21,9 @@
   "scripts": {
     
     "start": "concurrently \"yarn start-flask\" \"yarn wait-on-api && yarn start-react\"",
-    "start-flask": "cd ../../backend/src && pip install -r requirements.txt && gunicorn -w 4 -b 0.0.0.0 app:app --timeout 900",
+    "start-flask": "cd ../../backend/src && pip install -r requirements.txt && flask run",
     "start-react": "react-scripts start",
-    "wait-on-api": "wait-on http://localhost:8000/",
+    "wait-on-api": "wait-on http://127.0.0.1:5000/",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -46,7 +46,7 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:8000/",
+  "proxy": "http://127.0.0.1:5000/",
   "devDependencies": {
     "@types/jest": "^29.5.5",
     "@types/node": "^20.8.3",
