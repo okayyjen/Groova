@@ -1,6 +1,6 @@
 # Groova
 
-Your personal mood based AI playlist generator
+Your personal AI playlist generator
 
 ## About Groova
 
