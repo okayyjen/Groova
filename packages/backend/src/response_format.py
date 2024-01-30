@@ -3,8 +3,7 @@ from pydantic import BaseModel, Field
 from langchain.chains import create_tagging_chain_pydantic
 import constants
 from pydantic import BaseModel, Field
-from langchain.chat_models import ChatOpenAI
-from langchain.chat_models import ChatOpenAI
+from langchain_community.chat_models import ChatOpenAI
 from langchain.chains import create_tagging_chain_pydantic
 from langchain.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
