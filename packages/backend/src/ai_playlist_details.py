@@ -1,10 +1,8 @@
 from typing import List
 from pydantic import BaseModel, Field
-from langchain import LLMChain
-from langchain.chat_models import ChatOpenAI
+from langchain_community.chat_models import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 import constants
-from langchain.chat_models import ChatOpenAI
 from langchain.chains import create_tagging_chain_pydantic, LLMChain
 from dotenv import load_dotenv
 

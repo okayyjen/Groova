@@ -1,7 +1,6 @@
-from langchain import PromptTemplate, LLMChain
-from langchain.chat_models import ChatOpenAI
+from langchain.prompts import PromptTemplate
+from langchain_community.chat_models import ChatOpenAI
 import constants
-from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
 import ai_playlist_details
 import response_format
